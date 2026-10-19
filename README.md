@@ -5,7 +5,8 @@ Open `index.html` in a browser, or host the folder on GitHub Pages, Netlify or V
 
 ## Files
 
-- `index.html`: landing page (photo, the shirt, about, lookbook, email sign-up)
+- `index.html`: landing page (photo, the shirt, about, lookbook link, email sign-up)
+- `lookbook.html`: the lookbook
 - `product.html`: product page (photo gallery, sizes, add to cart, details)
 - `account.html`: customer sign-in, saved details and past orders
 - `site.css`: the design

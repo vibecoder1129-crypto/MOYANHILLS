@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lookbook — MOYEN HILLS</title>
+  <meta name="description" content="MOYEN HILLS. ART WILL TEE: boxy cut-off t-shirt, 100% cotton, screen printed front, back and neck label. Made in Latvia.">
+  <meta property="og:title" content="MOYEN HILLS — ART WILL TEE">
+  <meta property="og:image" content="images/landing.jpg">
+  <link rel="icon" href="images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site.css">
+  <script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+  <header class="bar" data-bar>
+    <span aria-hidden="true"></span>
+    <a class="bar__logo" href="index.html" aria-label="MOYEN HILLS, home">
+      <img src="images/logo.png" width="2400" height="262" alt="MOYEN HILLS">
+    </a>
+    <div class="bar__icons">
+      <a class="bar__icon" href="account.html" data-account-link aria-label="Sign in or create an account">
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><circle cx="12" cy="8.5" r="3.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4.8 20c.9-3.6 3.8-5.6 7.2-5.6s6.3 2 7.2 5.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </a>
+      <button class="bar__cart" type="button" data-open-cart aria-haspopup="dialog" aria-label="Open cart">
+        <svg class="bar__bag" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M5 8h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 8Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span class="bar__count" data-cart-count>0</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- Lookbook -->
+    <section class="look look--page" id="lookbook" aria-labelledby="look-title">
+      <div class="look__head" data-reveal>
+        <h1 class="label" id="look-title">Lookbook — First drop</h1>
+        <a class="label" href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">@moyenhills</a>
+      </div>
+
+      <div class="look__spread">
+        <figure class="look__tall" data-reveal>
+          <div class="look__img"><img src="images/tee-front.jpg" width="1200" height="1600" alt="Model on concrete stairs wearing the ART WILL TEE" loading="lazy"></div>
+          <figcaption>On the stairs, after dark.</figcaption>
+        </figure>
+        <div class="look__side">
+          <blockquote class="look__quote" data-reveal>
+            <p>“Art will save us all.”</p>
+            <cite>— the back print</cite>
+          </blockquote>
+          <figure data-reveal>
+            <div class="look__img look__img--sq"><img src="images/back-print.jpg" width="1002" height="1054" alt="The halftone back print, ART WILL SAVE US ALL" loading="lazy"></div>
+            <figcaption>Back — halftone print.</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <blockquote class="look__big" data-reveal>
+        <p>“We all just some average kids at the end of the day.”</p>
+        <cite>— the front print</cite>
+      </blockquote>
+
+      <div class="look__row" data-reveal-group>
+        <figure><div class="look__img"><img src="images/flat-front.jpg" width="1002" height="1201" alt="The tee laid flat in sunlight, front" loading="lazy"></div><figcaption>Front — wordmark and portrait.</figcaption></figure>
+        <figure><div class="look__img"><img src="images/front-print.jpg" width="1002" height="1201" alt="Close-up of the front print with the handwritten lines" loading="lazy"></div><figcaption>“Hey kid, never be afraid to have big desires.”</figcaption></figure>
+        <figure><div class="look__img"><img src="images/neck-label.jpg" width="1002" height="1054" alt="Printed neck label: MOYEN HILLS, 100% cotton" loading="lazy"></div><figcaption>Neck label — 100% cotton.</figcaption></figure>
+      </div>
+
+      <figure class="look__wide" data-reveal>
+        <div class="look__img"><img src="images/flat-back.jpg" width="1002" height="1054" alt="The tee laid flat on concrete, back print and cut-off hem" loading="lazy"></div>
+        <figcaption>Cut-off style bottom. Made in Latvia.</figcaption>
+      </figure>
+
+      <p class="look__cta" data-reveal><a class="btn" href="product.html">Shop the ART WILL TEE</a></p>
+    </section>
+  </main>
+
+  <!-- Email -->
+  <footer class="foot" aria-labelledby="sub-title">
+    <form class="sub" data-subscribe novalidate data-reveal>
+      <h2 class="sub__title" id="sub-title">subscribe to news and updates</h2>
+      <div class="sub__row">
+        <label class="sr" for="sub-email">email address</label>
+        <input class="sub__input" id="sub-email" name="email" type="email" placeholder="email address" autocomplete="email" required>
+        <button class="btn" type="submit">SUBSCRIBE</button>
+      </div>
+      <p class="sub__msg" data-sub-msg role="status" aria-live="polite"></p>
+    </form>
+    <ul class="foot__links" data-reveal>
+      <li><a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">instagram</a></li>
+      <li><a href="https://www.tiktok.com/@moyenhills" target="_blank" rel="noopener">tiktok</a></li>
+    </ul>
+    <p class="foot__legal">© <span data-year>2026</span> MOYEN HILLS · <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></p>
+  </footer>
+
+  <!-- Cart (shared) -->
+  <dialog class="cart" data-cart aria-labelledby="cart-title">
+    <div class="cart__head">
+      <h2 class="cart__title" id="cart-title">Cart</h2>
+      <button type="button" class="link-u" data-close-cart>Close</button>
+    </div>
+    <div data-cart-view>
+      <ul class="cart__items" data-cart-items></ul>
+      <p class="cart__empty" data-cart-empty>Your cart is empty.</p>
+      <div class="cart__total" data-cart-total-row hidden><span>Subtotal</span><span data-cart-total>€0</span></div>
+      <p class="cart__hint" data-cart-total-row hidden>Delivery is added when we confirm your order by email.</p>
+      <form class="checkout" data-checkout hidden>
+        <h3 class="checkout__title">Your details</h3>
+        <label>Full name<input name="name" autocomplete="name" required></label>
+        <label>Email<input name="email" type="email" autocomplete="email" required></label>
+        <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
+        <label>Address<input name="address" autocomplete="street-address" required></label>
+        <div class="checkout__two">
+          <label>City<input name="city" autocomplete="address-level2" required></label>
+          <label>Postcode<input name="postcode" autocomplete="postal-code" required></label>
+        </div>
+        <label>Country<input name="country" autocomplete="country-name" value="Latvia" required></label>
+        <label>Note (optional)<textarea name="note" rows="2"></textarea></label>
+        <input type="text" name="_honey" class="sr" tabindex="-1" autocomplete="off">
+        <p class="checkout__account" data-checkout-account hidden>Signed in — this order will be saved to your account.</p>
+        <button class="btn btn--wide" type="submit">Place order</button>
+        <p class="checkout__msg" data-checkout-msg role="status" aria-live="polite"></p>
+      </form>
+    </div>
+    <div class="cart__done" data-cart-done hidden>
+      <p class="cart__done-title">Order received</p>
+      <p>Thank you. We will email you within a day to confirm your order and send the payment details.</p>
+      <button type="button" class="btn" data-close-cart>Keep looking</button>
+    </div>
+  </dialog>
+
+  <script src="config.js"></script>
+  <script src="vendor/supabase.js" defer></script>
+  <script src="app.js" defer></script>
+  <script src="auth.js" defer></script>
+</body>
+</html>
