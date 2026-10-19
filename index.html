@@ -6,96 +6,27 @@
   <title>MOYEN HILLS — ART WILL TEE, made in Latvia</title>
   <meta name="description" content="MOYEN HILLS. ART WILL TEE: boxy cut-off t-shirt, 100% cotton, screen printed front, back and neck label. Made in Latvia.">
   <meta property="og:title" content="MOYEN HILLS — ART WILL TEE">
-  <meta property="og:image" content="images/flat-front.jpg">
+  <meta property="og:image" content="images/landing.jpg">
   <link rel="icon" href="images/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <script>document.documentElement.classList.add('js');try{if(sessionStorage.getItem('mh-intro'))document.documentElement.classList.add('seen-intro');sessionStorage.setItem('mh-intro','1')}catch(e){}</script>
+  <link rel="stylesheet" href="site.css">
 </head>
-<body class="page-home">
-  <!-- Intro -->
-  <div class="intro" aria-hidden="true" data-intro>
-    <div class="intro__logo"><img decoding="async" src="images/logo.png" width="2400" height="262" alt=""></div>
-    <p class="intro__count"><span data-intro-count>0</span>%</p>
-  </div>
-
-  <header class="bar" data-bar>
-    <a class="bar__name" href="#top" data-top aria-label="MOYEN HILLS, back to top">MOYEN HILLS</a>
-    <nav class="bar__nav" aria-label="Main">
-      <a href="product.html">Shop</a>
-    </nav>
+<body>
+  <header class="bar">
+    <button class="bar__logo" type="button" data-top aria-label="MOYEN HILLS, back to top">
+      <img src="images/logo.png" width="2400" height="262" alt="MOYEN HILLS">
+    </button>
     <button class="bar__cart" type="button" data-open-cart aria-haspopup="dialog">cart <span data-cart-count>0</span></button>
   </header>
 
   <main id="top">
-    <!-- Image -->
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="hero__frames">
-        <div class="hero__frame" data-slides>
-          <img decoding="async" class="is-on" src="images/tee-back.jpg" width="1400" height="1120" alt="Two people from behind wearing the tee, ART WILL SAVE US ALL on the back">
-          <img decoding="async" src="images/flat-front.jpg" width="1002" height="1201" alt="ART WILL TEE, front, laid flat on concrete in the sun">
-          <img decoding="async" src="images/tee-front.jpg" width="1200" height="1600" alt="Model on concrete stairs wearing the ART WILL TEE">
-        </div>
-      </div>
-      <div class="hero__copy">
-        <h1 class="hero__title" id="hero-title"><span class="line"><span>ART WILL TEE</span></span></h1>
-        <a class="hero__cta" href="product.html"><span>Shop now</span></a>
-      </div>
-      <div class="hero__progress" aria-hidden="true"><span></span><span></span><span></span></div>
-    </section>
-
-    <!-- Shirt -->
-    <section class="shop" id="shop" aria-labelledby="shop-title">
-      <h2 class="sr" id="shop-title">Shop</h2>
-      <article class="card" data-product-card>
-        <a class="card__media" href="product.html" aria-label="ART WILL TEE, view product">
-          <img decoding="async" class="card__img" src="images/flat-front.jpg" width="1002" height="1201" alt="ART WILL TEE, front" loading="lazy">
-          <img decoding="async" class="card__img card__img--alt" src="images/flat-back.jpg" width="1002" height="1054" alt="" loading="lazy">
-          <span class="card__badge">New</span>
-        </a>
-        <div class="card__quick" data-quick>
-          <p>Quick add</p>
-          <div class="card__sizes" data-quick-sizes></div>
-        </div>
-        <div class="card__info">
-          <h3 class="card__name"><a href="product.html" data-product-name>ART WILL TEE</a></h3>
-          <p class="card__price" data-price>€45</p>
-        </div>
-        <p class="soldout" data-soldout-note hidden>SOLD OUT, DONT BE LATE</p>
-        <p class="card__colour"><span class="swatch" aria-hidden="true"></span> White</p>
-      </article>
+    <section class="landing" aria-label="ART WILL TEE">
+      <h1 class="sr">MOYEN HILLS — ART WILL TEE</h1>
+      <img src="images/landing.jpg" width="1600" height="1280" alt="Two people from behind at night wearing the ART WILL TEE, ART WILL SAVE US ALL printed on the back" fetchpriority="high">
     </section>
   </main>
-
-  <!-- Footer (shared) -->
-  <footer class="foot" aria-labelledby="sub-title">
-    <form class="sub" data-subscribe novalidate>
-      <h2 class="sub__title" id="sub-title">subscribe to news and updates</h2>
-      <div class="sub__row">
-        <label class="sr" for="sub-email">email address</label>
-        <input class="sub__input" id="sub-email" name="email" type="email" placeholder="email address" autocomplete="email" required>
-        <button class="btn sub__btn" type="submit">SUBSCRIBE</button>
-      </div>
-      <p class="sub__msg" data-sub-msg role="status" aria-live="polite"></p>
-    </form>
-    <ul class="foot__links">
-      <li><a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">instagram</a></li>
-      <li><a href="https://www.tiktok.com/@moyenhills" target="_blank" rel="noopener">tiktok</a></li>
-    </ul>
-    <div class="foot__legal">
-      <p>© <span data-year>2026</span> MOYEN HILLS · <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></p>
-      <button type="button" class="link-u" data-top>Back to top</button>
-    </div>
-  </footer>
-
-  <!-- Added-to-cart toast -->
-  <div class="toast" data-toast role="status" aria-live="polite" hidden>
-    <img decoding="async" src="images/flat-front.jpg" alt="" width="60" height="72">
-    <div><p class="toast__title">Added to cart</p><p class="toast__meta" data-toast-meta></p></div>
-    <button type="button" class="link-u" data-open-cart>View cart</button>
-  </div>
 
   <!-- Cart (shared) -->
   <dialog class="cart" data-cart aria-labelledby="cart-title">
@@ -132,9 +63,6 @@
     </div>
   </dialog>
 
-  <script src="vendor/gsap.min.js" defer></script>
-  <script src="vendor/ScrollTrigger.min.js" defer></script>
   <script src="app.js" defer></script>
-  <script src="motion.js" defer></script>
 </body>
 </html>

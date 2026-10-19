@@ -117,6 +117,7 @@ function showToast(text) {
 }
 function hideToast() {
   const toast = $('[data-toast]');
+  if (!toast) return;
   toast.classList.remove('is-on');
   setTimeout(() => { if (!toast.classList.contains('is-on')) toast.hidden = true; }, 400);
 }
@@ -217,7 +218,7 @@ $('[data-checkout]').addEventListener('submit', async (e) => {
 });
 
 /* Newsletter */
-$('[data-subscribe]').addEventListener('submit', async (e) => {
+$('[data-subscribe]')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const form = e.target;
   const input = form.email;
