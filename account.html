@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Account — MOYEN HILLS</title>
+  <meta name="description" content="MOYEN HILLS. ART WILL TEE: boxy cut-off t-shirt, 100% cotton, screen printed front, back and neck label. Made in Latvia.">
+  <meta property="og:title" content="MOYEN HILLS — ART WILL TEE">
+  <meta property="og:image" content="images/landing.jpg">
+  <link rel="icon" href="images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site.css">
+  <script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+  <header class="bar" data-bar>
+    <span aria-hidden="true"></span>
+    <a class="bar__logo" href="index.html" aria-label="MOYEN HILLS, home">
+      <img src="images/logo.png" width="2400" height="262" alt="MOYEN HILLS">
+    </a>
+    <div class="bar__icons">
+      <a class="bar__icon" href="account.html" data-account-link aria-label="Sign in or create an account">
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><circle cx="12" cy="8.5" r="3.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4.8 20c.9-3.6 3.8-5.6 7.2-5.6s6.3 2 7.2 5.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </a>
+      <button class="bar__cart" type="button" data-open-cart aria-haspopup="dialog" aria-label="Open cart">
+        <svg class="bar__bag" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M5 8h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 8Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span class="bar__count" data-cart-count>0</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="acct" id="top" data-account>
+    <!-- Accounts not connected yet -->
+    <section class="acct__box" data-view="off" hidden>
+      <h1 class="acct__title">Account</h1>
+      <p class="acct__lead">Customer accounts are coming soon. You can still order as a guest from the cart.</p>
+      <a class="btn" href="product.html">Shop the ART WILL TEE</a>
+    </section>
+
+    <!-- Signed out -->
+    <section class="acct__box" data-view="signin" hidden>
+      <h1 class="acct__title">Sign in</h1>
+      <p class="acct__lead">See your orders and keep your delivery details saved for next time.</p>
+      <div class="acct__providers">
+        <button type="button" class="btn btn--line btn--wide" data-provider="google">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.5 5.5 0 0 1-2.4 3.6v3h3.9c2.2-2.1 3.5-5.1 3.5-8.7Z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5H1.3v3.1A12 12 0 0 0 12 24Z"/><path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 0 1 0-4.6V6.6h-4a12 12 0 0 0 0 10.8l4-3.1Z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.3 6.6l4 3.1c.9-2.9 3.6-4.9 6.7-4.9Z"/></svg>
+          Continue with Google
+        </button>
+        <button type="button" class="btn btn--wide" data-provider="apple">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9a4.8 4.8 0 0 0-3.8-2c-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9a5 5 0 0 0-4.2 2.6c-1.8 3.1-.5 7.7 1.3 10.2.8 1.2 1.8 2.6 3.1 2.6s1.7-.8 3.3-.8 2 .8 3.4.8 2.2-1.3 3-2.5c1-1.4 1.4-2.8 1.4-2.8s-2.4-1-2.4-4.2ZM13.9 4.9c.7-.9 1.2-2 1-3.2-1 0-2.3.7-3 1.6-.7.8-1.2 2-1.1 3.1 1.2.1 2.3-.6 3.1-1.5Z"/></svg>
+          Continue with Apple
+        </button>
+      </div>
+      <div class="acct__email" data-email-block>
+        <p class="acct__or"><span>or with email</span></p>
+        <form class="acct__form" data-email-form novalidate>
+          <label data-name-field hidden>Full name<input name="full_name" autocomplete="name"></label>
+          <label>Email<input name="email" type="email" autocomplete="email" required></label>
+          <label>Password<input name="password" type="password" autocomplete="current-password" minlength="6" required></label>
+          <button class="btn btn--wide" type="submit" data-email-submit>Sign in</button>
+          <button type="button" class="acct__link" data-forgot>Forgot password?</button>
+        </form>
+        <p class="acct__switch"><span data-mode-text>New here?</span> <button type="button" class="acct__link" data-mode-toggle>Create an account</button></p>
+      </div>
+      <p class="acct__msg" data-signin-msg role="status" aria-live="polite"></p>
+    </section>
+
+    <!-- Choose a new password -->
+    <section class="acct__box" data-view="reset" hidden>
+      <h1 class="acct__title">New password</h1>
+      <form class="acct__form" data-reset-form>
+        <label>New password<input name="password" type="password" autocomplete="new-password" minlength="6" required></label>
+        <button class="btn btn--wide" type="submit">Save password</button>
+      </form>
+      <p class="acct__msg" data-reset-msg role="status" aria-live="polite"></p>
+    </section>
+
+    <!-- Signed in -->
+    <section class="acct__box acct__box--wide" data-view="account" hidden>
+      <h1 class="acct__title" data-hello>Your account</h1>
+      <p class="acct__lead"><span data-email></span> · <button type="button" class="acct__link" data-signout>Sign out</button></p>
+
+      <div class="acct__cols">
+        <section aria-labelledby="orders-title">
+          <h2 class="label" id="orders-title">Your orders</h2>
+          <ul class="orders" data-orders></ul>
+        </section>
+
+        <section aria-labelledby="details-title">
+          <h2 class="label" id="details-title">Your details</h2>
+          <form class="acct__form" data-profile>
+            <label>Full name<input name="full_name" autocomplete="name"></label>
+            <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
+            <label>Address<input name="address" autocomplete="street-address"></label>
+            <div class="acct__two">
+              <label>City<input name="city" autocomplete="address-level2"></label>
+              <label>Postcode<input name="postcode" autocomplete="postal-code"></label>
+            </div>
+            <label>Country<input name="country" autocomplete="country-name"></label>
+            <button class="btn btn--wide" type="submit">Save details</button>
+            <p class="acct__msg" data-profile-msg role="status" aria-live="polite"></p>
+          </form>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <!-- Email -->
+  <footer class="foot" aria-labelledby="sub-title">
+    <form class="sub" data-subscribe novalidate data-reveal>
+      <h2 class="sub__title" id="sub-title">subscribe to news and updates</h2>
+      <div class="sub__row">
+        <label class="sr" for="sub-email">email address</label>
+        <input class="sub__input" id="sub-email" name="email" type="email" placeholder="email address" autocomplete="email" required>
+        <button class="btn" type="submit">SUBSCRIBE</button>
+      </div>
+      <p class="sub__msg" data-sub-msg role="status" aria-live="polite"></p>
+    </form>
+    <ul class="foot__links" data-reveal>
+      <li><a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">instagram</a></li>
+      <li><a href="https://www.tiktok.com/@moyenhills" target="_blank" rel="noopener">tiktok</a></li>
+    </ul>
+    <p class="foot__legal">© <span data-year>2026</span> MOYEN HILLS · <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></p>
+  </footer>
+
+  <!-- Cart (shared) -->
+  <dialog class="cart" data-cart aria-labelledby="cart-title">
+    <div class="cart__head">
+      <h2 class="cart__title" id="cart-title">Cart</h2>
+      <button type="button" class="link-u" data-close-cart>Close</button>
+    </div>
+    <div data-cart-view>
+      <ul class="cart__items" data-cart-items></ul>
+      <p class="cart__empty" data-cart-empty>Your cart is empty.</p>
+      <div class="cart__total" data-cart-total-row hidden><span>Subtotal</span><span data-cart-total>€0</span></div>
+      <p class="cart__hint" data-cart-total-row hidden>Delivery is added when we confirm your order by email.</p>
+      <form class="checkout" data-checkout hidden>
+        <h3 class="checkout__title">Your details</h3>
+        <label>Full name<input name="name" autocomplete="name" required></label>
+        <label>Email<input name="email" type="email" autocomplete="email" required></label>
+        <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
+        <label>Address<input name="address" autocomplete="street-address" required></label>
+        <div class="checkout__two">
+          <label>City<input name="city" autocomplete="address-level2" required></label>
+          <label>Postcode<input name="postcode" autocomplete="postal-code" required></label>
+        </div>
+        <label>Country<input name="country" autocomplete="country-name" value="Latvia" required></label>
+        <label>Note (optional)<textarea name="note" rows="2"></textarea></label>
+        <input type="text" name="_honey" class="sr" tabindex="-1" autocomplete="off">
+        <p class="checkout__account" data-checkout-account hidden>Signed in — this order will be saved to your account.</p>
+        <button class="btn btn--wide" type="submit">Place order</button>
+        <p class="checkout__msg" data-checkout-msg role="status" aria-live="polite"></p>
+      </form>
+    </div>
+    <div class="cart__done" data-cart-done hidden>
+      <p class="cart__done-title">Order received</p>
+      <p>Thank you. We will email you within a day to confirm your order and send the payment details.</p>
+      <button type="button" class="btn" data-close-cart>Keep looking</button>
+    </div>
+  </dialog>
+
+  <script src="config.js"></script>
+  <script src="vendor/supabase.js" defer></script>
+  <script src="app.js" defer></script>
+  <script src="auth.js" defer></script>
+</body>
+</html>

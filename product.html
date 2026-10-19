@@ -20,10 +20,15 @@
     <a class="bar__logo" href="index.html" aria-label="MOYEN HILLS, home">
       <img src="images/logo.png" width="2400" height="262" alt="MOYEN HILLS">
     </a>
-    <button class="bar__cart" type="button" data-open-cart aria-haspopup="dialog" aria-label="Open cart">
-      <svg class="bar__bag" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M5 8h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 8Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-      <span class="bar__count" data-cart-count>0</span>
-    </button>
+    <div class="bar__icons">
+      <a class="bar__icon" href="account.html" data-account-link aria-label="Sign in or create an account">
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><circle cx="12" cy="8.5" r="3.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4.8 20c.9-3.6 3.8-5.6 7.2-5.6s6.3 2 7.2 5.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </a>
+      <button class="bar__cart" type="button" data-open-cart aria-haspopup="dialog" aria-label="Open cart">
+        <svg class="bar__bag" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M5 8h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 8Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span class="bar__count" data-cart-count>0</span>
+      </button>
+    </div>
   </header>
 
   <main class="pdp" id="top">
@@ -120,6 +125,7 @@
         <label>Country<input name="country" autocomplete="country-name" value="Latvia" required></label>
         <label>Note (optional)<textarea name="note" rows="2"></textarea></label>
         <input type="text" name="_honey" class="sr" tabindex="-1" autocomplete="off">
+        <p class="checkout__account" data-checkout-account hidden>Signed in — this order will be saved to your account.</p>
         <button class="btn btn--wide" type="submit">Place order</button>
         <p class="checkout__msg" data-checkout-msg role="status" aria-live="polite"></p>
       </form>
@@ -131,6 +137,9 @@
     </div>
   </dialog>
 
+  <script src="config.js"></script>
+  <script src="vendor/supabase.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="auth.js" defer></script>
 </body>
 </html>

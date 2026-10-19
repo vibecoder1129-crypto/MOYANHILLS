@@ -169,6 +169,7 @@ function openCart() {
   $('[data-cart-view]').hidden = false;
   $('[data-cart-done]').hidden = true;
   if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open', '');
+  window.mhAccount?.fillCheckout($('[data-checkout]'));
 }
 function closeCart() { if (dialog.open) dialog.close(); }
 
@@ -206,6 +207,13 @@ $('[data-checkout]').addEventListener('submit', async (e) => {
       }),
     });
     if (!res.ok) throw new Error(res.status);
+    await window.mhAccount?.recordOrder({
+      items: cart.map((i) => ({ name: PRODUCT.name, colour: PRODUCT.colour, size: i.size, qty: i.qty, price: PRODUCT.price })),
+      subtotal: total(),
+      currency: SETTINGS.currency,
+      full_name: data.name, email: data.email, phone: data.phone || null,
+      address: data.address, city: data.city, postcode: data.postcode, country: data.country, note: data.note || null,
+    });
     cart = [];
     save();
     form.reset();

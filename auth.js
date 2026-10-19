@@ -1,0 +1,200 @@
+/* MOYEN HILLS — customer accounts
+ * Sign-in with Google, Apple or email (Supabase Auth), saved details and
+ * order history. Loaded on every page after config.js and vendor/supabase.js;
+ * does nothing until config.js has the Supabase URL and key.
+ */
+(() => {
+  const cfg = window.MH_CONFIG || {};
+  const $ = (s, el = document) => el.querySelector(s);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const money = (n, cur = 'EUR') => new Intl.NumberFormat('en-IE', { style: 'currency', currency: cur, maximumFractionDigits: n % 1 ? 2 : 0 }).format(n);
+  const enabled = !!(cfg.supabaseUrl && cfg.supabaseAnonKey && window.supabase);
+  const sb = enabled ? window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey) : null;
+  const FIELDS = ['full_name', 'phone', 'address', 'city', 'postcode', 'country'];
+
+  const state = { user: null, profile: null };
+
+  async function loadProfile() {
+    if (!state.user) { state.profile = null; return null; }
+    const { data } = await sb.from('profiles').select('*').eq('id', state.user.id).maybeSingle();
+    state.profile = data || { id: state.user.id, full_name: state.user.user_metadata?.full_name || state.user.user_metadata?.name || '' };
+    return state.profile;
+  }
+
+  async function saveProfile(values) {
+    const row = { id: state.user.id, updated_at: new Date().toISOString() };
+    FIELDS.forEach((k) => { if (values[k] !== undefined) row[k] = String(values[k]).trim(); });
+    const { error } = await sb.from('profiles').upsert(row);
+    if (error) throw error;
+    state.profile = { ...state.profile, ...row };
+  }
+
+  function markHeader() {
+    document.querySelectorAll('[data-account-link]').forEach((a) => {
+      a.classList.toggle('is-signed-in', !!state.user);
+      a.setAttribute('aria-label', state.user ? 'Your account' : 'Sign in or create an account');
+    });
+  }
+
+  /* Used by the cart (app.js) */
+  window.mhAccount = {
+    enabled,
+    get user() { return state.user; },
+    // Fill the checkout form with saved details
+    fillCheckout(form) {
+      if (!state.user || !form) return;
+      const p = state.profile || {};
+      const set = (name, v) => { const el = form.elements[name]; if (el && !el.value && v) el.value = v; };
+      set('name', p.full_name); set('email', state.user.email); set('phone', p.phone);
+      set('address', p.address); set('city', p.city); set('postcode', p.postcode);
+      if (p.country && form.elements.country) form.elements.country.value = p.country;
+      const note = $('[data-checkout-account]', form.closest('dialog') || document);
+      if (note) note.hidden = false;
+    },
+    // Store the order on the account and remember the delivery details
+    async recordOrder(order) {
+      if (!state.user) return;
+      const { error } = await sb.from('orders').insert({ user_id: state.user.id, ...order });
+      if (error) console.warn('Order not saved to account:', error.message);
+      try {
+        await saveProfile({ full_name: order.full_name, phone: order.phone, address: order.address, city: order.city, postcode: order.postcode, country: order.country });
+      } catch (e) { console.warn('Details not saved:', e.message); }
+    },
+  };
+
+  /* ---------------- Account page ---------------- */
+  const page = $('[data-account]');
+  const views = page ? {
+    off: $('[data-view="off"]', page),
+    signin: $('[data-view="signin"]', page),
+    reset: $('[data-view="reset"]', page),
+    account: $('[data-view="account"]', page),
+  } : {};
+  const show = (name) => Object.entries(views).forEach(([k, el]) => { if (el) el.hidden = k !== name; });
+  const say = (sel, text, isError) => { const el = $(sel, page); if (el) { el.textContent = text; el.classList.toggle('is-error', !!isError); } };
+
+  async function renderAccount() {
+    const p = await loadProfile();
+    $('[data-hello]', page).textContent = p?.full_name ? `Hi, ${p.full_name.split(' ')[0]}` : 'Your account';
+    $('[data-email]', page).textContent = state.user.email || '';
+    const form = $('[data-profile]', page);
+    FIELDS.forEach((k) => { if (form.elements[k]) form.elements[k].value = p?.[k] || (k === 'country' ? 'Latvia' : ''); });
+
+    const list = $('[data-orders]', page);
+    list.innerHTML = '<li class="orders__empty">Loading your orders…</li>';
+    const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending: false });
+    if (error) { list.innerHTML = `<li class="orders__empty">Could not load your orders. ${esc(error.message)}</li>`; return; }
+    if (!data.length) { list.innerHTML = '<li class="orders__empty">No orders yet. <a href="product.html">Shop the ART WILL TEE</a></li>'; return; }
+    list.innerHTML = data.map((o) => {
+      const items = (o.items || []).map((i) => `${esc(i.qty)} × ${esc(i.name)}, size ${esc(i.size)}`).join('<br>');
+      const date = new Date(o.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      return `<li class="order">
+        <div class="order__top"><span>Order #${esc(o.id)}</span><span class="order__status order__status--${esc(o.status)}">${esc(o.status)}</span></div>
+        <p class="order__items">${items}</p>
+        <div class="order__bottom"><span>${esc(date)}</span><b>${esc(money(Number(o.subtotal), o.currency))}</b></div>
+      </li>`;
+    }).join('');
+  }
+
+  async function route() {
+    if (!page) return;
+    if (!enabled) { show('off'); return; }
+    if (state.recovering) { show('reset'); return; }
+    if (state.user) { show('account'); await renderAccount(); } else { show('signin'); }
+  }
+
+  if (page && enabled) {
+    const back = location.origin + location.pathname;
+    // Which sign-in options to show
+    page.querySelectorAll('[data-provider]').forEach((b) => { b.hidden = cfg.providers?.[b.dataset.provider] === false; });
+    $('[data-email-block]', page).hidden = cfg.providers?.email === false;
+
+    page.querySelectorAll('[data-provider]').forEach((b) => b.addEventListener('click', async () => {
+      say('[data-signin-msg]', 'Redirecting…');
+      const { error } = await sb.auth.signInWithOAuth({ provider: b.dataset.provider, options: { redirectTo: back } });
+      if (error) say('[data-signin-msg]', error.message, true);
+    }));
+
+    // Email: sign in or create an account
+    let mode = 'in';
+    const emailForm = $('[data-email-form]', page);
+    const setMode = (m) => {
+      mode = m;
+      $('[data-name-field]', page).hidden = m !== 'up';
+      emailForm.elements.password.autocomplete = m === 'up' ? 'new-password' : 'current-password';
+      $('[data-email-submit]', page).textContent = m === 'up' ? 'Create account' : 'Sign in';
+      $('[data-mode-text]', page).textContent = m === 'up' ? 'Already have an account?' : 'New here?';
+      $('[data-mode-toggle]', page).textContent = m === 'up' ? 'Sign in' : 'Create an account';
+      say('[data-signin-msg]', '');
+    };
+    $('[data-mode-toggle]', page).addEventListener('click', () => setMode(mode === 'up' ? 'in' : 'up'));
+
+    emailForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!emailForm.reportValidity()) return;
+      const email = emailForm.elements.email.value.trim();
+      const password = emailForm.elements.password.value;
+      const btn = $('[data-email-submit]', page);
+      btn.disabled = true;
+      say('[data-signin-msg]', mode === 'up' ? 'Creating your account…' : 'Signing in…');
+      try {
+        if (mode === 'up') {
+          const full_name = emailForm.elements.full_name.value.trim();
+          const { data, error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: back, data: { full_name } } });
+          if (error) throw error;
+          if (!data.session) say('[data-signin-msg]', 'Check your inbox and tap the link to confirm your email, then sign in.');
+        } else {
+          const { error } = await sb.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+        }
+      } catch (err) {
+        say('[data-signin-msg]', err.message, true);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    $('[data-forgot]', page).addEventListener('click', async () => {
+      const email = emailForm.elements.email.value.trim();
+      if (!email) { say('[data-signin-msg]', 'Type your email above first, then tap “Forgot password”.', true); emailForm.elements.email.focus(); return; }
+      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: back });
+      say('[data-signin-msg]', error ? error.message : 'We sent you a link to choose a new password.', !!error);
+    });
+
+    // New password after following the reset link
+    $('[data-reset-form]', page).addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const password = e.target.elements.password.value;
+      const { error } = await sb.auth.updateUser({ password });
+      if (error) { say('[data-reset-msg]', error.message, true); return; }
+      state.recovering = false;
+      route();
+    });
+
+    // Saved details
+    $('[data-profile]', page).addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const values = Object.fromEntries(new FormData(e.target));
+      say('[data-profile-msg]', 'Saving…');
+      try {
+        await saveProfile(values);
+        say('[data-profile-msg]', 'Saved. These details will fill in at checkout.');
+        $('[data-hello]', page).textContent = values.full_name ? `Hi, ${values.full_name.split(' ')[0]}` : 'Your account';
+      } catch (err) { say('[data-profile-msg]', err.message, true); }
+    });
+
+    $('[data-signout]', page).addEventListener('click', async () => { await sb.auth.signOut(); });
+  }
+
+  if (enabled) {
+    sb.auth.onAuthStateChange((event, session) => {
+      state.user = session?.user || null;
+      if (event === 'PASSWORD_RECOVERY') state.recovering = true;
+      markHeader();
+      // Supabase callbacks must not await other Supabase calls directly
+      setTimeout(async () => { if (state.user && !page) await loadProfile(); route(); }, 0);
+    });
+  } else {
+    route();
+  }
+})();
