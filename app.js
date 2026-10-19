@@ -137,6 +137,7 @@ function hideToast() {
   setTimeout(() => { if (!toast.classList.contains('is-on')) toast.hidden = true; }, 400);
 }
 function bumpCount() {
+  $('[data-bar]')?.classList.remove('is-hidden'); // bring the header back so the bag count is visible
   const count = $('[data-cart-count]');
   count.classList.add('bump');
   setTimeout(() => count.classList.remove('bump'), 350);
@@ -199,6 +200,9 @@ $('[data-checkout]').addEventListener('submit', async (e) => {
   if (!form.reportValidity() || !cart.length) return;
   const data = Object.fromEntries(new FormData(form));
   if (data._honey) return;
+  // Join country code and number: "+371 20 000 000"
+  const code = (data.phone_code || '').replace(/[^\d+]/g, '').replace(/^(?!\+)/, '+');
+  data.phone = data.phone ? `${code.length > 1 ? code + ' ' : ''}${data.phone.trim()}` : '';
   const lines = cart.map((i) => `${i.qty} × ${PRODUCT.name} (${PRODUCT.colour}), size ${i.size}, ${money(i.qty * PRODUCT.price)}`).join('\n');
   const button = form.querySelector('button[type=submit]');
   button.disabled = true;
@@ -340,7 +344,7 @@ if (bar) {
     const y = scrollY;
     bar.classList.toggle('is-solid', !landing || y > landing.offsetHeight - bar.offsetHeight);
     const hide = y > lastY && y > 300 && !dialog.open && !(menuEl && menuEl.open);
-    if (hide !== hidden) { hidden = hide; bar.classList.toggle('is-hidden', hide); }
+    if (hide !== hidden || hide !== bar.classList.contains('is-hidden')) { hidden = hide; bar.classList.toggle('is-hidden', hide); }
     lastY = y; ticking = false;
   };
   update();

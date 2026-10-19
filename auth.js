@@ -45,7 +45,10 @@
       if (!state.user || !form) return;
       const p = state.profile || {};
       const set = (name, v) => { const el = form.elements[name]; if (el && !el.value && v) el.value = v; };
-      set('name', p.full_name); set('email', state.user.email); set('phone', p.phone);
+      set('name', p.full_name); set('email', state.user.email);
+      // Saved phone "+371 20000000" goes back into the two boxes
+      const m = String(p.phone || '').trim().match(/^(\+\d{1,4})\s+(.*)$/);
+      if (m && form.elements.phone_code) { form.elements.phone_code.value = m[1]; set('phone', m[2]); } else set('phone', p.phone);
       set('address', p.address); set('city', p.city); set('postcode', p.postcode);
       if (p.country && form.elements.country) form.elements.country.value = p.country;
       const note = $('[data-checkout-account]', form.closest('dialog') || document);

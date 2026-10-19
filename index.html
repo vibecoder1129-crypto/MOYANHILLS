@@ -157,7 +157,61 @@
         <h3 class="checkout__title">Your details</h3>
         <label>Full name<input name="name" autocomplete="name" required></label>
         <label>Email<input name="email" type="email" autocomplete="email" required></label>
-        <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
+        <div class="phone">
+          <label>Country code<input name="phone_code" list="dial-codes" value="+371" inputmode="tel" autocomplete="tel-country-code" pattern="\+?[0-9]{1,4}" title="Country code, for example +371" placeholder="+371"></label>
+          <label>Phone<input name="phone" type="tel" autocomplete="tel-national" placeholder="20 000 000"></label>
+        </div>
+        <p class="phone__hint">Choose your country code or type it yourself.</p>
+        <datalist id="dial-codes">
+          <option value="+371" label="Latvia +371"></option>
+          <option value="+370" label="Lithuania +370"></option>
+          <option value="+372" label="Estonia +372"></option>
+          <option value="+44" label="United Kingdom +44"></option>
+          <option value="+1" label="USA / Canada +1"></option>
+          <option value="+91" label="India +91"></option>
+          <option value="+355" label="Albania +355"></option>
+          <option value="+376" label="Andorra +376"></option>
+          <option value="+43" label="Austria +43"></option>
+          <option value="+375" label="Belarus +375"></option>
+          <option value="+32" label="Belgium +32"></option>
+          <option value="+387" label="Bosnia and Herzegovina +387"></option>
+          <option value="+359" label="Bulgaria +359"></option>
+          <option value="+385" label="Croatia +385"></option>
+          <option value="+357" label="Cyprus +357"></option>
+          <option value="+420" label="Czechia +420"></option>
+          <option value="+45" label="Denmark +45"></option>
+          <option value="+358" label="Finland +358"></option>
+          <option value="+33" label="France +33"></option>
+          <option value="+49" label="Germany +49"></option>
+          <option value="+30" label="Greece +30"></option>
+          <option value="+36" label="Hungary +36"></option>
+          <option value="+354" label="Iceland +354"></option>
+          <option value="+353" label="Ireland +353"></option>
+          <option value="+39" label="Italy +39"></option>
+          <option value="+383" label="Kosovo +383"></option>
+          <option value="+423" label="Liechtenstein +423"></option>
+          <option value="+352" label="Luxembourg +352"></option>
+          <option value="+356" label="Malta +356"></option>
+          <option value="+373" label="Moldova +373"></option>
+          <option value="+377" label="Monaco +377"></option>
+          <option value="+382" label="Montenegro +382"></option>
+          <option value="+31" label="Netherlands +31"></option>
+          <option value="+389" label="North Macedonia +389"></option>
+          <option value="+47" label="Norway +47"></option>
+          <option value="+48" label="Poland +48"></option>
+          <option value="+351" label="Portugal +351"></option>
+          <option value="+40" label="Romania +40"></option>
+          <option value="+7" label="Russia +7"></option>
+          <option value="+378" label="San Marino +378"></option>
+          <option value="+381" label="Serbia +381"></option>
+          <option value="+421" label="Slovakia +421"></option>
+          <option value="+386" label="Slovenia +386"></option>
+          <option value="+34" label="Spain +34"></option>
+          <option value="+46" label="Sweden +46"></option>
+          <option value="+41" label="Switzerland +41"></option>
+          <option value="+90" label="Turkey +90"></option>
+          <option value="+380" label="Ukraine +380"></option>
+        </datalist>
         <label>Address<input name="address" autocomplete="street-address" required></label>
         <div class="checkout__two">
           <label>City<input name="city" autocomplete="address-level2" required></label>

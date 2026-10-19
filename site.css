@@ -422,6 +422,8 @@ html { scroll-padding-top: var(--head-h); }
 .checkout label { min-width: 0; display: grid; gap: 4px; font-size: var(--t-xs); font-weight: 600; letter-spacing: .04em; }
 .checkout input, .checkout textarea { width: 100%; min-width: 0; font: inherit; font-size: 1rem; padding: 12px; min-height: 46px; background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius); transition: border-color .2s; }
 .checkout input:focus, .checkout textarea:focus { border-color: var(--ink); outline: none; }
+.phone { display: grid; grid-template-columns: 7.5rem 1fr; gap: 12px; }
+.phone__hint { margin-top: -4px; font-size: var(--t-xs); color: var(--muted); }
 .checkout__two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .checkout__msg { min-height: 1.5em; font-size: var(--t-sm); }
 .cart__done { padding-top: 40px; display: grid; gap: 16px; justify-items: start; }
