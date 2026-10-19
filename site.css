@@ -125,7 +125,7 @@ html { scroll-padding-top: var(--bar-h); }
 .gallery__arrow--prev { left: 12px; }
 .gallery__arrow--next { right: 12px; }
 .gallery__count { position: absolute; right: 12px; bottom: 12px; padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,.92); font-size: var(--t-xs); font-weight: 700; }
-.gallery__thumbs { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 8px; }
+.gallery__thumbs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 8px; }
 .gallery__thumb { padding: 0; border: 1px solid transparent; border-radius: 6px; overflow: hidden; background: var(--tint); opacity: .55; transition: opacity .2s, border-color .2s; }
 .gallery__thumb img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
 .gallery__thumb:hover, .gallery__thumb.is-on { opacity: 1; }
