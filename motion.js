@@ -64,12 +64,6 @@
     }, introDelay * 1000);
   }
 
-  /* Words of the quote, for the scroll fill */
-  $$('[data-words]').forEach((el) => {
-    el.innerHTML = el.textContent.trim().split(/\s+/).map((w) => `<span class="w">${w}</span>`).join(' ');
-    if (reduced || !hasGsap) el.classList.add('is-plain');
-  });
-
   if (!hasGsap || reduced) return;
   const { gsap, ScrollTrigger } = window;
   gsap.registerPlugin(ScrollTrigger);
@@ -87,8 +81,8 @@
 
   /* Fade-ups, staggered per group */
   const groups = [
-    '.shop__head', '.card', '.details__head > *', '.details__item', '.quote__note', '.look .h-section', '.look__copy',
-    '.facts > div', '.foot__inner > *', '.foot__legal', '.pdp__about > *', '.pdp__buy > *',
+    '.shop__head', '.card', '.look .h-section',
+    '.foot__inner > *', '.foot__legal', '.pdp__about > *', '.pdp__buy > *',
   ];
   groups.forEach((sel) => {
     const els = $$(sel);
@@ -112,14 +106,6 @@
     gsap.from(fig.querySelector('img'), {
       scale: 1.04, opacity: 0, duration: 1, ...done,
       scrollTrigger: { trigger: fig, start: 'top 95%', once: true }, delay: i === 0 ? 0.1 : 0,
-    });
-  });
-
-  /* Quote fills in word by word with the scroll */
-  $$('[data-words]').forEach((el) => {
-    gsap.to(el.querySelectorAll('.w'), {
-      opacity: 1, ease: 'none', stagger: 0.1,
-      scrollTrigger: { trigger: el, start: 'top 80%', end: 'bottom 45%', scrub: true },
     });
   });
 
