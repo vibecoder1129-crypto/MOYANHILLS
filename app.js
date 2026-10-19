@@ -253,6 +253,32 @@ if (menuBtn) {
   nav.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
 }
 
+/* Motion: header hides on scroll down, sections rise into view */
+const bar = $('[data-bar]');
+if (bar) {
+  let lastY = scrollY; let ticking = false; let hidden = false;
+  addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const y = scrollY;
+      const hide = y > lastY && y > 300 && !dialog.open && !document.querySelector('.bar__nav.is-open');
+      if (hide !== hidden) { hidden = hide; bar.classList.toggle('is-hidden', hide); }
+      lastY = y; ticking = false;
+    });
+  }, { passive: true });
+}
+const reveals = $$('[data-reveal], [data-reveal-group]');
+if ('IntersectionObserver' in window && reveals.length) {
+  $$('[data-reveal-group]').forEach((g) => [...g.children].forEach((el, i) => el.style.setProperty('--d', `${i * 80}ms`)));
+  const io = new IntersectionObserver((entries) => entries.forEach((en) => {
+    if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); }
+  }), { rootMargin: '0px 0px -8% 0px' });
+  reveals.forEach((el) => io.observe(el));
+} else {
+  reveals.forEach((el) => el.classList.add('is-in'));
+}
+
 /* Back to top */
 $$('[data-top]').forEach((b) => b.addEventListener('click', (e) => {
   e.preventDefault();

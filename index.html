@@ -12,9 +12,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="site.css">
+  <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
-  <header class="bar">
+  <header class="bar" data-bar>
     <button class="bar__menu" type="button" aria-expanded="false" aria-controls="main-nav" data-menu>
       <span class="sr">Menu</span><span class="bar__lines" aria-hidden="true"></span>
     </button>
@@ -38,10 +39,11 @@
 
     <!-- Shop -->
     <section class="shop" id="shop" aria-labelledby="shop-title">
-      <h2 class="label" id="shop-title">New in</h2>
-      <article class="card" data-product-card>
+      <h2 class="label" id="shop-title" data-reveal>New in</h2>
+      <article class="card" data-product-card data-reveal>
         <a class="card__media" href="product.html" aria-label="ART WILL TEE, view product">
           <img class="card__img" src="images/flat-front.jpg" width="1002" height="1201" alt="ART WILL TEE, front, laid flat" loading="lazy">
+          <img class="card__img card__img--alt" src="images/flat-back.jpg" width="1002" height="1054" alt="" loading="lazy">
         </a>
         <h3 class="card__name"><a href="product.html" data-product-name>ART WILL TEE</a></h3>
         <p class="card__price" data-price>€45</p>
@@ -51,11 +53,11 @@
 
     <!-- Lookbook -->
     <section class="look" id="lookbook" aria-labelledby="look-title">
-      <div class="look__head">
+      <div class="look__head" data-reveal>
         <h2 class="label" id="look-title">Lookbook</h2>
         <a class="label" href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">@moyenhills</a>
       </div>
-      <div class="look__grid">
+      <div class="look__grid" data-reveal-group>
         <img src="images/tee-front.jpg" width="1200" height="1600" alt="Model on concrete stairs wearing the tee" loading="lazy">
         <img src="images/back-print.jpg" width="1002" height="1054" alt="The halftone back print, ART WILL SAVE US ALL" loading="lazy">
         <img src="images/flat-back.jpg" width="1002" height="1054" alt="The tee laid flat, back" loading="lazy">
@@ -68,7 +70,7 @@
 
   <!-- Email -->
   <footer class="foot" aria-labelledby="sub-title">
-    <form class="sub" data-subscribe novalidate>
+    <form class="sub" data-subscribe novalidate data-reveal>
       <h2 class="sub__title" id="sub-title">subscribe to news and updates</h2>
       <div class="sub__row">
         <label class="sr" for="sub-email">email address</label>
@@ -77,7 +79,7 @@
       </div>
       <p class="sub__msg" data-sub-msg role="status" aria-live="polite"></p>
     </form>
-    <ul class="foot__links">
+    <ul class="foot__links" data-reveal>
       <li><a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">instagram</a></li>
       <li><a href="https://www.tiktok.com/@moyenhills" target="_blank" rel="noopener">tiktok</a></li>
     </ul>

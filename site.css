@@ -111,6 +111,55 @@ html { scroll-padding-top: var(--bar-h); }
   .sub__row { flex-direction: column; }
 }
 
+/* ---------- Motion ---------- */
+:root { --ease: cubic-bezier(.16, 1, .3, 1); }
+.bar { transition: transform .5s var(--ease); }
+.bar.is-hidden { transform: translateY(-100%); }
+.bar__nav a, .bar__cart, .foot__links a { transition: opacity .2s; }
+.bar__nav a:hover, .bar__cart:hover, .foot__links a:hover { opacity: .55; }
+.bar__cart span { display: inline-block; transition: transform .35s var(--ease); }
+.bar__cart span.bump { transform: scale(1.5); }
+
+/* landing: slow settle on load, button rises in */
+.landing { overflow: hidden; }
+.js .landing img { animation: settle 2.2s var(--ease) both; }
+.js .landing__cta { animation: rise .9s var(--ease) .6s both; }
+@keyframes settle { from { transform: scale(1.12); opacity: .4; } to { transform: none; opacity: 1; } }
+@keyframes rise { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* buttons */
+.btn { transition: background-color .25s, border-color .25s, color .25s, transform .15s; }
+.btn:active { transform: scale(.97); }
+
+/* card: back of the tee on hover, slight zoom */
+.card__media { position: relative; }
+.card__img { transition: opacity .6s var(--ease), transform 1.2s var(--ease); }
+.card__img--alt { position: absolute; inset: 0; opacity: 0; }
+.card:hover .card__img--alt { opacity: 1; }
+.card:hover .card__img { transform: scale(1.04); }
+
+/* lookbook pictures zoom gently on hover */
+.look__grid { overflow: hidden; }
+.look__cell { overflow: hidden; }
+.look__grid img { transition: transform 1.2s var(--ease); }
+.look__grid img:hover { transform: scale(1.06); }
+
+/* scroll reveals (content stays visible without script) */
+.js [data-reveal], .js [data-reveal-group] > * { opacity: 0; transform: translateY(28px); transition: opacity .9s var(--ease), transform .9s var(--ease); transition-delay: var(--d, 0ms); }
+.js .is-in[data-reveal], .js [data-reveal-group].is-in > * { opacity: 1; transform: none; }
+.js [data-reveal-group].is-in > img:hover { transform: scale(1.06); transition-delay: 0ms; }
+
+/* cart slides in */
+.cart[open] { animation: slide .5s var(--ease); }
+.cart[open]::backdrop { animation: fade .4s ease; }
+@keyframes slide { from { transform: translateX(100%); } }
+@keyframes fade { from { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .js [data-reveal], .js [data-reveal-group] > * { opacity: 1; transform: none; }
+}
+
 /* ---------- Cart ---------- */
 .cart {
   inset: 0 0 0 auto; margin: 0; height: 100dvh; max-height: 100dvh; width: min(460px, 100vw); max-width: 100vw;
