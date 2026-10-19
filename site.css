@@ -24,7 +24,7 @@ h1, h2, h3, p { margin: 0; }
 a { color: inherit; }
 button { font: inherit; color: inherit; cursor: pointer; }
 :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
-.sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.sr { position: absolute !important; width: 1px !important; height: 1px !important; min-height: 0 !important; padding: 0 !important; border: 0 !important; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 .link-u { background: none; border: 0; padding: 0; font-size: var(--t-xs); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; text-decoration: underline; text-underline-offset: 4px; }
 
 /* Buttons: black block, white type */
@@ -193,10 +193,9 @@ html { scroll-padding-top: var(--bar-h); }
 .js .is-in[data-reveal], .js [data-reveal-group].is-in > * { opacity: 1; transform: none; }
 .js [data-reveal-group].is-in > img:hover { transform: scale(1.06); transition-delay: 0ms; }
 
-/* cart slides in */
-.cart[open] { animation: slide .5s var(--ease); }
-.cart[open]::backdrop { animation: fade .4s ease; }
-@keyframes slide { from { transform: translateX(100%); } }
+/* cart fades in, no sliding */
+.cart[open] { animation: fade .25s ease; }
+.cart[open]::backdrop { animation: fade .25s ease; }
 @keyframes fade { from { opacity: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
@@ -210,6 +209,7 @@ html { scroll-padding-top: var(--bar-h); }
   padding: 0; border: 0; background: var(--bg); color: var(--ink);
 }
 .cart::backdrop { background: rgba(0,0,0,.35); }
+.cart { overflow-x: hidden; }
 .cart > * { padding: 0 24px; }
 .cart__head { display: flex; justify-content: space-between; align-items: center; height: var(--bar-h); position: sticky; top: 0; background: var(--bg); z-index: 1; }
 .cart__title { font-size: var(--t-xs); font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
