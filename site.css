@@ -190,7 +190,8 @@ html { scroll-padding-top: var(--head-h); }
 /* ---------- Footer / email ---------- */
 .foot { padding: clamp(72px, 9vw, 128px) var(--m) 28px; display: grid; justify-items: center; text-align: center; gap: 32px; }
 .sub { width: min(520px, 100%); }
-.sub__title { font-size: var(--t-lead); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 18px; }
+.sub__title { font-size: clamp(1.5rem, 1rem + 1.6vw, 2.25rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 8px; }
+.sub__lead { font-size: var(--t-sm); color: var(--muted); margin-bottom: 18px; }
 .sub__row { display: flex; gap: 8px; }
 .sub__input { flex: 1; min-width: 0; min-height: 48px; padding: 0 16px; border: 1px solid var(--ink); border-radius: var(--radius); font: inherit; background: var(--bg); color: var(--ink); }
 .sub__input::placeholder { color: #7a7a7a; }

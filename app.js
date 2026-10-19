@@ -237,16 +237,16 @@ $('[data-subscribe]')?.addEventListener('submit', async (e) => {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.textContent = 'Enter a valid email address.'; input.focus(); return; }
   const button = form.querySelector('button');
   button.disabled = true;
-  msg.textContent = 'Subscribing…';
+  msg.textContent = 'Joining…';
   try {
     const res = await fetch(endpoint(SETTINGS.subscribeEmail), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ _subject: 'New subscriber: MOYEN HILLS news', _template: 'table', Email: email, _replyto: email }),
+      body: JSON.stringify({ _subject: 'New member of the Hills family', _template: 'table', Email: email, _replyto: email }),
     });
     if (!res.ok) throw new Error(res.status);
     form.reset();
-    msg.textContent = 'You are subscribed. News and drops come to your inbox.';
+    msg.textContent = 'Welcome to the Hills family. New drops and news will come to your inbox.';
   } catch {
     msg.textContent = 'That did not go through. Please try again in a moment.';
   } finally {
