@@ -15,7 +15,7 @@ Open `index.html` in a browser, or host the folder on GitHub Pages, Netlify or V
 Edit `PRODUCT` at the top of `app.js`:
 
 ```js
-price: 35,
+price: 45,
 soldOut: false,                          // true = whole product sold out
 stock: { S: 10, M: 10, L: 10, XL: 10 },  // 0 = that size is sold out
 ```

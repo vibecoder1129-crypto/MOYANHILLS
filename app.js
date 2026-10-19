@@ -15,7 +15,7 @@ const SETTINGS = {
 const PRODUCT = {
   id: 'art-will-save-us-all-tee',
   name: 'Art Will Save Us All tee',
-  price: 35,
+  price: 45,
   image: 'images/tee-front.jpg',
   soldOut: false,
   // Pieces left per size. 0 = that size is sold out.
