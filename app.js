@@ -245,6 +245,41 @@ $('[data-subscribe]')?.addEventListener('submit', async (e) => {
   }
 });
 
+/* Product gallery: swipe, arrows, thumbnails, keyboard */
+const gal = $('[data-gallery]');
+if (gal) {
+  const track = $('[data-track]', gal);
+  const slides = [...track.children];
+  const thumbs = $$('[data-go]', gal);
+  const prev = $('[data-prev]', gal);
+  const next = $('[data-next]', gal);
+  const counter = $('[data-index]', gal);
+  let current = 0;
+  const go = (i) => {
+    const k = Math.max(0, Math.min(slides.length - 1, i));
+    track.scrollTo({ left: k * track.clientWidth, behavior: reduced() ? 'auto' : 'smooth' });
+  };
+  const sync = () => {
+    const k = Math.round(track.scrollLeft / track.clientWidth);
+    if (k === current) return;
+    current = k;
+    counter.textContent = k + 1;
+    thumbs.forEach((t, j) => t.classList.toggle('is-on', j === k));
+    prev.disabled = k === 0;
+    next.disabled = k === slides.length - 1;
+  };
+  let raf = 0;
+  track.addEventListener('scroll', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(sync); }, { passive: true });
+  prev.addEventListener('click', () => go(current - 1));
+  next.addEventListener('click', () => go(current + 1));
+  thumbs.forEach((t) => t.addEventListener('click', () => go(Number(t.dataset.go))));
+  track.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); go(current + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); go(current - 1); }
+  });
+  prev.disabled = true;
+}
+
 /* Phone menu */
 const menuBtn = $('[data-menu]');
 if (menuBtn) {

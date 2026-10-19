@@ -30,9 +30,31 @@
   </header>
 
   <main class="pdp" id="top">
-    <figure class="pdp__hero" data-product-media data-reveal>
-      <img src="images/flat-front.jpg" width="1002" height="1201" alt="ART WILL TEE, front, laid flat" fetchpriority="high">
-    </figure>
+    <section class="gallery" aria-label="Product photos" data-gallery data-product-media data-reveal>
+      <div class="gallery__frame">
+        <ul class="gallery__track" data-track tabindex="0">
+        <li class="gallery__slide" aria-label="1 of 7"><img src="images/flat-front.jpg" width="1002" height="1201" alt="ART WILL TEE, front, laid flat" fetchpriority="high"></li>
+        <li class="gallery__slide" aria-label="2 of 7"><img src="images/flat-back.jpg" width="1002" height="1054" alt="ART WILL TEE, back, laid flat" loading="lazy"></li>
+        <li class="gallery__slide" aria-label="3 of 7"><img src="images/tee-front.jpg" width="1200" height="1600" alt="Worn by a model on concrete stairs" loading="lazy"></li>
+        <li class="gallery__slide" aria-label="4 of 7"><img src="images/front-print.jpg" width="1002" height="1201" alt="Close-up of the front print" loading="lazy"></li>
+        <li class="gallery__slide" aria-label="5 of 7"><img src="images/back-print.jpg" width="1002" height="1054" alt="Close-up of the back print, ART WILL SAVE US ALL" loading="lazy"></li>
+        <li class="gallery__slide" aria-label="6 of 7"><img src="images/neck-label.jpg" width="1002" height="1054" alt="Printed neck label, 100% cotton" loading="lazy"></li>
+        <li class="gallery__slide" aria-label="7 of 7"><img src="images/landing.jpg" width="1600" height="1280" alt="Worn by two people, seen from behind at night" loading="lazy"></li>
+        </ul>
+        <button type="button" class="gallery__arrow gallery__arrow--prev" data-prev aria-label="Previous photo">&#8592;</button>
+        <button type="button" class="gallery__arrow gallery__arrow--next" data-next aria-label="Next photo">&#8594;</button>
+        <p class="gallery__count" aria-live="polite"><span data-index>1</span> / 7</p>
+      </div>
+      <div class="gallery__thumbs">
+        <button type="button" class="gallery__thumb is-on" data-go="0" aria-label="Show photo 1"><img src="images/flat-front.jpg" width="1002" height="1201" alt="" loading="lazy"></button>
+        <button type="button" class="gallery__thumb" data-go="1" aria-label="Show photo 2"><img src="images/flat-back.jpg" width="1002" height="1054" alt="" loading="lazy"></button>
+        <button type="button" class="gallery__thumb" data-go="2" aria-label="Show photo 3"><img src="images/tee-front.jpg" width="1200" height="1600" alt="" loading="lazy"></button>
+        <button type="button" class="gallery__thumb" data-go="3" aria-label="Show photo 4"><img src="images/front-print.jpg" width="1002" height="1201" alt="" loading="lazy"></button>
+        <button type="button" class="gallery__thumb" data-go="4" aria-label="Show photo 5"><img src="images/back-print.jpg" width="1002" height="1054" alt="" loading="lazy"></button>
+        <button type="button" class="gallery__thumb" data-go="5" aria-label="Show photo 6"><img src="images/neck-label.jpg" width="1002" height="1054" alt="" loading="lazy"></button>
+        <button type="button" class="gallery__thumb" data-go="6" aria-label="Show photo 7"><img src="images/landing.jpg" width="1600" height="1280" alt="" loading="lazy"></button>
+      </div>
+    </section>
 
     <section class="pdp__info" aria-labelledby="product-name" data-reveal>
       <h1 class="pdp__name" id="product-name" data-product-name>ART WILL TEE</h1>
@@ -59,14 +81,6 @@
       </div>
     </section>
 
-    <div class="pdp__more" data-product-media data-reveal-group>
-      <img src="images/flat-back.jpg" width="1002" height="1054" alt="ART WILL TEE, back, laid flat" loading="lazy">
-      <img src="images/front-print.jpg" width="1002" height="1201" alt="Close-up of the front print" loading="lazy">
-      <img src="images/back-print.jpg" width="1002" height="1054" alt="Close-up of the back print, ART WILL SAVE US ALL" loading="lazy">
-      <img src="images/neck-label.jpg" width="1002" height="1054" alt="Printed neck label, 100% cotton" loading="lazy">
-      <img src="images/tee-front.jpg" width="1200" height="1600" alt="Worn by a model on concrete stairs" loading="lazy">
-      <img src="images/landing.jpg" width="1600" height="1280" alt="Worn by two people, seen from behind at night" loading="lazy">
-    </div>
   </main>
 
   <!-- Email -->
