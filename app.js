@@ -16,7 +16,7 @@ const PRODUCT = {
   id: 'art-will-tee',
   name: 'ART WILL TEE',
   colour: 'White',
-  price: 45,
+  price: 35,
   image: 'images/flat-front.jpg',
   url: 'product.html',
   soldOut: false,
