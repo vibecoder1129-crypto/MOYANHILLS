@@ -63,6 +63,13 @@ function renderProduct() {
   document.body.classList.toggle('is-soldout', soldOut);
   $$('[data-soldout-note]').forEach((el) => { el.hidden = !soldOut; });
 
+  // Honest scarcity: counts what is really left, from PRODUCT.stock
+  const left = Object.values(PRODUCT.stock).reduce((n, v) => n + Math.max(0, v), 0);
+  $$('[data-stock-left]').forEach((el) => {
+    el.hidden = soldOut;
+    $('[data-stock-text]', el).textContent = left <= 10 ? `Almost gone — only ${left} left` : `Limited stock — only ${left} left`;
+  });
+
   const quick = $('[data-quick-sizes]');
   if (quick) {
     quick.innerHTML = '';
@@ -87,6 +94,13 @@ function renderProduct() {
       label.innerHTML = `<input type="radio" name="size" value="${size}" ${sizeOff(size) ? 'disabled' : ''}><span>${size}</span>`;
       if (sizeOff(size)) label.title = `${size} is sold out`;
       row.append(label);
+    }
+    const note = $('[data-size-note]');
+    if (note) {
+      row.addEventListener('change', (e) => {
+        const n = PRODUCT.stock[e.target.value];
+        note.textContent = n > 0 && n <= 3 ? `Only ${n} left in ${e.target.value}` : '';
+      });
     }
     const add = $('[data-add]');
     add.disabled = soldOut;

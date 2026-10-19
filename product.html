@@ -75,12 +75,14 @@
     <section class="pdp__info" aria-labelledby="product-name" data-reveal>
       <h1 class="pdp__name" id="product-name" data-product-name>ART WILL TEE</h1>
       <p class="pdp__price" data-price>€35</p>
+      <p class="scarcity" data-stock-left hidden><span class="scarcity__dot" aria-hidden="true"></span><span data-stock-text></span></p>
       <p class="soldout" data-soldout-note hidden>SOLD OUT, DONT BE LATE</p>
       <form class="buy" data-buy>
         <fieldset class="sizes">
           <legend class="label">Size</legend>
           <div class="sizes__row" data-sizes></div>
         </fieldset>
+        <p class="size-note" data-size-note aria-live="polite"></p>
         <button class="btn btn--wide" type="submit" data-add>Add to cart</button>
         <p class="buy__msg" data-buy-msg role="status" aria-live="polite"></p>
       </form>

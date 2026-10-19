@@ -130,6 +130,14 @@ html { scroll-padding-top: var(--head-h); }
 .feature__name { font-size: clamp(2rem, 1rem + 3vw, 3.75rem); font-weight: 800; letter-spacing: -0.04em; line-height: .95; }
 .feature__price { font-size: 1.25rem; font-weight: 600; }
 .feature .sizes legend { margin: 0 0 10px; }
+.feature__copy { font-size: var(--t-sm); line-height: 1.6; color: #333; max-width: 40ch; }
+.feature__cta { justify-self: start; margin-top: 6px; }
+.scarcity { display: inline-flex; align-items: center; gap: 10px; justify-self: start; padding: 7px 14px 7px 12px; border-radius: 999px; background: var(--tint); font-size: var(--t-xs); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.pdp__info .scarcity { justify-self: center; }
+.scarcity__dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: #d4361c; }
+.scarcity__dot::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: #d4361c; animation: pulse 1.8s ease-out infinite; }
+@keyframes pulse { from { transform: scale(1); opacity: .6; } to { transform: scale(2.6); opacity: 0; } }
+.size-note { min-height: 1.2em; margin: -4px 0 8px; font-size: var(--t-sm); font-weight: 600; color: #b3261e; }
 .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 20px; padding-top: 18px; border-top: 1px solid var(--line); font-size: var(--t-sm); }
 .facts b { display: block; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
 .arrow-link { justify-self: start; font-size: var(--t-sm); font-weight: 600; text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 2px; }
@@ -182,6 +190,7 @@ html { scroll-padding-top: var(--head-h); }
 @media (max-width: 720px) {
   .feature { grid-template-columns: 1fr; padding-left: 0; padding-right: 0; justify-content: stretch; }
   .feature__info { padding: 0 var(--m); max-width: none; }
+  .feature__cta { justify-self: stretch; }
   .look__spread { grid-template-columns: 1fr; }
   .look__row { grid-template-columns: 1fr 1fr; }
   .look__row figure:first-child { grid-column: 1 / -1; }
