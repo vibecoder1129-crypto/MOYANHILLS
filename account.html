@@ -9,9 +9,7 @@
   <meta property="og:title" content="MOYEN HILLS — ART WILL TEE">
   <meta property="og:image" content="images/landing.jpg">
   <link rel="icon" href="images/favicon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preload" href="fonts/inter-tight-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="site.css">
   <script>document.documentElement.classList.add('js');try{if(sessionStorage.getItem('mh-intro'))document.documentElement.classList.add('seen-intro');else sessionStorage.setItem('mh-intro','1')}catch(e){}</script>
 </head>
@@ -134,6 +132,7 @@
         <button class="btn" type="submit">JOIN</button>
       </div>
       <p class="sub__msg" data-sub-msg role="status" aria-live="polite"></p>
+      <p class="sub__consent">By joining you agree to get emails from MOYEN HILLS. Unsubscribe any time. <a href="privacy.html">Privacy policy</a></p>
     </form>
     <ul class="foot__links" data-reveal>
       <li><a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">instagram</a></li>
@@ -144,6 +143,8 @@
       <a href="lookbook.html">Lookbook</a>
       <a href="account.html">Account</a>
       <a href="mailto:moyenhills@gmail.com">Contact</a>
+      <a href="terms.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
     </nav>
     <p class="foot__legal">© <span data-year>2026</span> MOYEN HILLS · <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></p>
   </footer>
@@ -256,6 +257,7 @@
         <label>Note (optional)<textarea name="note" rows="2"></textarea></label>
         <input type="text" name="_honey" class="sr" tabindex="-1" autocomplete="off">
         <p class="checkout__account" data-checkout-account hidden>Signed in — this order will be saved to your account.</p>
+        <p class="checkout__legal">By placing an order you agree to our <a href="terms.html">Terms of sale</a> and <a href="privacy.html">Privacy policy</a>.</p>
         <button class="btn btn--wide" type="submit">Place order</button>
         <p class="checkout__msg" data-checkout-msg role="status" aria-live="polite"></p>
       </form>

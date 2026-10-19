@@ -9,6 +9,8 @@ Open `index.html` in a browser, or host the folder on GitHub Pages, Netlify or V
 - `lookbook.html`: the lookbook
 - `product.html`: product page (photo gallery, sizes, add to cart, details)
 - `account.html`: customer sign-in, saved details and past orders
+- `terms.html`, `privacy.html`: terms of sale and privacy policy (fill in the yellow highlighted parts before launch)
+- `fonts/`: the Inter Tight font, self-hosted
 - `site.css`: the design
 - `app.js`: cart, checkout, newsletter, gallery and the product settings
 - `auth.js` + `config.js`: customer accounts (Supabase); `vendor/supabase.js` is the Supabase library
