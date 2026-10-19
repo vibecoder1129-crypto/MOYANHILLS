@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
   <title>MOYEN HILLS — ART WILL TEE, made in Latvia</title>
   <meta name="description" content="MOYEN HILLS. ART WILL TEE: boxy cut-off t-shirt, 100% cotton, screen printed front, back and neck label. Made in Latvia.">
   <meta property="og:title" content="MOYEN HILLS — ART WILL TEE">
@@ -34,41 +35,52 @@
   <main id="top">
     <!-- Landing photo -->
     <section class="landing" aria-label="ART WILL TEE">
-      <img src="images/landing.jpg" width="1600" height="1280" alt="Two people from behind at night wearing the ART WILL TEE, ART WILL SAVE US ALL printed on the back" fetchpriority="high">
+      <img src="images/landing.jpg" srcset="images/landing-480.jpg 480w, images/landing-800.jpg 800w, images/landing.jpg 1600w" sizes="100vw" width="1600" height="1280" alt="Two people from behind at night wearing the ART WILL TEE, ART WILL SAVE US ALL printed on the back" fetchpriority="high">
       <div class="landing__copy">
         <h1 class="landing__title"><span>ART WILL TEE</span> <span>OUT NOW</span></h1>
         <a class="btn landing__cta" href="product.html">Shop now</a>
       </div>
     </section>
 
-    <!-- Shop -->
-    <section class="shop" id="shop" aria-labelledby="shop-title">
-      <h2 class="label" id="shop-title" data-reveal>New in</h2>
-      <article class="card" data-product-card data-reveal>
-        <a class="card__media" href="product.html" aria-label="ART WILL TEE, view product">
-          <img class="card__img" src="images/flat-front.jpg" width="1002" height="1201" alt="ART WILL TEE, front, laid flat" loading="lazy">
-          <img class="card__img card__img--alt" src="images/flat-back.jpg" width="1002" height="1054" alt="" loading="lazy">
-        </a>
-        <h3 class="card__name"><a href="product.html" data-product-name>ART WILL TEE</a></h3>
-        <p class="card__price" data-price>€35</p>
+    <!-- The tee -->
+    <section class="feature" id="shop" aria-labelledby="feature-name">
+      <a class="feature__media" href="product.html" aria-label="ART WILL TEE, all photos and details" data-product-media data-reveal>
+        <img class="feature__img" src="images/flat-front.jpg" srcset="images/flat-front-480.jpg 480w, images/flat-front-800.jpg 800w, images/flat-front.jpg 1002w" sizes="(max-width: 720px) 100vw, 50vw" width="1002" height="1201" alt="ART WILL TEE, front, laid flat" loading="lazy">
+        <img class="feature__img feature__img--alt" src="images/flat-back.jpg" srcset="images/flat-back-480.jpg 480w, images/flat-back-800.jpg 800w, images/flat-back.jpg 1002w" sizes="(max-width: 720px) 100vw, 50vw" width="1002" height="1054" alt="" loading="lazy">
+        <span class="feature__hint">Front / back</span>
+      </a>
+      <div class="feature__info" data-reveal>
+        <p class="label">New in — First drop</p>
+        <h2 class="feature__name" id="feature-name" data-product-name>ART WILL TEE</h2>
+        <p class="feature__price" data-price>€35</p>
         <p class="soldout" data-soldout-note hidden>SOLD OUT, DONT BE LATE</p>
-      </article>
+        <form class="buy" data-buy>
+          <fieldset class="sizes">
+            <legend class="label">Size</legend>
+            <div class="sizes__row" data-sizes></div>
+          </fieldset>
+          <button class="btn btn--wide" type="submit" data-add>Add to cart</button>
+          <p class="buy__msg" data-buy-msg role="status" aria-live="polite"></p>
+        </form>
+        <ul class="facts">
+          <li><b>Made in</b>Latvia</li>
+          <li><b>Fabric</b>100% cotton</li>
+          <li><b>Fit</b>Boxy, cut-off hem</li>
+          <li><b>Ships in</b>1–3 days</li>
+        </ul>
+        <a class="arrow-link" href="product.html">All photos &amp; details <span aria-hidden="true">→</span></a>
+      </div>
     </section>
 
     <!-- Brand -->
     <section class="brand" aria-labelledby="brand-title">
       <h2 class="label" id="brand-title" data-reveal>About MOYEN HILLS</h2>
       <p class="brand__statement" data-reveal>A clothing brand from Latvia. Screen printed on the front, the back and the neck label, cut boxy and short, and made in small numbers. When it’s gone, it’s gone.</p>
-      <ul class="brand__facts" data-reveal-group>
-        <li><b>Made in</b> Latvia</li>
-        <li><b>Fabric</b> 100% cotton</li>
-        <li><b>Ships in</b> 1–3 days</li>
-      </ul>
     </section>
 
     <!-- Lookbook link -->
     <a class="lookcta" href="lookbook.html" aria-label="Open the lookbook" data-reveal>
-      <img src="images/tee-front.jpg" width="1200" height="1600" alt="Model on concrete stairs wearing the ART WILL TEE" loading="lazy">
+      <img src="images/tee-front.jpg" srcset="images/tee-front-480.jpg 480w, images/tee-front-800.jpg 800w, images/tee-front.jpg 1200w" sizes="100vw" width="1200" height="1600" alt="Model on concrete stairs wearing the ART WILL TEE" loading="lazy">
       <span class="lookcta__btn">LOOKBOOK</span>
     </a>
   </main>
@@ -88,6 +100,12 @@
       <li><a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">instagram</a></li>
       <li><a href="https://www.tiktok.com/@moyenhills" target="_blank" rel="noopener">tiktok</a></li>
     </ul>
+    <nav class="foot__nav" aria-label="Site">
+      <a href="product.html">Shop</a>
+      <a href="lookbook.html">Lookbook</a>
+      <a href="account.html">Account</a>
+      <a href="mailto:moyenhills@gmail.com">Contact</a>
+    </nav>
     <p class="foot__legal">© <span data-year>2026</span> MOYEN HILLS · <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></p>
   </footer>
 
@@ -99,7 +117,7 @@
     </div>
     <div data-cart-view>
       <ul class="cart__items" data-cart-items></ul>
-      <p class="cart__empty" data-cart-empty>Your cart is empty.</p>
+      <div class="cart__empty" data-cart-empty><p>Your cart is empty.</p><a class="btn" href="product.html">Shop the ART WILL TEE</a></div>
       <div class="cart__total" data-cart-total-row hidden><span>Subtotal</span><span data-cart-total>€0</span></div>
       <p class="cart__hint" data-cart-total-row hidden>Delivery is added when we confirm your order by email.</p>
       <form class="checkout" data-checkout hidden>

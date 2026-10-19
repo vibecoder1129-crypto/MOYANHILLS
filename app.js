@@ -289,6 +289,26 @@ if (gal) {
   prev.disabled = true;
 }
 
+/* Phone buy bar on the product page: shows once the main button scrolls away */
+const sticky = $('[data-sticky]');
+if (sticky && 'IntersectionObserver' in window) {
+  const addBtn = $('[data-add]');
+  const stickyBtn = $('[data-sticky-add]');
+  const io = new IntersectionObserver(([en]) => {
+    const on = !en.isIntersecting && en.boundingClientRect.top < 0 && !isSoldOut();
+    sticky.classList.toggle('is-on', on);
+    sticky.setAttribute('aria-hidden', String(!on));
+    stickyBtn.tabIndex = on ? 0 : -1;
+  });
+  io.observe(addBtn);
+  stickyBtn.addEventListener('click', () => {
+    const form = $('[data-buy]');
+    if (new FormData(form).get('size')) { form.requestSubmit(); return; }
+    $('[data-sizes]').scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'center' });
+    $('[data-buy-msg]').textContent = 'Choose a size first.';
+  });
+}
+
 /* Motion: header clear over the landing photo, solid after it; hides on scroll down */
 const bar = $('[data-bar]');
 const landing = $('.landing');
