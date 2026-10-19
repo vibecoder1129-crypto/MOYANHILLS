@@ -113,7 +113,7 @@ html { scroll-padding-top: var(--bar-h); }
 .look__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.4s var(--ease, ease); }
 .look figure:hover .look__img img { transform: scale(1.04); }
 
-.look__spread { display: grid; grid-template-columns: 7fr 5fr; gap: clamp(12px, 2vw, 32px); align-items: end; }
+.look__spread { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(24px, 4vw, 64px); align-items: center; }
 .look__side { display: grid; gap: clamp(32px, 5vw, 72px); }
 .look__quote { margin: 0; }
 .look__quote p { font-size: clamp(2rem, 1rem + 3.4vw, 4.25rem); font-weight: 800; line-height: .95; letter-spacing: -0.045em; text-transform: uppercase; }
