@@ -19,7 +19,6 @@
     <a class="bar__name" href="index.html" aria-label="MOYEN HILLS, home">MOYEN HILLS</a>
     <nav class="bar__nav" aria-label="Main">
       <a href="product.html" aria-current="page">Shop</a>
-      <a href="index.html#lookbook">Lookbook</a>
     </nav>
     <button class="bar__cart" type="button" data-open-cart aria-haspopup="dialog">cart <span data-cart-count>0</span></button>
   </header>
@@ -88,25 +87,21 @@
 
   <!-- Footer (shared) -->
   <footer class="foot" aria-labelledby="sub-title">
-    <div class="foot__inner">
-      <form class="sub" data-subscribe novalidate>
-        <h2 class="sub__title" id="sub-title">subscribe to news and updates</h2>
-        <div class="sub__row">
-          <label class="sr" for="sub-email">email address</label>
-          <input class="sub__input" id="sub-email" name="email" type="email" placeholder="email address" autocomplete="email" required>
-          <button class="btn sub__btn" type="submit">SUBSCRIBE</button>
-        </div>
-        <p class="sub__msg" data-sub-msg role="status" aria-live="polite"></p>
-      </form>
-      <ul class="foot__links">
-        <li><a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">instagram</a></li>
-        <li><a href="https://www.tiktok.com/@moyenhills" target="_blank" rel="noopener">tiktok</a></li>
-        <li><a class="foot__mail" href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></li>
-      </ul>
-    </div>
-    <div class="foot__name" aria-hidden="true"><img decoding="async" src="images/logo.png" width="2400" height="262" alt="" loading="lazy"></div>
+    <form class="sub" data-subscribe novalidate>
+      <h2 class="sub__title" id="sub-title">subscribe to news and updates</h2>
+      <div class="sub__row">
+        <label class="sr" for="sub-email">email address</label>
+        <input class="sub__input" id="sub-email" name="email" type="email" placeholder="email address" autocomplete="email" required>
+        <button class="btn sub__btn" type="submit">SUBSCRIBE</button>
+      </div>
+      <p class="sub__msg" data-sub-msg role="status" aria-live="polite"></p>
+    </form>
+    <ul class="foot__links">
+      <li><a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">instagram</a></li>
+      <li><a href="https://www.tiktok.com/@moyenhills" target="_blank" rel="noopener">tiktok</a></li>
+    </ul>
     <div class="foot__legal">
-      <p>© <span data-year>2026</span> MOYEN HILLS · Made in Latvia</p>
+      <p>© <span data-year>2026</span> MOYEN HILLS · <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></p>
       <button type="button" class="link-u" data-top>Back to top</button>
     </div>
   </footer>

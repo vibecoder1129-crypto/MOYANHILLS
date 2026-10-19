@@ -5,7 +5,7 @@ Open `index.html` in a browser, or host the folder on GitHub Pages, Netlify or V
 
 ## Files
 
-- `index.html`: home page (intro, hero slideshow, new in, lookbook)
+- `index.html`: home page (intro, wide image, the shirt, email sign-up)
 - `product.html`: product page (gallery, sizes, add to cart, details)
 - `styles.css`: the design
 - `app.js`: cart, checkout, newsletter and the product settings

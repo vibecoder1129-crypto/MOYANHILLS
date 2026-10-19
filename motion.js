@@ -81,8 +81,7 @@
 
   /* Fade-ups, staggered per group */
   const groups = [
-    '.shop__head', '.card', '.look .h-section',
-    '.foot__inner > *', '.foot__legal', '.pdp__about > *', '.pdp__buy > *',
+    '.card', '.sub', '.foot__links', '.foot__legal', '.pdp__about > *', '.pdp__buy > *',
   ];
   groups.forEach((sel) => {
     const els = $$(sel);
