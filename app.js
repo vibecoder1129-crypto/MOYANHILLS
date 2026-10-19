@@ -134,6 +134,7 @@ function save() { store.write(cart); renderCart(); }
 
 function renderCart() {
   $$('[data-cart-count]').forEach((el) => { el.textContent = totalQty(); });
+  $$('[data-open-cart].bar__cart').forEach((el) => el.setAttribute('aria-label', `Open cart, ${totalQty()} item${totalQty() === 1 ? '' : 's'}`));
   const list = $('[data-cart-items]');
   list.innerHTML = '';
   for (const item of cart) {
@@ -280,30 +281,27 @@ if (gal) {
   prev.disabled = true;
 }
 
-/* Phone menu */
-const menuBtn = $('[data-menu]');
-if (menuBtn) {
-  const nav = $('#main-nav');
-  const setMenu = (open) => { nav.classList.toggle('is-open', open); menuBtn.setAttribute('aria-expanded', open); };
-  menuBtn.addEventListener('click', () => setMenu(!nav.classList.contains('is-open')));
-  nav.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
-}
-
-/* Motion: header hides on scroll down, sections rise into view */
+/* Motion: header clear over the landing photo, solid after it; hides on scroll down */
 const bar = $('[data-bar]');
+const landing = $('.landing');
 if (bar) {
   let lastY = scrollY; let ticking = false; let hidden = false;
+  const update = () => {
+    const y = scrollY;
+    bar.classList.toggle('is-solid', !landing || y > landing.offsetHeight - bar.offsetHeight);
+    const hide = y > lastY && y > 300 && !dialog.open;
+    if (hide !== hidden) { hidden = hide; bar.classList.toggle('is-hidden', hide); }
+    lastY = y; ticking = false;
+  };
+  update();
   addEventListener('scroll', () => {
     if (ticking) return;
     ticking = true;
-    requestAnimationFrame(() => {
-      const y = scrollY;
-      const hide = y > lastY && y > 300 && !dialog.open && !document.querySelector('.bar__nav.is-open');
-      if (hide !== hidden) { hidden = hide; bar.classList.toggle('is-hidden', hide); }
-      lastY = y; ticking = false;
-    });
+    requestAnimationFrame(update);
   }, { passive: true });
 }
+
+/* Sections rise into view */
 const reveals = $$('[data-reveal], [data-reveal-group]');
 if ('IntersectionObserver' in window && reveals.length) {
   $$('[data-reveal-group]').forEach((g) => [...g.children].forEach((el, i) => el.style.setProperty('--d', `${i * 80}ms`)));

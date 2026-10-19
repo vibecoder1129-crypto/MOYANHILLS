@@ -15,18 +15,15 @@
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
-  <header class="bar" data-bar>
-    <button class="bar__menu" type="button" aria-expanded="false" aria-controls="main-nav" data-menu>
-      <span class="sr">Menu</span><span class="bar__lines" aria-hidden="true"></span>
-    </button>
-    <nav class="bar__nav" id="main-nav" aria-label="Main">
-      <a href="#shop">Shop</a>
-      <a href="#lookbook">Lookbook</a>
-    </nav>
+  <header class="bar bar--over" data-bar>
+    <span aria-hidden="true"></span>
     <button class="bar__logo" type="button" data-top aria-label="MOYEN HILLS, back to top">
       <img src="images/logo.png" width="2400" height="262" alt="MOYEN HILLS">
     </button>
-    <button class="bar__cart" type="button" data-open-cart aria-haspopup="dialog">cart <span data-cart-count>0</span></button>
+    <button class="bar__cart" type="button" data-open-cart aria-haspopup="dialog" aria-label="Open cart">
+      <svg class="bar__bag" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M5 8h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 8Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <span class="bar__count" data-cart-count>0</span>
+    </button>
   </header>
 
   <main id="top">
