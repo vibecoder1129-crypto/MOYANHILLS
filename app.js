@@ -250,14 +250,5 @@ $$('[data-top]').forEach((b) => b.addEventListener('click', (e) => {
 }));
 $$('[data-year]').forEach((el) => { el.textContent = new Date().getFullYear(); });
 
-/* Product page gallery counter (phone swipe) */
-const gallery = $('[data-gallery]');
-if (gallery) {
-  const index = $('[data-gallery-index]');
-  gallery.addEventListener('scroll', () => {
-    index.textContent = Math.round(gallery.scrollLeft / gallery.clientWidth) + 1;
-  }, { passive: true });
-}
-
 renderProduct();
 renderCart();

@@ -75,7 +75,6 @@
   gsap.registerPlugin(ScrollTrigger);
   ScrollTrigger.config({ ignoreMobileResize: true });
   gsap.defaults({ ease: 'expo.out', duration: 1.1 });
-  const mm = gsap.matchMedia();
   const done = { clearProps: 'transform,opacity' };
 
   /* Hero copy rises line by line after the intro */
@@ -84,15 +83,11 @@
     gsap.from('.hero__cta', { y: 20, opacity: 0, delay: introDelay + 0.45 });
     gsap.from('.hero__frame', { yPercent: 100, duration: 1.4, ease: 'expo.inOut', stagger: 0.12, delay: introDelay - 0.35, ...done });
     gsap.from('.bar > *', { y: -20, opacity: 0, stagger: 0.08, delay: introDelay + 0.2 });
-    // the hero drifts slower than the page as it leaves (desktop only)
-    mm.add('(min-width: 721px)', () => {
-      gsap.to('.hero__frames', { yPercent: 18, ease: 'none', force3D: true, scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } });
-    });
   }
 
   /* Fade-ups, staggered per group */
   const groups = [
-    '.shop__head', '.card', '.details__intro > *', '.quote__note', '.look .h-section', '.look__copy',
+    '.shop__head', '.card', '.details__head > *', '.details__item', '.quote__note', '.look .h-section', '.look__copy',
     '.facts > div', '.foot__inner > *', '.foot__legal', '.pdp__about > *', '.pdp__buy > *',
   ];
   groups.forEach((sel) => {
@@ -101,26 +96,21 @@
     ScrollTrigger.batch(els, {
       start: 'top 90%',
       once: true,
-      onEnter: (batch) => gsap.from(batch, { y: 32, opacity: 0, stagger: 0.08, ...done }),
+      onEnter: (batch) => gsap.from(batch, { y: 20, opacity: 0, duration: 0.9, stagger: 0.08, ...done }),
     });
-  });
-
-  /* Parallax on the campaign picture */
-  $$('[data-parallax] img').forEach((img) => {
-    gsap.fromTo(img, { yPercent: -8 }, { yPercent: 0, ease: 'none', force3D: true, scrollTrigger: { trigger: img.parentElement, scrub: true } });
   });
 
   /* Pictures rise and settle as they arrive (transform and opacity only, so the GPU does the work) */
   $$('.reveal-img').forEach((fig) => {
     const tl = gsap.timeline({ scrollTrigger: { trigger: fig, start: 'top 90%', once: true } });
-    tl.from(fig, { yPercent: 8, opacity: 0, duration: 1.2, ...done })
-      .from(fig.querySelector('img'), { scale: 1.2, duration: 1.6, ...done }, 0);
+    tl.from(fig, { y: 24, opacity: 0, duration: 1, ...done })
+      .from(fig.querySelector('img'), { scale: 1.06, duration: 1.4, ...done }, 0);
   });
 
   /* Product page pictures */
   $$('.pdp__gallery figure').forEach((fig, i) => {
     gsap.from(fig.querySelector('img'), {
-      scale: 1.15, opacity: 0, duration: 1.4, ...done,
+      scale: 1.04, opacity: 0, duration: 1, ...done,
       scrollTrigger: { trigger: fig, start: 'top 95%', once: true }, delay: i === 0 ? 0.1 : 0,
     });
   });
@@ -130,18 +120,6 @@
     gsap.to(el.querySelectorAll('.w'), {
       opacity: 1, ease: 'none', stagger: 0.1,
       scrollTrigger: { trigger: el, start: 'top 80%', end: 'bottom 45%', scrub: true },
-    });
-  });
-
-  /* Details: vertical scroll moves the strip sideways (desktop) */
-  mm.add('(min-width: 721px)', () => {
-    const pin = $('[data-hscroll]');
-    const track = $('[data-hscroll-track]');
-    if (!pin || !track) return;
-    const distance = () => Math.max(0, track.scrollWidth - (pin.clientWidth - track.offsetLeft) + 32);
-    gsap.to(track, {
-      x: () => -distance(), ease: 'none', force3D: true,
-      scrollTrigger: { trigger: pin, start: 'top top', end: () => `+=${distance()}`, pin: true, scrub: true, anticipatePin: 1, invalidateOnRefresh: true },
     });
   });
 
