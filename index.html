@@ -3,175 +3,155 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MOYEN HILLS — Art Will Save Us All tee, made in Latvia</title>
-  <meta name="description" content="MOYEN HILLS. Boxy cut-off t-shirt, 100% cotton, screen printed front, back and neck label. Made in Latvia.">
-  <meta property="og:title" content="MOYEN HILLS">
-  <meta property="og:description" content="Boxy cut-off t-shirt, screen printed and made in Latvia.">
-  <meta property="og:image" content="images/tee-front.jpg">
+  <title>MOYEN HILLS — ART WILL TEE, made in Latvia</title>
+  <meta name="description" content="MOYEN HILLS. ART WILL TEE: boxy cut-off t-shirt, 100% cotton, screen printed front, back and neck label. Made in Latvia.">
+  <meta property="og:title" content="MOYEN HILLS — ART WILL TEE">
+  <meta property="og:image" content="images/flat-front.jpg">
   <link rel="icon" href="images/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=TikTok+Sans:wdth,wght@75..150,300..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <script>document.documentElement.classList.add('js')</script>
+  <script>document.documentElement.classList.add('js');try{if(sessionStorage.getItem('mh-intro'))document.documentElement.classList.add('seen-intro');sessionStorage.setItem('mh-intro','1')}catch(e){}</script>
 </head>
-<body>
-  <a class="skip" href="#shop">Skip to the shop</a>
+<body class="page-home">
+  <!-- Intro -->
+  <div class="intro" aria-hidden="true" data-intro>
+    <div class="intro__logo"><img src="images/logo.png" width="2400" height="262" alt=""></div>
+    <p class="intro__count"><span data-intro-count>0</span>%</p>
+  </div>
 
-  <header class="bar">
-    <button class="bar__name" type="button" data-top aria-label="MOYEN HILLS, back to top">MOYEN HILLS</button>
-    <button class="bar__cart" type="button" data-open-cart aria-haspopup="dialog">
-      cart <span class="bar__count" data-cart-count aria-label="items in cart">0</span>
-    </button>
+  <header class="bar" data-bar>
+    <a class="bar__name" href="#top" data-top aria-label="MOYEN HILLS, back to top">MOYEN HILLS</a>
+    <nav class="bar__nav" aria-label="Main">
+      <a href="product.html">Shop</a>
+      <a href="#details">Details</a>
+      <a href="#lookbook">Lookbook</a>
+    </nav>
+    <button class="bar__cart" type="button" data-open-cart aria-haspopup="dialog">cart <span data-cart-count>0</span></button>
   </header>
 
   <main id="top">
-    <!-- Hero: the name as a monument -->
+    <!-- Hero: two frames, each cycling through the tee -->
     <section class="hero" aria-labelledby="hero-title">
-      <h1 id="hero-title" class="hero__name">
-        <img src="images/logo.png" width="2400" height="262" alt="MOYEN HILLS">
-        <span class="sr">MOYEN HILLS, t-shirts made in Latvia</span>
-      </h1>
-
-      <div class="hero__grid">
-        <div class="hero__left">
-        <figure class="hero__tile hero__tile--detail">
-          <img src="images/detail-front.jpg" width="500" height="590" alt="Close-up of the front print">
-        </figure>
-        <ul class="hero__facts" aria-label="About the tee">
-          <li>Boxy fit, short sleeves</li>
-          <li>Screen printed front, back and neck label</li>
-          <li>100% cotton</li>
-          <li>Cut-off bottom</li>
-          <li>Made in Latvia</li>
-        </ul>
+      <div class="hero__frames">
+        <div class="hero__frame" data-slides>
+          <img class="is-on" src="images/flat-front.jpg" width="1002" height="1201" alt="ART WILL TEE, front, laid flat on concrete in the sun">
+          <img src="images/flat-back.jpg" width="1002" height="1054" alt="ART WILL TEE, back, laid flat on concrete">
+          <img src="images/front-print.jpg" width="1002" height="1201" alt="Close-up of the front print">
         </div>
+        <div class="hero__frame" data-slides>
+          <img class="is-on" src="images/tee-front.jpg" width="1200" height="1600" alt="Model on concrete stairs wearing the ART WILL TEE">
+          <img src="images/tee-back.jpg" width="1400" height="1120" alt="Two people from behind wearing the tee, ART WILL SAVE US ALL on the back">
+          <img src="images/back-print.jpg" width="1002" height="1054" alt="Close-up of the halftone back print">
+        </div>
+      </div>
+      <div class="hero__copy">
+        <h1 class="hero__title" id="hero-title"><span class="line"><span>ART WILL TEE</span></span></h1>
+        <p class="hero__sub"><span class="line"><span>First drop. Made in Latvia.</span></span></p>
+        <a class="hero__cta" href="product.html"><span>Shop now</span></a>
+      </div>
+      <div class="hero__progress" aria-hidden="true"><span></span><span></span><span></span></div>
+    </section>
 
-        <figure class="hero__photo reveal">
-          <img src="images/tee-front.jpg" width="1400" height="1867" alt="Model sitting on concrete stairs wearing the white MOYEN HILLS tee with the black screen-printed portrait on the front" fetchpriority="high">
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker__track">
+        <span>Art will save us all</span><span>Made in Latvia</span><span>100% cotton</span><span>First drop</span>
+        <span>Art will save us all</span><span>Made in Latvia</span><span>100% cotton</span><span>First drop</span>
+      </div>
+    </div>
+
+    <!-- Shop -->
+    <section class="shop" id="shop" aria-labelledby="shop-title">
+      <div class="shop__head">
+        <h2 class="h-section" id="shop-title">New in</h2>
+        <a class="link-u" href="product.html">View all (1)</a>
+      </div>
+      <div class="shop__grid">
+        <figure class="shop__campaign" data-parallax>
+          <img src="images/tee-back.jpg" width="1400" height="1120" alt="The back print worn by two people at night" loading="lazy">
+          <figcaption>Campaign — night shoot</figcaption>
         </figure>
 
-        <div class="hero__rail">
-          <figure class="hero__tile">
-            <img src="images/tee-back.jpg" width="1600" height="1280" alt="The back print, ART WILL SAVE US ALL, on two tees">
+        <article class="card" data-product-card>
+          <a class="card__media" href="product.html" aria-label="ART WILL TEE, view product">
+            <img class="card__img" src="images/flat-front.jpg" width="1002" height="1201" alt="ART WILL TEE, front" loading="lazy">
+            <img class="card__img card__img--alt" src="images/flat-back.jpg" width="1002" height="1054" alt="" loading="lazy">
+            <span class="card__badge">New</span>
+          </a>
+          <div class="card__quick" data-quick>
+            <p>Quick add</p>
+            <div class="card__sizes" data-quick-sizes></div>
+          </div>
+          <div class="card__info">
+            <h3 class="card__name"><a href="product.html" data-product-name>ART WILL TEE</a></h3>
+            <p class="card__price" data-price>€45</p>
+          </div>
+          <p class="soldout" data-soldout-note hidden>SOLD OUT, DONT BE LATE</p>
+          <p class="card__colour"><span class="swatch" aria-hidden="true"></span> White</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- The details: horizontal scroll -->
+    <section class="details" id="details" aria-labelledby="details-title">
+      <div class="details__pin" data-hscroll>
+        <div class="details__intro">
+          <h2 class="h-big" id="details-title">Printed on three sides</h2>
+          <p>Custom screen printed graphics on the front, the back and the neck label. Scroll to see each one.</p>
+        </div>
+        <div class="details__track" data-hscroll-track>
+          <figure class="details__item">
+            <div class="details__img"><img src="images/back-print.jpg" width="1002" height="1054" alt="Back print: ART WILL SAVE US ALL over a halftone photograph" loading="lazy"></div>
+            <figcaption><b>Back</b> Art will save us all</figcaption>
           </figure>
-          <p class="hero__statement">One t-shirt. Printed, cut and made in Latvia.</p>
-          <div class="hero__buy">
-            <p class="hero__price"><span data-price>€45</span></p>
-            <a class="btn" href="#shop">Shop the tee</a>
+          <figure class="details__item">
+            <div class="details__img"><img src="images/front-print.jpg" width="1002" height="1201" alt="Front print: the MOYEN HILLS wordmark over a cut-up portrait with handwritten lines" loading="lazy"></div>
+            <figcaption><b>Front</b> Wordmark and portrait</figcaption>
+          </figure>
+          <figure class="details__item">
+            <div class="details__img"><img src="images/neck-label.jpg" width="1002" height="1054" alt="Printed neck label: MOYEN HILLS, 100% cotton, care symbols, size M" loading="lazy"></div>
+            <figcaption><b>Neck label</b> 100% cotton</figcaption>
+          </figure>
+          <figure class="details__item">
+            <div class="details__img"><img src="images/flat-back.jpg" width="1002" height="1054" alt="The tee laid flat showing the cut-off bottom" loading="lazy"></div>
+            <figcaption><b>Hem</b> Cut-off style bottom</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- Statement from the print -->
+    <section class="quote" aria-labelledby="quote-title">
+      <h2 class="sr" id="quote-title">From the front print</h2>
+      <p class="quote__text" data-words>We all just some average kids at the end of the day</p>
+      <p class="quote__note">— printed on the front of the ART WILL TEE</p>
+    </section>
+
+    <!-- Lookbook -->
+    <section class="look" id="lookbook" aria-labelledby="look-title">
+      <h2 class="h-section" id="look-title">Lookbook</h2>
+      <div class="look__grid">
+        <figure class="look__a reveal-img"><img src="images/tee-front.jpg" width="1200" height="1600" alt="Model on concrete stairs in the ART WILL TEE with blue jeans" loading="lazy"></figure>
+        <div class="look__side">
+          <figure class="look__b reveal-img"><img src="images/flat-front.jpg" width="1002" height="1201" alt="The tee laid flat in sunlight" loading="lazy"></figure>
+          <div class="look__copy">
+            <p>A boxy short-sleeve tee with a cut-off style bottom, screen printed on three sides. Pre-made in Latvia in small numbers.</p>
+            <a class="btn" href="product.html">Shop the tee</a>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Signature move: the back print as a marquee -->
-    <div class="marquee" aria-hidden="true">
-      <div class="marquee__track">
-        <span>Art will save us all</span><span>Made in Latvia</span>
-        <span>Art will save us all</span><span>Made in Latvia</span>
-        <span>Art will save us all</span><span>Made in Latvia</span>
-      </div>
-    </div>
-
-    <!-- The product -->
-    <section class="shop" id="shop" aria-labelledby="product-name" data-product>
-      <div class="shop__media" data-product-media>
-        <img class="shop__img shop__img--main reveal" src="images/tee-front.jpg" width="1400" height="1867" alt="Front of the tee, worn" loading="lazy">
-        <img class="shop__img reveal" src="images/tee-back.jpg" width="1600" height="1280" alt="Two people seen from behind wearing the tee, the back print reads ART WILL SAVE US ALL above a halftone photograph" loading="lazy">
-      </div>
-
-      <div class="shop__info">
-        <h2 class="shop__name reveal" id="product-name">Art Will Save Us All tee</h2>
-        <p class="shop__soldout" data-soldout-note hidden>SOLD OUT, DONT BE LATE</p>
-        <p class="shop__price reveal" data-price>€45</p>
-
-        <ul class="shop__details reveal">
-          <li>Short-sleeve t-shirt with a boxy fit</li>
-          <li>Front, back and neck label custom screen printed graphics</li>
-          <li>100% cotton</li>
-          <li>Cut-off style bottom</li>
-          <li>Made in Latvia</li>
-        </ul>
-
-        <form class="buy reveal" data-buy>
-          <fieldset class="sizes">
-            <legend>Size</legend>
-            <div class="sizes__row" data-sizes></div>
-          </fieldset>
-          <button class="btn btn--wide" type="submit" data-add>Add to cart</button>
-          <p class="buy__msg" data-buy-msg role="status" aria-live="polite"></p>
-        </form>
-
-        <p class="shop__note reveal">Pre-made. Please allow 1–3 days for order fulfilling.</p>
-      </div>
-    </section>
-
-    <!-- Showcase: band of unequal panels -->
-    <section class="band" aria-labelledby="band-title">
-      <h2 class="band__title reveal" id="band-title">Printed on three sides</h2>
-      <div class="band__row">
-        <figure class="band__panel" style="--g:5">
-          <img src="images/tee-back.jpg" width="1600" height="1280" alt="The back print on two tees side by side" loading="lazy">
-          <figcaption class="band__label">Art will save<br>us all</figcaption>
-        </figure>
-        <figure class="band__panel" style="--g:2">
-          <img src="images/detail-back.jpg" width="540" height="600" alt="Close-up of the halftone back print" loading="lazy">
-        </figure>
-        <figure class="band__panel" style="--g:3">
-          <img src="images/detail-front.jpg" width="500" height="590" alt="Close-up of the front print: the distressed MOYEN HILLS wordmark over a cut-up portrait" loading="lazy">
-        </figure>
-        <figure class="band__panel" style="--g:2">
-          <img src="images/detail-back-2.jpg" width="560" height="600" alt="Second back print, worn" loading="lazy">
-        </figure>
-      </div>
-      <p class="band__caption reveal">Back: ART WILL SAVE US ALL over a halftone photograph. Front: the wordmark over a cut-up portrait. Plus the neck label.</p>
-    </section>
-
-    <!-- About -->
-    <section class="about" aria-labelledby="about-title">
-      <ul class="about__facts reveal" aria-label="Quick facts">
-        <li>Latvia</li>
-        <li>First drop</li>
-        <li><a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></li>
-      </ul>
-      <div class="about__text">
-        <h2 class="sr" id="about-title">About MOYEN HILLS</h2>
-        <p class="about__lead reveal">
-          <img class="about__cap" src="images/detail-front.jpg" width="500" height="590" alt="" loading="lazy">
-          <strong>MOYEN HILLS</strong> is a clothing brand from Latvia. The first piece is a single t-shirt: boxy, cut short at the bottom, and screen printed on the front, the back and the neck label.
-        </p>
-        <p class="about__lead about__lead--soft reveal">It is made in Latvia and pre-made in small numbers. When it is gone, it is gone, so follow along for the next one.</p>
-      </div>
-    </section>
-
-    <!-- FAQ -->
-    <section class="faq" aria-labelledby="faq-title">
-      <div class="faq__row">
-        <h2 class="faq__q faq__q--head reveal" id="faq-title">Questions</h2>
-      </div>
-      <div class="faq__row">
-        <h3 class="faq__q reveal">How does it fit?</h3>
-        <p class="faq__a reveal">Boxy, with short sleeves and a cut-off style bottom, so it sits wide and a little short. For exact measurements, email us before you order.</p>
-      </div>
-      <div class="faq__row">
-        <h3 class="faq__q reveal">When does it ship?</h3>
-        <p class="faq__a reveal">Every tee is pre-made, so please allow 1–3 days for order fulfilling. You get an email when it is on its way.</p>
-      </div>
-      <div class="faq__row">
-        <h3 class="faq__q reveal">What is it made of?</h3>
-        <p class="faq__a reveal">100% cotton, with custom screen printed graphics on the front, the back and the neck label. Made in Latvia.</p>
-      </div>
-      <div class="faq__row">
-        <h3 class="faq__q reveal">How do I pay?</h3>
-        <p class="faq__a reveal">Place your order from the cart. We confirm it by email with the payment details and the total including delivery.</p>
-      </div>
-      <div class="faq__row">
-        <h3 class="faq__q reveal">Anything else?</h3>
-        <p class="faq__a reveal">Write to <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a> or message <a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">@moyenhills</a> on Instagram.</p>
-      </div>
+    <!-- Facts -->
+    <section class="facts" aria-label="Good to know">
+      <div><h3>Made in Latvia</h3><p>Printed and finished at home.</p></div>
+      <div><h3>100% cotton</h3><p>Boxy fit, short sleeves.</p></div>
+      <div><h3>Ships in 1–3 days</h3><p>Every tee is pre-made.</p></div>
     </section>
   </main>
 
+  <!-- Footer (shared) -->
   <footer class="foot" aria-labelledby="sub-title">
     <div class="foot__inner">
       <form class="sub" data-subscribe novalidate>
@@ -183,37 +163,37 @@
         </div>
         <p class="sub__msg" data-sub-msg role="status" aria-live="polite"></p>
       </form>
-
       <ul class="foot__links">
         <li><a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">instagram</a></li>
         <li><a href="https://www.tiktok.com/@moyenhills" target="_blank" rel="noopener">tiktok</a></li>
-        <li><a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></li>
+        <li><a class="foot__mail" href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></li>
       </ul>
     </div>
-
     <div class="foot__name" aria-hidden="true"><img src="images/logo.png" width="2400" height="262" alt="" loading="lazy"></div>
-
     <div class="foot__legal">
-      <p>© <span data-year>2026</span> MOYEN HILLS. Made in Latvia.</p>
-      <button type="button" class="link" data-top>Back to top</button>
+      <p>© <span data-year>2026</span> MOYEN HILLS · Made in Latvia</p>
+      <button type="button" class="link-u" data-top>Back to top</button>
     </div>
   </footer>
 
-  <!-- Cart -->
+  <!-- Added-to-cart toast -->
+  <div class="toast" data-toast role="status" aria-live="polite" hidden>
+    <img src="images/flat-front.jpg" alt="" width="60" height="72">
+    <div><p class="toast__title">Added to cart</p><p class="toast__meta" data-toast-meta></p></div>
+    <button type="button" class="link-u" data-open-cart>View cart</button>
+  </div>
+
+  <!-- Cart (shared) -->
   <dialog class="cart" data-cart aria-labelledby="cart-title">
     <div class="cart__head">
-      <h2 class="cart__title" id="cart-title">cart</h2>
-      <button type="button" class="link" data-close-cart>close</button>
+      <h2 class="cart__title" id="cart-title">Cart</h2>
+      <button type="button" class="link-u" data-close-cart>Close</button>
     </div>
-
     <div data-cart-view>
       <ul class="cart__items" data-cart-items></ul>
       <p class="cart__empty" data-cart-empty>Your cart is empty.</p>
-      <div class="cart__total" data-cart-total-row hidden>
-        <span>Subtotal</span><span data-cart-total>€0</span>
-      </div>
+      <div class="cart__total" data-cart-total-row hidden><span>Subtotal</span><span data-cart-total>€0</span></div>
       <p class="cart__hint" data-cart-total-row hidden>Delivery is added when we confirm your order by email.</p>
-
       <form class="checkout" data-checkout hidden>
         <h3 class="checkout__title">Your details</h3>
         <label>Full name<input name="name" autocomplete="name" required></label>
@@ -231,14 +211,16 @@
         <p class="checkout__msg" data-checkout-msg role="status" aria-live="polite"></p>
       </form>
     </div>
-
     <div class="cart__done" data-cart-done hidden>
-      <p class="cart__done-title">Order received.</p>
+      <p class="cart__done-title">Order received</p>
       <p>Thank you. We will email you within a day to confirm your order and send the payment details.</p>
       <button type="button" class="btn" data-close-cart>Keep looking</button>
     </div>
   </dialog>
 
+  <script src="vendor/gsap.min.js" defer></script>
+  <script src="vendor/ScrollTrigger.min.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="motion.js" defer></script>
 </body>
 </html>

@@ -1,14 +1,16 @@
 # MOYEN HILLS store
 
-A one-product store for the MOYEN HILLS tee. Plain HTML, CSS and JavaScript, no build step.
+A one-product store for the MOYEN HILLS ART WILL TEE. Plain HTML, CSS and JavaScript, no build step.
 Open `index.html` in a browser, or host the folder on GitHub Pages, Netlify or Vercel.
 
 ## Files
 
-- `index.html`: the page
+- `index.html`: home page (intro, hero slideshow, new in, print details, lookbook)
+- `product.html`: product page (gallery, sizes, add to cart, details)
 - `styles.css`: the design
 - `app.js`: cart, checkout, newsletter and the product settings
-- `images/`: logo, product photos and detail crops
+- `motion.js`: animations (uses GSAP in `vendor/`)
+- `images/`: logo and product photos
 
 ## Change the price, sizes or stock
 
