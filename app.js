@@ -289,6 +289,14 @@ if (gal) {
   prev.disabled = true;
 }
 
+/* Full-screen menu */
+const menuEl = $('[data-menu]');
+if (menuEl) {
+  $$('[data-open-menu]').forEach((b) => b.addEventListener('click', () => { if (menuEl.showModal) menuEl.showModal(); else menuEl.setAttribute('open', ''); }));
+  $$('[data-close-menu]').forEach((b) => b.addEventListener('click', () => menuEl.close()));
+  menuEl.addEventListener('click', (e) => { if (e.target.closest('a[href]')) menuEl.close(); });
+}
+
 /* Phone buy bar on the product page: shows once the main button scrolls away */
 const sticky = $('[data-sticky]');
 if (sticky && 'IntersectionObserver' in window) {
@@ -317,7 +325,7 @@ if (bar) {
   const update = () => {
     const y = scrollY;
     bar.classList.toggle('is-solid', !landing || y > landing.offsetHeight - bar.offsetHeight);
-    const hide = y > lastY && y > 300 && !dialog.open;
+    const hide = y > lastY && y > 300 && !dialog.open && !(menuEl && menuEl.open);
     if (hide !== hidden) { hidden = hide; bar.classList.toggle('is-hidden', hide); }
     lastY = y; ticking = false;
   };
