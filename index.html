@@ -13,9 +13,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="site.css">
-  <script>document.documentElement.classList.add('js')</script>
+  <script>document.documentElement.classList.add('js');try{if(sessionStorage.getItem('mh-intro'))document.documentElement.classList.add('seen-intro');else sessionStorage.setItem('mh-intro','1')}catch(e){}</script>
 </head>
 <body>
+  <div class="loader" aria-hidden="true">
+    <img class="loader__logo" src="images/logo.png" width="2400" height="262" alt="">
+    <span class="loader__line"></span>
+  </div>
   <header class="bar bar--over" data-bar>
     <p class="annc"><span>ART WILL TEE — OUT NOW</span><span class="annc__more">&nbsp;· Made in Latvia · Ships in 1–3 days</span></p>
     <div class="bar__row">
