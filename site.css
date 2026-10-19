@@ -111,6 +111,36 @@ html { scroll-padding-top: var(--bar-h); }
   .sub__row { flex-direction: column; }
 }
 
+/* ---------- Product page (centred) ---------- */
+.pdp { padding: calc(var(--bar-h) + clamp(24px, 4vw, 56px)) var(--m) 0; display: grid; justify-items: center; gap: clamp(32px, 4vw, 56px); }
+.pdp__hero { width: min(560px, 100%); aspect-ratio: 4 / 5; overflow: hidden; background: var(--tint); }
+.pdp__hero img { width: 100%; height: 100%; object-fit: cover; }
+.pdp__info { width: min(440px, 100%); text-align: center; display: grid; gap: 14px; }
+.pdp__name { font-size: clamp(1.5rem, 1rem + 1.4vw, 2.25rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+.pdp__price { font-size: 1.125rem; font-weight: 600; }
+.sizes { border: 0; margin: 10px 0 12px; padding: 0; }
+.sizes legend { margin: 0 auto 10px; padding: 0; }
+.sizes__row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.size { position: relative; }
+.size input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.size span { display: flex; align-items: center; justify-content: center; min-height: 46px; border: 1px solid var(--line); border-radius: var(--radius); font-size: var(--t-sm); font-weight: 600; transition: background-color .2s, color .2s, border-color .2s; }
+.size input:hover + span { border-color: var(--ink); }
+.size input:checked + span { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.size input:focus-visible + span { outline: 2px solid var(--ink); outline-offset: 2px; }
+.size input:disabled + span { color: #b5b5b5; text-decoration: line-through; cursor: not-allowed; }
+.buy__msg { min-height: 1.5em; margin-top: 8px; font-size: var(--t-sm); }
+.pdp__note { font-size: var(--t-sm); color: var(--muted); }
+.pdp__details { margin-top: 18px; padding-top: 22px; border-top: 1px solid var(--line); display: grid; gap: 10px; font-size: var(--t-sm); }
+.pdp__details li + li { margin-top: 2px; }
+.pdp__more { width: min(1120px, 100%); display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.pdp__more img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; background: var(--tint); }
+.is-soldout [data-product-media] img { filter: grayscale(1); }
+@media (max-width: 720px) {
+  .pdp { padding-left: 0; padding-right: 0; padding-top: var(--bar-h); }
+  .pdp__info { padding: 0 var(--m); }
+  .pdp__more { grid-template-columns: 1fr 1fr; }
+}
+
 /* ---------- Motion ---------- */
 :root { --ease: cubic-bezier(.16, 1, .3, 1); }
 .bar { transition: transform .5s var(--ease); }

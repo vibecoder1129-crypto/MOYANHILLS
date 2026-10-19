@@ -6,112 +6,86 @@
   <title>ART WILL TEE — MOYEN HILLS</title>
   <meta name="description" content="MOYEN HILLS. ART WILL TEE: boxy cut-off t-shirt, 100% cotton, screen printed front, back and neck label. Made in Latvia.">
   <meta property="og:title" content="MOYEN HILLS — ART WILL TEE">
-  <meta property="og:image" content="images/flat-front.jpg">
+  <meta property="og:image" content="images/landing.jpg">
   <link rel="icon" href="images/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <script>document.documentElement.classList.add('js');try{if(sessionStorage.getItem('mh-intro'))document.documentElement.classList.add('seen-intro');sessionStorage.setItem('mh-intro','1')}catch(e){}</script>
+  <link rel="stylesheet" href="site.css">
+  <script>document.documentElement.classList.add('js')</script>
 </head>
-<body class="page-product">
-  <header class="bar bar--solid" data-bar>
-    <a class="bar__name" href="index.html" aria-label="MOYEN HILLS, home">MOYEN HILLS</a>
-    <nav class="bar__nav" aria-label="Main">
-      <a href="product.html" aria-current="page">Shop</a>
+<body>
+  <header class="bar" data-bar>
+    <button class="bar__menu" type="button" aria-expanded="false" aria-controls="main-nav" data-menu>
+      <span class="sr">Menu</span><span class="bar__lines" aria-hidden="true"></span>
+    </button>
+    <nav class="bar__nav" id="main-nav" aria-label="Main">
+      <a href="index.html#shop" aria-current="page">Shop</a>
+      <a href="index.html#lookbook">Lookbook</a>
     </nav>
+    <a class="bar__logo" href="index.html" aria-label="MOYEN HILLS, home">
+      <img src="images/logo.png" width="2400" height="262" alt="MOYEN HILLS">
+    </a>
     <button class="bar__cart" type="button" data-open-cart aria-haspopup="dialog">cart <span data-cart-count>0</span></button>
   </header>
 
-  <main id="top" class="pdp" data-product-page>
-    <!-- Left: description and details -->
-    <aside class="pdp__about">
-      <p class="crumbs"><a href="index.html">Home</a> / <a href="product.html">Shop</a> / ART WILL TEE</p>
-      <div class="pdp__desc">
-        <h2 class="pdp__label">Description</h2>
-        <p>Short-sleeve t-shirt with a boxy fit, including front, back and neck label custom screen printed graphics. Cut-off style bottom.</p>
-      </div>
-      <div class="acc" data-acc>
-        <details open>
-          <summary>Composition</summary>
-          <ul class="ticks">
-            <li>100% cotton</li>
-            <li>Front, back and neck label custom screen printed graphics</li>
-            <li>Cut-off style bottom</li>
-            <li>MADE IN LATVIA</li>
-          </ul>
-        </details>
-        <details>
-          <summary>Shipping</summary>
-          <p>Pre-made. Please allow 1–3 days for order fulfilling. You get an email when your order is on its way.</p>
-        </details>
-        <details>
-          <summary>Fit</summary>
-          <p>Boxy, with short sleeves and a cut-off bottom, so it sits wide and a little short. For exact measurements, email <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a> before you order.</p>
-        </details>
-        <details>
-          <summary>Payment</summary>
-          <p>Place your order from the cart. We confirm it by email with the payment details and the total including delivery.</p>
-        </details>
-      </div>
-    </aside>
+  <main class="pdp" id="top">
+    <figure class="pdp__hero" data-product-media data-reveal>
+      <img src="images/flat-front.jpg" width="1002" height="1201" alt="ART WILL TEE, front, laid flat" fetchpriority="high">
+    </figure>
 
-    <!-- Centre: gallery -->
-    <div class="pdp__gallery" data-gallery data-product-media>
-      <figure><img decoding="async" src="images/flat-front.jpg" width="1002" height="1201" alt="ART WILL TEE, front, laid flat"></figure>
-      <figure><img decoding="async" src="images/flat-back.jpg" width="1002" height="1054" alt="ART WILL TEE, back, laid flat" loading="lazy"></figure>
-      <figure><img decoding="async" src="images/tee-front.jpg" width="1200" height="1600" alt="Worn by a model on concrete stairs" loading="lazy"></figure>
-      <figure><img decoding="async" src="images/front-print.jpg" width="1002" height="1201" alt="Close-up of the front print with the handwritten lines" loading="lazy"></figure>
-      <figure><img decoding="async" src="images/back-print.jpg" width="1002" height="1054" alt="Close-up of the back print, ART WILL SAVE US ALL" loading="lazy"></figure>
-      <figure><img decoding="async" src="images/neck-label.jpg" width="1002" height="1054" alt="Printed neck label, 100% cotton" loading="lazy"></figure>
-      <figure><img decoding="async" src="images/tee-back.jpg" width="1400" height="1120" alt="Worn by two people, seen from behind" loading="lazy"></figure>
-    </div>
-
-    <!-- Right: buy box -->
-    <section class="pdp__buy" aria-labelledby="product-name">
+    <section class="pdp__info" aria-labelledby="product-name" data-reveal>
       <h1 class="pdp__name" id="product-name" data-product-name>ART WILL TEE</h1>
-      <p class="soldout" data-soldout-note hidden>SOLD OUT, DONT BE LATE</p>
       <p class="pdp__price" data-price>€45</p>
-      <p class="pdp__colour"><span class="swatch" aria-hidden="true"></span> White</p>
+      <p class="soldout" data-soldout-note hidden>SOLD OUT, DONT BE LATE</p>
       <form class="buy" data-buy>
         <fieldset class="sizes">
-          <legend>Size</legend>
+          <legend class="label">Size</legend>
           <div class="sizes__row" data-sizes></div>
         </fieldset>
         <button class="btn btn--wide" type="submit" data-add>Add to cart</button>
         <p class="buy__msg" data-buy-msg role="status" aria-live="polite"></p>
       </form>
       <p class="pdp__note">Pre-made. Please allow 1–3 days for order fulfilling.</p>
+
+      <div class="pdp__details">
+        <h2 class="label">Details</h2>
+        <p>Short-sleeve t-shirt with a boxy fit, including front, back &amp; neck label custom screen printed graphics.</p>
+        <ul>
+          <li>100% cotton</li>
+          <li>Cut-off style bottom</li>
+          <li>MADE IN LATVIA</li>
+        </ul>
+      </div>
     </section>
+
+    <div class="pdp__more" data-product-media data-reveal-group>
+      <img src="images/flat-back.jpg" width="1002" height="1054" alt="ART WILL TEE, back, laid flat" loading="lazy">
+      <img src="images/front-print.jpg" width="1002" height="1201" alt="Close-up of the front print" loading="lazy">
+      <img src="images/back-print.jpg" width="1002" height="1054" alt="Close-up of the back print, ART WILL SAVE US ALL" loading="lazy">
+      <img src="images/neck-label.jpg" width="1002" height="1054" alt="Printed neck label, 100% cotton" loading="lazy">
+      <img src="images/tee-front.jpg" width="1200" height="1600" alt="Worn by a model on concrete stairs" loading="lazy">
+      <img src="images/landing.jpg" width="1600" height="1280" alt="Worn by two people, seen from behind at night" loading="lazy">
+    </div>
   </main>
 
-  <!-- Footer (shared) -->
+  <!-- Email -->
   <footer class="foot" aria-labelledby="sub-title">
-    <form class="sub" data-subscribe novalidate>
+    <form class="sub" data-subscribe novalidate data-reveal>
       <h2 class="sub__title" id="sub-title">subscribe to news and updates</h2>
       <div class="sub__row">
         <label class="sr" for="sub-email">email address</label>
         <input class="sub__input" id="sub-email" name="email" type="email" placeholder="email address" autocomplete="email" required>
-        <button class="btn sub__btn" type="submit">SUBSCRIBE</button>
+        <button class="btn" type="submit">SUBSCRIBE</button>
       </div>
       <p class="sub__msg" data-sub-msg role="status" aria-live="polite"></p>
     </form>
-    <ul class="foot__links">
+    <ul class="foot__links" data-reveal>
       <li><a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">instagram</a></li>
       <li><a href="https://www.tiktok.com/@moyenhills" target="_blank" rel="noopener">tiktok</a></li>
     </ul>
-    <div class="foot__legal">
-      <p>© <span data-year>2026</span> MOYEN HILLS · <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></p>
-      <button type="button" class="link-u" data-top>Back to top</button>
-    </div>
+    <p class="foot__legal">© <span data-year>2026</span> MOYEN HILLS · <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></p>
   </footer>
-
-  <!-- Added-to-cart toast -->
-  <div class="toast" data-toast role="status" aria-live="polite" hidden>
-    <img decoding="async" src="images/flat-front.jpg" alt="" width="60" height="72">
-    <div><p class="toast__title">Added to cart</p><p class="toast__meta" data-toast-meta></p></div>
-    <button type="button" class="link-u" data-open-cart>View cart</button>
-  </div>
 
   <!-- Cart (shared) -->
   <dialog class="cart" data-cart aria-labelledby="cart-title">
@@ -148,9 +122,6 @@
     </div>
   </dialog>
 
-  <script src="vendor/gsap.min.js" defer></script>
-  <script src="vendor/ScrollTrigger.min.js" defer></script>
   <script src="app.js" defer></script>
-  <script src="motion.js" defer></script>
 </body>
 </html>

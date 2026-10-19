@@ -100,7 +100,8 @@ if (buy) {
     e.preventDefault();
     const msg = $('[data-buy-msg]');
     const size = new FormData(buy).get('size');
-    msg.textContent = size ? addToCart(size) : 'Choose a size first.';
+    if (!size) { msg.textContent = 'Choose a size first.'; return; }
+    msg.textContent = addToCart(size) || `Added to cart: ${PRODUCT.name}, size ${size}.`;
   });
 }
 
