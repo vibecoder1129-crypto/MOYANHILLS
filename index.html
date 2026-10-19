@@ -15,6 +15,13 @@
 </head>
 <body>
   <header class="bar">
+    <button class="bar__menu" type="button" aria-expanded="false" aria-controls="main-nav" data-menu>
+      <span class="sr">Menu</span><span class="bar__lines" aria-hidden="true"></span>
+    </button>
+    <nav class="bar__nav" id="main-nav" aria-label="Main">
+      <a href="#shop">Shop</a>
+      <a href="#lookbook">Lookbook</a>
+    </nav>
     <button class="bar__logo" type="button" data-top aria-label="MOYEN HILLS, back to top">
       <img src="images/logo.png" width="2400" height="262" alt="MOYEN HILLS">
     </button>
@@ -22,11 +29,60 @@
   </header>
 
   <main id="top">
+    <!-- Landing photo -->
     <section class="landing" aria-label="ART WILL TEE">
       <h1 class="sr">MOYEN HILLS — ART WILL TEE</h1>
       <img src="images/landing.jpg" width="1600" height="1280" alt="Two people from behind at night wearing the ART WILL TEE, ART WILL SAVE US ALL printed on the back" fetchpriority="high">
+      <a class="btn landing__cta" href="product.html">Shop now</a>
+    </section>
+
+    <!-- Shop -->
+    <section class="shop" id="shop" aria-labelledby="shop-title">
+      <h2 class="label" id="shop-title">New in</h2>
+      <article class="card" data-product-card>
+        <a class="card__media" href="product.html" aria-label="ART WILL TEE, view product">
+          <img class="card__img" src="images/flat-front.jpg" width="1002" height="1201" alt="ART WILL TEE, front, laid flat" loading="lazy">
+        </a>
+        <h3 class="card__name"><a href="product.html" data-product-name>ART WILL TEE</a></h3>
+        <p class="card__price" data-price>€45</p>
+        <p class="soldout" data-soldout-note hidden>SOLD OUT, DONT BE LATE</p>
+      </article>
+    </section>
+
+    <!-- Lookbook -->
+    <section class="look" id="lookbook" aria-labelledby="look-title">
+      <div class="look__head">
+        <h2 class="label" id="look-title">Lookbook</h2>
+        <a class="label" href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">@moyenhills</a>
+      </div>
+      <div class="look__grid">
+        <img src="images/tee-front.jpg" width="1200" height="1600" alt="Model on concrete stairs wearing the tee" loading="lazy">
+        <img src="images/back-print.jpg" width="1002" height="1054" alt="The halftone back print, ART WILL SAVE US ALL" loading="lazy">
+        <img src="images/flat-back.jpg" width="1002" height="1054" alt="The tee laid flat, back" loading="lazy">
+        <img src="images/front-print.jpg" width="1002" height="1201" alt="The front print with handwritten lines" loading="lazy">
+        <img src="images/neck-label.jpg" width="1002" height="1054" alt="Printed neck label, 100% cotton" loading="lazy">
+        <img src="images/flat-front.jpg" width="1002" height="1201" alt="The tee laid flat in sunlight, front" loading="lazy">
+      </div>
     </section>
   </main>
+
+  <!-- Email -->
+  <footer class="foot" aria-labelledby="sub-title">
+    <form class="sub" data-subscribe novalidate>
+      <h2 class="sub__title" id="sub-title">subscribe to news and updates</h2>
+      <div class="sub__row">
+        <label class="sr" for="sub-email">email address</label>
+        <input class="sub__input" id="sub-email" name="email" type="email" placeholder="email address" autocomplete="email" required>
+        <button class="btn" type="submit">SUBSCRIBE</button>
+      </div>
+      <p class="sub__msg" data-sub-msg role="status" aria-live="polite"></p>
+    </form>
+    <ul class="foot__links">
+      <li><a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">instagram</a></li>
+      <li><a href="https://www.tiktok.com/@moyenhills" target="_blank" rel="noopener">tiktok</a></li>
+    </ul>
+    <p class="foot__legal">© <span data-year>2026</span> MOYEN HILLS · <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></p>
+  </footer>
 
   <!-- Cart (shared) -->
   <dialog class="cart" data-cart aria-labelledby="cart-title">

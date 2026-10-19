@@ -244,6 +244,15 @@ $('[data-subscribe]')?.addEventListener('submit', async (e) => {
   }
 });
 
+/* Phone menu */
+const menuBtn = $('[data-menu]');
+if (menuBtn) {
+  const nav = $('#main-nav');
+  const setMenu = (open) => { nav.classList.toggle('is-open', open); menuBtn.setAttribute('aria-expanded', open); };
+  menuBtn.addEventListener('click', () => setMenu(!nav.classList.contains('is-open')));
+  nav.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
+}
+
 /* Back to top */
 $$('[data-top]').forEach((b) => b.addEventListener('click', (e) => {
   e.preventDefault();
