@@ -1,0 +1,196 @@
+<!doctype html>
+<!-- Designed & built by Archit Gajjar -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="designer" content="Archit Gajjar">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin — MOYEN HILLS</title>
+  <link rel="icon" href="images/favicon.png">
+  <link rel="stylesheet" href="site.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="adm">
+  <header class="adm__bar">
+    <a class="adm__logo" href="index.html" aria-label="MOYEN HILLS, back to the shop"><img src="images/logo.png" width="2400" height="262" alt="MOYEN HILLS"></a>
+    <span class="adm__tag">Admin</span>
+    <span class="adm__who" data-who></span>
+    <button type="button" class="link-u" data-signout hidden>Sign out</button>
+  </header>
+
+  <main class="adm__main">
+    <!-- Supabase not connected yet: preview mode -->
+    <section class="adm__card adm__preview" data-preview hidden>
+      <h1 class="adm__title">Preview mode</h1>
+      <p>The database isn’t connected yet, so changes you make here are only saved in <b>this browser</b>. The shop pages in this browser show them straight away, so you can try things out.</p>
+      <p>To make them real for everyone: press <b>Download catalog.js</b>, put the file in the website folder in place of the old one (and any new photos it downloads into the <code>images</code> folder), then publish the site.</p>
+      <div class="adm__btns">
+        <button type="button" class="btn" data-download>Download catalog.js</button>
+        <button type="button" class="btn btn--line" data-discard>Undo all changes</button>
+      </div>
+      <p class="adm__msg" data-preview-msg role="status" aria-live="polite"></p>
+      <details class="adm__setup">
+        <summary>Connect the database (so the admin works live, from anywhere)</summary>
+      <ol class="adm__steps">
+        <li>Create a free project at <a href="https://supabase.com" target="_blank" rel="noopener">supabase.com</a>.</li>
+        <li>In <b>SQL Editor</b>, paste everything from <code>supabase/schema.sql</code> and press <b>Run</b>.</li>
+        <li>Still in the SQL Editor, add yourself as an admin:<br><code>insert into public.admins (email) values ('you@example.com');</code></li>
+        <li>Copy the <b>Project URL</b> and <b>anon public</b> key (Project Settings → API) into <code>config.js</code>.</li>
+        <li>Come back here and sign in with that email.</li>
+      </ol>
+      <p class="adm__muted">The README explains every step.</p>
+      </details>
+    </section>
+
+    <!-- Sign in -->
+    <section class="adm__card adm__card--narrow" data-view="signin" hidden>
+      <h1 class="adm__title">Sign in</h1>
+      <p class="adm__muted">Use the email that was added as an admin.</p>
+      <form class="adm__form" data-signin>
+        <label>Email<input name="email" type="email" autocomplete="email" required></label>
+        <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+        <button class="btn btn--wide" type="submit">Sign in</button>
+      </form>
+      <button type="button" class="btn btn--line btn--wide" data-google>Continue with Google</button>
+      <p class="adm__msg" data-signin-msg role="status" aria-live="polite"></p>
+      <p class="adm__muted">No password yet? Create an account on the <a href="account.html">account page</a> with the same email, confirm it, then come back.</p>
+    </section>
+
+    <!-- Signed in, but not an admin -->
+    <section class="adm__card adm__card--narrow" data-view="denied" hidden>
+      <h1 class="adm__title">Not an admin</h1>
+      <p>This account can’t manage the shop. Ask the owner to add your email to the <code>admins</code> list, then sign in again.</p>
+    </section>
+
+    <!-- The admin -->
+    <section data-view="app" hidden>
+      <nav class="adm__tabs" role="tablist" aria-label="Admin sections">
+        <button type="button" role="tab" class="adm__tab is-on" data-tab="products" aria-selected="true">Products</button>
+        <button type="button" role="tab" class="adm__tab" data-tab="promos" aria-selected="false">Promo codes</button>
+        <button type="button" role="tab" class="adm__tab" data-tab="orders" aria-selected="false">Orders</button>
+      </nav>
+
+      <!-- Products -->
+      <div class="adm__panel" data-panel="products">
+        <div class="adm__head">
+          <h1 class="adm__title">Products</h1>
+          <button type="button" class="btn" data-new-product>New product</button>
+        </div>
+        <ul class="adm__list" data-products></ul>
+      </div>
+
+      <!-- Promo codes -->
+      <div class="adm__panel" data-panel="promos" hidden>
+        <div class="adm__head">
+          <h1 class="adm__title">Promo codes</h1>
+          <button type="button" class="btn" data-new-promo>New code</button>
+        </div>
+        <ul class="adm__list" data-promos></ul>
+      </div>
+
+      <!-- Orders -->
+      <div class="adm__panel" data-panel="orders" hidden>
+        <div class="adm__head">
+          <h1 class="adm__title">Orders</h1>
+          <button type="button" class="btn btn--line" data-reload-orders>Refresh</button>
+        </div>
+        <ul class="adm__list" data-orders></ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- Product editor -->
+  <dialog class="adm__dialog" data-product-dialog aria-labelledby="pe-title">
+    <form class="adm__form" data-product-form novalidate>
+      <div class="adm__dhead">
+        <h2 class="adm__title" id="pe-title" data-pe-title>Product</h2>
+        <button type="button" class="link-u" data-close>Close</button>
+      </div>
+
+      <fieldset>
+        <legend>Basics</legend>
+        <label>Name<input name="name" required placeholder="ART WILL TEE"></label>
+        <label>Link name <span class="adm__hint">Used in the address: product.html?id=<b data-slug-preview>…</b>. Can’t be changed later.</span><input name="id" required pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="art-will-tee"></label>
+        <div class="adm__two">
+          <label>Price (€)<input name="price" type="number" min="0" step="0.01" required></label>
+          <label>Colour<input name="colour" placeholder="White"></label>
+        </div>
+        <div class="adm__checks">
+          <label class="adm__check"><input type="checkbox" name="active"> Show in the shop</label>
+          <label class="adm__check"><input type="checkbox" name="featured"> Feature on the home page</label>
+          <label class="adm__check"><input type="checkbox" name="sold_out"> Sold out</label>
+        </div>
+        <div class="adm__two">
+          <label>Old price (€) <span class="adm__hint">Shown crossed out for a sale. Empty = none.</span><input name="was_price" type="number" min="0" step="0.01"></label>
+          <label>Position in the shop <span class="adm__hint">Lower numbers show first.</span><input name="sort" type="number" step="1"></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Sizes and stock</legend>
+        <p class="adm__hint">Pieces left per size, in the order shown. 0 = that size is sold out. Stock goes down by itself when someone orders.</p>
+        <ul class="adm__sizes" data-sizes></ul>
+        <button type="button" class="btn btn--line" data-add-size>Add a size</button>
+      </fieldset>
+
+      <fieldset>
+        <legend>Photos</legend>
+        <p class="adm__hint">The first photo is the main one; the second shows when you hover in the shop.</p>
+        <ul class="adm__photos" data-photos></ul>
+        <label class="btn btn--line adm__upload">Upload photos<input type="file" accept="image/*" multiple data-upload hidden></label>
+        <p class="adm__msg" data-upload-msg aria-live="polite"></p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Text</legend>
+        <label>Small label on the home page<input name="label" placeholder="Limited first drop"></label>
+        <label>Short intro on the home page<textarea name="blurb" rows="3"></textarea></label>
+        <label>Description<textarea name="description" rows="3"></textarea></label>
+        <label>Details <span class="adm__hint">One per line.</span><textarea name="details" rows="3" placeholder="100% cotton&#10;MADE IN LATVIA"></textarea></label>
+        <label>Fit<textarea name="fit" rows="2"></textarea></label>
+        <label>Note under the button<input name="note" placeholder="Pre-made. Please allow 1–3 days for order fulfilling."></label>
+      </fieldset>
+
+      <div class="adm__actions">
+        <button class="btn" type="submit">Save</button>
+        <button type="button" class="btn btn--line adm__danger" data-delete-product>Delete product</button>
+        <p class="adm__msg" data-pe-msg role="status" aria-live="polite"></p>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Promo code editor -->
+  <dialog class="adm__dialog adm__dialog--narrow" data-promo-dialog aria-labelledby="pc-title">
+    <form class="adm__form" data-promo-form novalidate>
+      <div class="adm__dhead">
+        <h2 class="adm__title" id="pc-title" data-pc-title>Promo code</h2>
+        <button type="button" class="link-u" data-close>Close</button>
+      </div>
+      <label>Code <span class="adm__hint">Letters, numbers, - or _. Customers can type it in any case.</span><input name="code" required pattern="[A-Za-z0-9_\-]+" placeholder="HILLS10" autocapitalize="characters"></label>
+      <div class="adm__two">
+        <label>Discount type<select name="kind"><option value="percent">% off</option><option value="amount">€ off</option></select></label>
+        <label>Discount<input name="value" type="number" min="0.01" step="0.01" required placeholder="10"></label>
+      </div>
+      <div class="adm__two">
+        <label>Minimum order (€)<input name="min_subtotal" type="number" min="0" step="0.01" placeholder="0"></label>
+        <label>Max uses <span class="adm__hint">Empty = unlimited</span><input name="max_uses" type="number" min="1" step="1"></label>
+      </div>
+      <label>Expires on <span class="adm__hint">Empty = never</span><input name="expires_at" type="date"></label>
+      <label>Who it’s for <span class="adm__hint">Only you see this.</span><input name="note" placeholder="Friends of the brand"></label>
+      <label class="adm__check"><input type="checkbox" name="active"> Active</label>
+      <div class="adm__actions">
+        <button class="btn" type="submit">Save</button>
+        <button type="button" class="btn btn--line adm__danger" data-delete-promo>Delete code</button>
+        <p class="adm__msg" data-pc-msg role="status" aria-live="polite"></p>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="config.js"></script>
+  <script src="vendor/supabase.js" defer></script>
+  <script src="catalog.js" defer></script>
+  <script src="data.js" defer></script>
+  <script src="admin.js" defer></script>
+</body>
+</html>

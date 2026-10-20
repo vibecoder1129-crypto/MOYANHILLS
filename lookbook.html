@@ -94,9 +94,9 @@
 
     </section>
     <!-- Next: the tee -->
-    <a class="lookcta lookcta--end" href="product.html" aria-label="Shop the ART WILL TEE" data-reveal>
+    <a class="lookcta lookcta--end" href="shop.html" aria-label="Visit the shop" data-reveal>
       <img src="images/flat-front.jpg" srcset="images/flat-front-480.jpg 480w, images/flat-front-800.jpg 800w, images/flat-front.jpg 1002w" sizes="100vw" width="1002" height="1201" alt="ART WILL TEE, front, laid flat" loading="lazy">
-      <span class="lookcta__btn">SHOP THE TEE — €35</span>
+      <span class="lookcta__btn">SHOP NOW</span>
     </a>
   </main>
 
@@ -118,7 +118,7 @@
       <li><a href="https://www.tiktok.com/@moyenhills" target="_blank" rel="noopener">tiktok</a></li>
     </ul>
     <nav class="foot__nav" aria-label="Site">
-      <a href="product.html">Shop</a>
+      <a href="shop.html">Shop</a>
       <a href="lookbook.html">Lookbook</a>
       <a href="account.html">Account</a>
       <a href="mailto:moyenhills@gmail.com">Contact</a>
@@ -142,7 +142,7 @@
     <div class="menu__body">
       <nav class="menu__links" aria-label="Site">
         <a href="index.html">Home</a>
-        <a href="product.html">Shop</a>
+        <a href="shop.html">Shop</a>
         <a href="lookbook.html">Lookbook</a>
         <a href="account.html">Account</a>
       </nav>
@@ -166,8 +166,16 @@
     </div>
     <div data-cart-view>
       <ul class="cart__items" data-cart-items></ul>
-      <div class="cart__empty" data-cart-empty><p>Your cart is empty.</p><a class="btn" href="product.html">Shop the ART WILL TEE</a></div>
+      <div class="cart__empty" data-cart-empty><p>Your cart is empty.</p><a class="btn" href="shop.html">Visit the shop</a></div>
       <div class="cart__total" data-cart-total-row hidden><span>Subtotal</span><span data-cart-total>€0</span></div>
+      <div class="promo" data-promo hidden>
+        <label class="sr" for="promo-code">Promo code</label>
+        <input class="promo__input" id="promo-code" data-promo-input placeholder="Promo code" autocomplete="off" autocapitalize="characters" spellcheck="false">
+        <button type="button" class="btn btn--line" data-promo-apply>Apply</button>
+      </div>
+      <p class="promo__msg" data-promo-msg role="status" aria-live="polite"></p>
+      <div class="cart__line" data-discount-row hidden><span>Promo <b data-promo-code></b> <button type="button" class="link-u" data-promo-remove>Remove</button></span><span data-discount></span></div>
+      <div class="cart__total cart__total--grand" data-discount-row hidden><span>Total</span><span data-grand-total>€0</span></div>
       <p class="cart__hint" data-cart-total-row hidden>Delivery is added when we confirm your order by email.</p>
       <form class="checkout" data-checkout hidden>
         <h3 class="checkout__title">Your details</h3>
@@ -251,6 +259,8 @@
 
   <script src="config.js"></script>
   <script src="vendor/supabase.js" defer></script>
+  <script src="catalog.js" defer></script>
+  <script src="data.js" defer></script>
   <script src="app.js" defer></script>
   <script src="auth.js" defer></script>
 </body>

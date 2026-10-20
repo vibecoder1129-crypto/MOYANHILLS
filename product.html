@@ -47,7 +47,7 @@
     </div>
   </header>
 
-  <main class="pdp" id="top">
+  <main class="pdp" id="top" data-pdp>
     <section class="gallery" aria-label="Product photos" data-gallery data-product-media data-reveal>
       <div class="gallery__frame">
         <ul class="gallery__track" data-track tabindex="0">
@@ -60,7 +60,7 @@
         </ul>
         <button type="button" class="gallery__arrow gallery__arrow--prev" data-prev aria-label="Previous photo">&#8592;</button>
         <button type="button" class="gallery__arrow gallery__arrow--next" data-next aria-label="Next photo">&#8594;</button>
-        <p class="gallery__count" aria-live="polite"><span data-index>1</span> / 6</p>
+        <p class="gallery__count" aria-live="polite" data-count><span data-index>1</span> / 6</p>
       </div>
       <div class="gallery__thumbs">
         <button type="button" class="gallery__thumb is-on" data-go="0" aria-label="Show photo 1"><img src="images/flat-front-480.jpg" width="1002" height="1201" alt="" loading="lazy"></button>
@@ -86,21 +86,21 @@
         <button class="btn btn--wide" type="submit" data-add>Add to cart</button>
         <p class="buy__msg" data-buy-msg role="status" aria-live="polite"></p>
       </form>
-      <p class="pdp__note">Pre-made. Please allow 1–3 days for order fulfilling.</p>
+      <p class="pdp__note" data-note>Pre-made. Please allow 1–3 days for order fulfilling.</p>
 
       <div class="acc">
         <details open>
           <summary>Details</summary>
-          <p>Short-sleeve t-shirt with a boxy fit, including front, back &amp; neck label custom screen printed graphics.</p>
-          <ul class="ticks"><li>100% cotton</li><li>Cut-off style bottom</li><li>MADE IN LATVIA</li></ul>
+          <p data-desc>Short-sleeve t-shirt with a boxy fit, including front, back &amp; neck label custom screen printed graphics.</p>
+          <ul class="ticks" data-details><li>100% cotton</li><li>Cut-off style bottom</li><li>MADE IN LATVIA</li></ul>
         </details>
         <details>
           <summary>Fit</summary>
-          <p>Boxy, with short sleeves and a cut-off style bottom, so it sits wide and a little short. For exact measurements, email <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a> before you order.</p>
+          <p><span data-fit>Boxy, with short sleeves and a cut-off style bottom, so it sits wide and a little short.</span> For exact measurements, email <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a> before you order.</p>
         </details>
         <details>
           <summary>Shipping</summary>
-          <p>Pre-made. Please allow 1–3 days for order fulfilling. You get an email when your order is on its way.</p>
+          <p>We confirm your order by email, then send it out. You get an email when your order is on its way.</p>
         </details>
         <details>
           <summary>Payment</summary>
@@ -118,7 +118,7 @@
 
   <!-- Phone: buy bar that follows the scroll -->
   <div class="stickybuy" data-sticky aria-hidden="true">
-    <div><p class="stickybuy__name">ART WILL TEE</p><p class="stickybuy__price" data-price>€35</p></div>
+    <div><p class="stickybuy__name" data-sticky-name>ART WILL TEE</p><p class="stickybuy__price" data-price>€35</p></div>
     <button type="button" class="btn" data-sticky-add tabindex="-1">Add to cart</button>
   </div>
 
@@ -140,7 +140,7 @@
       <li><a href="https://www.tiktok.com/@moyenhills" target="_blank" rel="noopener">tiktok</a></li>
     </ul>
     <nav class="foot__nav" aria-label="Site">
-      <a href="product.html">Shop</a>
+      <a href="shop.html">Shop</a>
       <a href="lookbook.html">Lookbook</a>
       <a href="account.html">Account</a>
       <a href="mailto:moyenhills@gmail.com">Contact</a>
@@ -164,7 +164,7 @@
     <div class="menu__body">
       <nav class="menu__links" aria-label="Site">
         <a href="index.html">Home</a>
-        <a href="product.html">Shop</a>
+        <a href="shop.html">Shop</a>
         <a href="lookbook.html">Lookbook</a>
         <a href="account.html">Account</a>
       </nav>
@@ -188,8 +188,16 @@
     </div>
     <div data-cart-view>
       <ul class="cart__items" data-cart-items></ul>
-      <div class="cart__empty" data-cart-empty><p>Your cart is empty.</p><a class="btn" href="product.html">Shop the ART WILL TEE</a></div>
+      <div class="cart__empty" data-cart-empty><p>Your cart is empty.</p><a class="btn" href="shop.html">Visit the shop</a></div>
       <div class="cart__total" data-cart-total-row hidden><span>Subtotal</span><span data-cart-total>€0</span></div>
+      <div class="promo" data-promo hidden>
+        <label class="sr" for="promo-code">Promo code</label>
+        <input class="promo__input" id="promo-code" data-promo-input placeholder="Promo code" autocomplete="off" autocapitalize="characters" spellcheck="false">
+        <button type="button" class="btn btn--line" data-promo-apply>Apply</button>
+      </div>
+      <p class="promo__msg" data-promo-msg role="status" aria-live="polite"></p>
+      <div class="cart__line" data-discount-row hidden><span>Promo <b data-promo-code></b> <button type="button" class="link-u" data-promo-remove>Remove</button></span><span data-discount></span></div>
+      <div class="cart__total cart__total--grand" data-discount-row hidden><span>Total</span><span data-grand-total>€0</span></div>
       <p class="cart__hint" data-cart-total-row hidden>Delivery is added when we confirm your order by email.</p>
       <form class="checkout" data-checkout hidden>
         <h3 class="checkout__title">Your details</h3>
@@ -273,6 +281,8 @@
 
   <script src="config.js"></script>
   <script src="vendor/supabase.js" defer></script>
+  <script src="catalog.js" defer></script>
+  <script src="data.js" defer></script>
   <script src="app.js" defer></script>
   <script src="auth.js" defer></script>
 </body>

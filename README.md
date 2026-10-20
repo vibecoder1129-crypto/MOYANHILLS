@@ -1,41 +1,91 @@
 # MOYEN HILLS store
 
-A one-product store for the MOYEN HILLS ART WILL TEE. Plain HTML, CSS and JavaScript, no build step.
+A store for MOYEN HILLS. Plain HTML, CSS and JavaScript, no build step.
 Open `index.html` in a browser, or host the folder on GitHub Pages, Netlify or Vercel.
 
 ## Files
 
-- `index.html`: landing page (photo, the shirt, about, lookbook link, "Join the Hills family" email sign-up)
+- `index.html`: landing page (the featured piece, about, lookbook link, "Join the Hills family" email sign-up)
+- `shop.html`: every product in the shop
+- `product.html`: one product (`product.html?id=art-will-tee`): photo gallery, sizes, add to cart, details
 - `lookbook.html`: the lookbook
-- `product.html`: product page (photo gallery, sizes, add to cart, details)
 - `account.html`: customer sign-in, saved details and past orders
+- `admin.html` + `admin.js` + `admin.css`: the admin page (products, prices, stock, photos, promo codes, orders)
 - `terms.html`, `privacy.html`: terms of sale and privacy policy (fill in the yellow highlighted parts before launch)
+- `catalog.js`: **everything you sell**: products, prices, sizes, stock, photos, promo codes, and where emails go
+- `data.js`: loads the products and checks promo codes (from Supabase when connected, otherwise `catalog.js`)
+- `app.js`: cart, checkout, newsletter and gallery. You shouldn't need to edit it to change what you sell.
+- `auth.js` + `config.js`: customer accounts (Supabase); `vendor/supabase.js` is the Supabase library
+- `supabase/schema.sql`: the database: accounts, orders, products, promo codes, admins
 - `fonts/`: the Inter Tight font, self-hosted
 - `site.css`: the design
-- `app.js`: cart, checkout, newsletter, gallery and the product settings
-- `auth.js` + `config.js`: customer accounts (Supabase); `vendor/supabase.js` is the Supabase library
-- `supabase/schema.sql`: the database tables for accounts and orders
 - `images/`: logo and product photos
 
-## Change the price, sizes or stock
+## Add, change or remove products
 
-Edit `PRODUCT` at the top of `app.js`:
+Use the **admin page**: open `admin.html` (on the live site: `moyenhills.com/admin.html`).
+Nothing on the site links to it, and search engines are told to skip it.
 
-```js
-price: 35,
-soldOut: false,                          // true = whole product sold out
-stock: { S: 10, M: 10, L: 10, XL: 10 },  // 0 = that size is sold out
-```
+- **New product:** name, price, colour, sizes with how many pieces are left of each, photos, texts.
+  The link name (`product.html?id=…`) is made from the name and can't be changed after saving.
+- **Change a price:** open the product, change **Price**. For a sale, put the old price in
+  **Old price** and it shows crossed out next to the new one.
+- **Stock:** pieces left per size. 0 = that size is sold out. With the database connected, stock
+  goes down by itself when someone orders and back up if you cancel the order.
+- **Sold out:** tick **Sold out** (or set every size to 0). The photos turn black and white and
+  "SOLD OUT, DONT BE LATE" shows under the name.
+- **Remove:** untick **Show in the shop** to hide it but keep it, or **Delete product**.
+- **Home page:** tick **Feature on the home page** on the product that should be the big one there.
+- **Order in the shop:** lower **Position** numbers show first.
 
-When the product is sold out (`soldOut: true`, or every size at 0), every product photo turns
-black and white, "SOLD OUT, DONT BE LATE" appears under the name, and the buy button is disabled.
+The admin page works in two ways:
+
+1. **Preview mode** (now, before Supabase is connected). Changes are saved in that browser only,
+   and the shop pages in the same browser show them straight away. When you're happy, press
+   **Download catalog.js**, put it in the website folder in place of the old `catalog.js`
+   (and any photos it downloads into `images/`), then publish the site. **Undo all changes**
+   goes back to what `catalog.js` says.
+2. **Live** (once Supabase is connected, see below). Changes are saved in the database and show on the
+   site for everyone straight away, from any computer or phone. Photos are uploaded to Supabase.
+   Only emails on the admins list can sign in.
+
+You can also edit `catalog.js` by hand; it explains each field at the top.
+
+## Promo codes
+
+Customers type a code in the cart and see the discount and the new total straight away. The
+code, discount and total are in the order email and the order record.
+
+Make codes on the admin page under **Promo codes**: % off or € off, a minimum order, a last valid
+day, a maximum number of uses (e.g. 1 for a one-off code for one client), and on/off.
+**Who it's for** is a note only you see.
+
+- **With the database connected**, codes are private, uses are counted, and the database checks
+  the code and works out the prices again when the order is placed, so a customer can't change
+  the price or the discount in their browser.
+- **In preview mode / `catalog.js`**, codes are saved as a fingerprint, so they can't be read
+  from the page source, but uses aren't counted. Connect the database for one-off codes.
+
+## Make yourself an admin (once Supabase is connected)
+
+1. Run `supabase/schema.sql` in **SQL Editor** (again, if you ran an older copy: it is safe to re-run).
+2. Create an account on the site's account page with your email, and confirm it.
+3. In **SQL Editor**, run (with your email):
+   ```sql
+   insert into public.admins (email) values ('you@example.com');
+   ```
+4. Open `admin.html` and sign in. To remove an admin: `delete from public.admins where email = '…';`
+
+The first time you connect the database, the shop shows what's in the `products` table. The
+schema already adds the ART WILL TEE there; if you changed `catalog.js` before, make the same
+changes on the admin page.
 
 ## Where orders go
 
 The site has no server of its own. When a buyer presses **Place order**, `app.js` does two things at once:
 
 1. **Email (always on).** The order is sent through [FormSubmit](https://formsubmit.co) to
-   `SETTINGS.orderEmail` in `app.js` (now `markuss.suna.veid@gmail.com`). The email has the items,
+   `orderEmail` in `catalog.js` (now `markuss.suna.veid@gmail.com`). The email has the items,
    sizes, total and the buyer's name, email, phone, address and note. Reply to it to send the buyer
    payment details; the reply goes straight to the buyer.
 2. **Stored record (once Supabase is set up).** The same order is saved in Supabase under
@@ -44,7 +94,7 @@ The site has no server of its own. When a buyer presses **Place order**, `app.js
 
 The buyer only sees "Order received" if at least one of the two worked. If neither did, the cart is
 kept and the buyer gets a link that opens their email app with the whole order written out,
-addressed to `SETTINGS.contactEmail` (`moyenhills@gmail.com`).
+addressed to `contactEmail` in `catalog.js` (`moyenhills@gmail.com`).
 
 Newsletter sign-ups are emailed the same way to `moyenhills@gmail.com`.
 
@@ -54,10 +104,10 @@ until it is activated. Place one test order on the live site; FormSubmit then em
 arrives. Until then, buyers see "The order could not be sent" (the site checks FormSubmit's answer,
 so an order is never shown as received when it was not). Do the same for the newsletter form.
 
-After activating, FormSubmit gives you a random alias. Put it in `SETTINGS.orderEmail` in `app.js`
+After activating, FormSubmit gives you a random alias. Put it in `orderEmail` in `catalog.js`
 in place of the plain email address, so the address is not visible in the page source.
 
-To send orders to a different inbox, change `SETTINGS.orderEmail` and activate the new address the
+To send orders to a different inbox, change `orderEmail` in `catalog.js` and activate the new address the
 same way.
 
 To send marketing emails to subscribers, copy the sign-ups into a newsletter tool (Mailchimp,

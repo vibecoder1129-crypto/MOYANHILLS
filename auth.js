@@ -8,8 +8,8 @@
   const $ = (s, el = document) => el.querySelector(s);
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const money = (n, cur = 'EUR') => new Intl.NumberFormat('en-IE', { style: 'currency', currency: cur, maximumFractionDigits: n % 1 ? 2 : 0 }).format(n);
-  const enabled = !!(cfg.supabaseUrl && cfg.supabaseAnonKey && window.supabase);
-  const sb = enabled ? window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey) : null;
+  const sb = window.mhData?.supabase || null; // created in data.js
+  const enabled = !!sb;
   const FIELDS = ['full_name', 'phone', 'address', 'city', 'postcode', 'country'];
 
   const state = { user: null, profile: null };
@@ -91,14 +91,14 @@
     list.innerHTML = '<li class="orders__empty">Loading your orders…</li>';
     const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending: false });
     if (error) { list.innerHTML = `<li class="orders__empty">Could not load your orders. ${esc(error.message)}</li>`; return; }
-    if (!data.length) { list.innerHTML = '<li class="orders__empty">No orders yet. <a href="product.html">Shop the ART WILL TEE</a></li>'; return; }
+    if (!data.length) { list.innerHTML = '<li class="orders__empty">No orders yet. <a href="shop.html">Visit the shop</a></li>'; return; }
     list.innerHTML = data.map((o) => {
       const items = (o.items || []).map((i) => `${esc(i.qty)} × ${esc(i.name)}, size ${esc(i.size)}`).join('<br>');
       const date = new Date(o.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
       return `<li class="order">
         <div class="order__top"><span>Order #${esc(o.id)}</span><span class="order__status order__status--${esc(o.status)}">${esc(o.status)}</span></div>
         <p class="order__items">${items}</p>
-        <div class="order__bottom"><span>${esc(date)}</span><b>${esc(money(Number(o.subtotal), o.currency))}</b></div>
+        <div class="order__bottom"><span>${esc(date)}</span><b>${esc(money(Number(o.total ?? o.subtotal), o.currency))}</b></div>
       </li>`;
     }).join('');
   }
