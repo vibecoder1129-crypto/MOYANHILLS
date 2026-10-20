@@ -373,6 +373,20 @@ $$('[data-top]').forEach((b) => b.addEventListener('click', (e) => {
   window.scrollTo({ top: 0, behavior: reduced() ? 'auto' : 'smooth' });
 }));
 $$('[data-year]').forEach((el) => { el.textContent = new Date().getFullYear(); });
+// Developer credit: tap the © three times to reveal it.
+(() => {
+  const toggle = $('[data-credit-toggle]');
+  const credit = $('[data-credit]');
+  if (!toggle || !credit) return;
+  let taps = 0, timer;
+  toggle.addEventListener('click', () => {
+    taps += 1;
+    clearTimeout(timer);
+    timer = setTimeout(() => { taps = 0; }, 1200);
+    if (taps >= 3) { credit.hidden = !credit.hidden; taps = 0; }
+  });
+})();
+console.log('%cMOYEN HILLS%c  Designed & built by Archit Gajjar', 'font-weight:800;letter-spacing:.1em', 'color:#888');
 
 renderProduct();
 renderCart();
