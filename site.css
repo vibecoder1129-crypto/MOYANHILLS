@@ -159,6 +159,8 @@ html { scroll-padding-top: var(--head-h); }
 
 /* ---------- Brand ---------- */
 .brand { padding: clamp(88px, 11vw, 160px) var(--m) 0; display: grid; justify-items: center; text-align: center; gap: 28px; }
+.brand__body { max-width: 52ch; display: grid; gap: 14px; font-size: var(--t-body); line-height: 1.65; color: #333; }
+.brand__body p { margin: 0; }
 .brand__statement { max-width: 44ch; font-size: clamp(1.375rem, 1rem + 1.5vw, 2.25rem); font-weight: 600; line-height: 1.15; letter-spacing: -0.025em; }
 
 /* ---------- Lookbook link on the landing page ---------- */
