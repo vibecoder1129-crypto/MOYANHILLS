@@ -235,7 +235,7 @@ html { scroll-padding-top: var(--head-h); }
 .foot__nav a { font-size: var(--t-xs); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; text-decoration: none; color: var(--muted); transition: color .2s; }
 .foot__nav a:hover { color: var(--ink); }
 .foot__legal { font-size: var(--t-xs); color: var(--muted); }
-.foot__c { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: default; }
+.foot__credit { margin-top: -20px; font-size: var(--t-xs); color: var(--muted); opacity: .7; letter-spacing: .02em; }
 
 /* ---------- Phone ---------- */
 @media (max-width: 720px) {
