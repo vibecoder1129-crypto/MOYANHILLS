@@ -13,10 +13,10 @@ create table if not exists public.profiles (
   updated_at timestamptz not null default now()
 );
 
--- Orders placed while signed in.
+-- Every order placed on the site. user_id is empty for guest orders.
 create table if not exists public.orders (
   id bigint generated always as identity primary key,
-  user_id uuid not null references auth.users (id) on delete cascade,
+  user_id uuid references auth.users (id) on delete set null,
   created_at timestamptz not null default now(),
   items jsonb not null,            -- [{ "name": "ART WILL TEE", "size": "M", "qty": 1, "price": 35 }]
   subtotal numeric(10, 2) not null,
@@ -32,6 +32,9 @@ create table if not exists public.orders (
   country text,
   note text
 );
+-- Projects created before guest orders were stored: allow an empty user_id.
+alter table public.orders alter column user_id drop not null;
+create index if not exists orders_created on public.orders (created_at desc);
 create index if not exists orders_user_created on public.orders (user_id, created_at desc);
 
 -- Each customer can only see and change their own rows.
@@ -50,6 +53,10 @@ drop policy if exists "own orders: insert" on public.orders;
 create policy "own orders: read"   on public.orders for select using (auth.uid() = user_id);
 -- Customers can add an order but never change its status; only you can, from the dashboard.
 create policy "own orders: insert" on public.orders for insert with check (auth.uid() = user_id and status = 'received');
+-- Guests can add an order with no user_id (it is not linked to any account).
+-- Nobody can read guest orders from the site; you see them in the dashboard.
+drop policy if exists "guest orders: insert" on public.orders;
+create policy "guest orders: insert" on public.orders for insert to anon, authenticated with check (user_id is null and status = 'received');
 
 -- Create an empty profile automatically when someone signs up (keeps the name from Google/Apple).
 create or replace function public.handle_new_user()

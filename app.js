@@ -10,6 +10,8 @@ const SETTINGS = {
   orderEmail: 'markuss.suna.veid@gmail.com',
   // New newsletter sign-ups are emailed here.
   subscribeEmail: 'moyenhills@gmail.com',
+  // Shown to buyers if an order cannot be sent.
+  contactEmail: 'moyenhills@gmail.com',
 };
 
 const PRODUCT = {
@@ -207,12 +209,23 @@ $('[data-checkout]').addEventListener('submit', async (e) => {
   const button = form.querySelector('button[type=submit]');
   button.disabled = true;
   msg.textContent = 'Sending your order…';
+  const order = {
+    items: cart.map((i) => ({ name: PRODUCT.name, colour: PRODUCT.colour, size: i.size, qty: i.qty, price: PRODUCT.price })),
+    subtotal: total(),
+    currency: SETTINGS.currency,
+    full_name: data.name, email: data.email, phone: data.phone || null,
+    address: data.address, city: data.city, postcode: data.postcode, country: data.country, note: data.note || null,
+  };
+  const subject = `New order: ${totalQty()} × ${PRODUCT.name}, ${money(total())}`;
+  const address = `${data.address}, ${data.postcode} ${data.city}, ${data.country}`;
   try {
-    const res = await fetch(endpoint(SETTINGS.orderEmail), {
+    // 1. Email the owner. FormSubmit answers 200 even when it did not send
+    //    (for example before the address is activated), so check `success`.
+    const emailed = fetch(endpoint(SETTINGS.orderEmail), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({
-        _subject: `New order: ${totalQty()} × ${PRODUCT.name}, ${money(total())}`,
+        _subject: subject,
         _template: 'table',
         _replyto: data.email,
         Order: lines,
@@ -220,18 +233,18 @@ $('[data-checkout]').addEventListener('submit', async (e) => {
         Name: data.name,
         Email: data.email,
         Phone: data.phone || '—',
-        Address: `${data.address}, ${data.postcode} ${data.city}, ${data.country}`,
+        Address: address,
         Note: data.note || '—',
       }),
-    });
-    if (!res.ok) throw new Error(res.status);
-    await window.mhAccount?.recordOrder({
-      items: cart.map((i) => ({ name: PRODUCT.name, colour: PRODUCT.colour, size: i.size, qty: i.qty, price: PRODUCT.price })),
-      subtotal: total(),
-      currency: SETTINGS.currency,
-      full_name: data.name, email: data.email, phone: data.phone || null,
-      address: data.address, city: data.city, postcode: data.postcode, country: data.country, note: data.note || null,
-    });
+    }).then(async (res) => {
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok || String(body.success) !== 'true') throw new Error(body.message || res.status);
+      return true;
+    }).catch((err) => { console.warn('Order email not sent:', err.message); return false; });
+    // 2. Store the order in Supabase (every order, signed in or guest), once accounts are set up.
+    const stored = window.mhAccount?.recordOrder(order) ?? Promise.resolve(false);
+    const [sent, saved] = await Promise.all([emailed, stored]);
+    if (!sent && !saved) throw new Error('not delivered');
     cart = [];
     save();
     form.reset();
@@ -239,7 +252,10 @@ $('[data-checkout]').addEventListener('submit', async (e) => {
     $('[data-cart-view]').hidden = true;
     $('[data-cart-done]').hidden = false;
   } catch {
-    msg.innerHTML = 'The order could not be sent. Please try again, or email it to <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a>.';
+    // Nothing reached the shop: let the buyer send the order themselves, already written out.
+    const mail = `mailto:${SETTINGS.contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
+      `${lines}\nSubtotal: ${money(total())}\n\nName: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone || '—'}\nAddress: ${address}\nNote: ${data.note || '—'}`)}`;
+    msg.innerHTML = `The order could not be sent. Please try again, or <a href="${mail}">email the order to ${SETTINGS.contactEmail}</a>.`;
   } finally {
     button.disabled = false;
   }
@@ -262,7 +278,8 @@ $('[data-subscribe]')?.addEventListener('submit', async (e) => {
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({ _subject: 'New member of the Hills family', _template: 'table', Email: email, _replyto: email }),
     });
-    if (!res.ok) throw new Error(res.status);
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok || String(body.success) !== 'true') throw new Error(body.message || res.status);
     form.reset();
     msg.textContent = 'Welcome to the Hills family. New drops and news will come to your inbox.';
   } catch {
