@@ -54,14 +54,18 @@
       const note = $('[data-checkout-account]', form.closest('dialog') || document);
       if (note) note.hidden = false;
     },
-    // Store the order on the account and remember the delivery details
+    // Store the order (on the account if signed in, as a guest order if not).
+    // Resolves true when the order was saved.
     async recordOrder(order) {
-      if (!state.user) return;
-      const { error } = await sb.from('orders').insert({ user_id: state.user.id, ...order });
-      if (error) console.warn('Order not saved to account:', error.message);
-      try {
-        await saveProfile({ full_name: order.full_name, phone: order.phone, address: order.address, city: order.city, postcode: order.postcode, country: order.country });
-      } catch (e) { console.warn('Details not saved:', e.message); }
+      if (!enabled) return false;
+      const { error } = await sb.from('orders').insert({ user_id: state.user?.id ?? null, ...order });
+      if (error) console.warn('Order not saved:', error.message);
+      if (state.user) {
+        try {
+          await saveProfile({ full_name: order.full_name, phone: order.phone, address: order.address, city: order.city, postcode: order.postcode, country: order.country });
+        } catch (e) { console.warn('Details not saved:', e.message); }
+      }
+      return !error;
     },
   };
 

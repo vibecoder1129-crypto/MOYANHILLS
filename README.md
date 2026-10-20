@@ -14,7 +14,7 @@ Open `index.html` in a browser, or host the folder on GitHub Pages, Netlify or V
 - `site.css`: the design
 - `app.js`: cart, checkout, newsletter, gallery and the product settings
 - `auth.js` + `config.js`: customer accounts (Supabase); `vendor/supabase.js` is the Supabase library
-- `supabase/schema.sql`: the database tables for accounts
+- `supabase/schema.sql`: the database tables for accounts and orders
 - `images/`: logo and product photos
 
 ## Change the price, sizes or stock
@@ -30,18 +30,35 @@ stock: { S: 10, M: 10, L: 10, XL: 10 },  // 0 = that size is sold out
 When the product is sold out (`soldOut: true`, or every size at 0), every product photo turns
 black and white, "SOLD OUT, DONT BE LATE" appears under the name, and the buy button is disabled.
 
-## Orders and sign-ups (email)
+## Where orders go
 
-The site has no server. It sends emails through [FormSubmit](https://formsubmit.co):
+The site has no server of its own. When a buyer presses **Place order**, `app.js` does two things at once:
 
-- **New orders** go to `markuss.suna.veid@gmail.com`, with the items, sizes, total and the buyer's
-  name, email, phone and address. Reply to that email to send the buyer payment details.
-- **Newsletter sign-ups** go to `moyenhills@gmail.com`.
+1. **Email (always on).** The order is sent through [FormSubmit](https://formsubmit.co) to
+   `SETTINGS.orderEmail` in `app.js` (now `markuss.suna.veid@gmail.com`). The email has the items,
+   sizes, total and the buyer's name, email, phone, address and note. Reply to it to send the buyer
+   payment details; the reply goes straight to the buyer.
+2. **Stored record (once Supabase is set up).** The same order is saved in Supabase under
+   **Table Editor → orders**, for guests and signed-in customers alike (guest orders have an empty
+   `user_id`). Until `config.js` has the Supabase keys, this step is skipped.
 
-**One-time activation:** the first time each form is used on the live site, FormSubmit emails an
-activation link to that address. Click it, and from then on every order or sign-up arrives.
-After activating, FormSubmit also gives you a random alias. Put that alias in `SETTINGS` in
-`app.js` in place of the plain email address, so the address is not visible in the page source.
+The buyer only sees "Order received" if at least one of the two worked. If neither did, the cart is
+kept and the buyer gets a link that opens their email app with the whole order written out,
+addressed to `SETTINGS.contactEmail` (`moyenhills@gmail.com`).
+
+Newsletter sign-ups are emailed the same way to `moyenhills@gmail.com`.
+
+**One-time activation (do this before launch):** FormSubmit does not deliver anything to an address
+until it is activated. Place one test order on the live site; FormSubmit then emails an
+**Activate Form** link to the order address. Click it, then place a second test order and check it
+arrives. Until then, buyers see "The order could not be sent" (the site checks FormSubmit's answer,
+so an order is never shown as received when it was not). Do the same for the newsletter form.
+
+After activating, FormSubmit gives you a random alias. Put it in `SETTINGS.orderEmail` in `app.js`
+in place of the plain email address, so the address is not visible in the page source.
+
+To send orders to a different inbox, change `SETTINGS.orderEmail` and activate the new address the
+same way.
 
 To send marketing emails to subscribers, copy the sign-ups into a newsletter tool (Mailchimp,
 Brevo, MailerLite) and send from `moyenhills@gmail.com`.
@@ -90,6 +107,7 @@ To hide a sign-in button (for example Apple while it is being set up), set it to
 - **Your orders**: every order placed while signed in, with its status.
 
 ### What you do
-Orders still arrive by email as before. Signed-in orders are also stored in Supabase under
-**Table Editor → orders**. Change an order's **status** to `paid`, `shipped` or `cancelled` there and the
+Orders still arrive by email as before. Every order (signed in or guest) is also stored in Supabase
+under **Table Editor → orders**. If you set up Supabase before guest orders were stored, run
+`supabase/schema.sql` again once so guest orders can be saved. Change an order's **status** to `paid`, `shipped` or `cancelled` there and the
 customer sees it on their account page. Customers can only ever see their own details and orders.
