@@ -16,8 +16,11 @@ window.MH_CATALOG = {
   settings: {
     currency: 'EUR',
     // New orders are emailed here (via formsubmit.co, no server needed).
-    orderEmail: 'markuss.suna.veid@gmail.com',
-    // New newsletter sign-ups are emailed here.
+    orderEmail: 'ordersmoyenhills@gmail.com',
+    // "Join the Hills family" sign-ups go to this Brevo form (double opt-in: Brevo emails a
+    // confirmation link). Brevo → Contacts → Forms → your form → Share → the form's `action` URL.
+    newsletterForm: 'https://49ed994b.sibforms.com/serve/MUIFAON0Ov00jxFmR0y9YqpvB7UI9vwoO-dHGMrbQw0hvest807HNSqBDf7cKYC2Lnsx2E0ehtxAZJt8lhzreLFOUUI6hEVcTZW8dvSVsmlw9zN3jRHFIL9SFn-fW0smQPCt8F8XZ7mZtCVnN2Z3OLVZJat7-K6jdrqihA6ulO-nni44FWzjpSEEtpUO9oxAxFXEY76yM-11OFtlIQ==',
+    // Only used if newsletterForm is empty: sign-ups are then emailed here.
     subscribeEmail: 'moyenhills@gmail.com',
     // Shown to buyers if an order cannot be sent.
     contactEmail: 'moyenhills@gmail.com',

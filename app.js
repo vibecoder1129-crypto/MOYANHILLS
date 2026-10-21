@@ -37,7 +37,7 @@ let current = null;
 /* Images: catalog photos may carry a srcset; uploaded ones are a plain src */
 function imgTag(im, { cls = '', sizes = '(max-width: 720px) 100vw, 50vw', lazy = true, alt } = {}) {
   if (!im) return '';
-  return `<img${cls ? ` class="${cls}"` : ''} src="${esc(im.src)}"${im.srcset ? ` srcset="${esc(im.srcset)}" sizes="${sizes}"` : ''}${im.width ? ` width="${im.width}" height="${im.height}"` : ''} alt="${esc(alt ?? im.alt ?? '')}"${lazy ? ' loading="lazy"' : ' fetchpriority="high"'}>`;
+  return `<img${cls ? ` class="${cls}"` : ''} src="${esc(im.src)}"${im.srcset ? ` srcset="${esc(im.srcset)}" sizes="${sizes}"` : ''}${im.width ? ` width="${Number(im.width) || ''}" height="${Number(im.height) || ''}"` : ''} alt="${esc(alt ?? im.alt ?? '')}"${lazy ? ' loading="lazy"' : ' fetchpriority="high"'}>`;
 }
 const smallSrc = (im) => (im?.srcset ? im.srcset.split(',')[0].trim().split(' ')[0] : im?.src || '');
 
@@ -146,7 +146,7 @@ function renderProductPage(p) {
   const gal = $('[data-gallery]', pdp);
   const n = p.images.length;
   $('[data-track]', gal).innerHTML = p.images.map((im, i) => `<li class="gallery__slide" aria-label="${i + 1} of ${n}">${imgTag(im, { lazy: i > 0 })}</li>`).join('');
-  $('.gallery__thumbs', gal).innerHTML = n > 1 ? p.images.map((im, i) => `<button type="button" class="gallery__thumb${i ? '' : ' is-on'}" data-go="${i}" aria-label="Show photo ${i + 1}"><img src="${esc(smallSrc(im))}"${im.width ? ` width="${im.width}" height="${im.height}"` : ''} alt="" loading="lazy"></button>`).join('') : '';
+  $('.gallery__thumbs', gal).innerHTML = n > 1 ? p.images.map((im, i) => `<button type="button" class="gallery__thumb${i ? '' : ' is-on'}" data-go="${i}" aria-label="Show photo ${i + 1}"><img src="${esc(smallSrc(im))}"${im.width ? ` width="${Number(im.width) || ''}" height="${Number(im.height) || ''}"` : ''} alt="" loading="lazy"></button>`).join('') : '';
   $('[data-count]', gal).innerHTML = `<span data-index>1</span> / ${n}`;
   $$('.gallery__arrow, [data-count]', gal).forEach((el) => { el.hidden = n < 2; });
   initGallery(gal);
@@ -415,6 +415,40 @@ $('[data-subscribe]')?.addEventListener('submit', async (e) => {
   const button = form.querySelector('button');
   button.disabled = true;
   msg.textContent = 'Joining…';
+  // Brevo form (double opt-in): Brevo emails a link to confirm the address
+  if (SETTINGS.newsletterForm) {
+    const body = new FormData();
+    body.append('EMAIL', email);
+    body.append('email_address_check', ''); // Brevo's own bot trap, must stay empty
+    body.append('locale', 'en');
+    try {
+      const res = await fetch(`${SETTINGS.newsletterForm}?isAjax=1`, { method: 'POST', body });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.success === false) throw new Error(data.message || res.status);
+      form.reset();
+      msg.textContent = 'Almost there: check your inbox and tap the link to confirm.';
+    } catch (err) {
+      if (err instanceof TypeError) {
+        // Brevo could not be reached from the page: send the form the plain way, in a new tab
+        const f = document.createElement('form');
+        f.method = 'POST';
+        f.action = SETTINGS.newsletterForm;
+        f.target = '_blank';
+        f.hidden = true;
+        for (const [k, v] of body) f.append(Object.assign(document.createElement('input'), { type: 'hidden', name: k, value: v }));
+        document.body.append(f);
+        f.submit();
+        f.remove();
+        form.reset();
+        msg.textContent = 'Almost there: check your inbox and tap the link to confirm.';
+      } else {
+        msg.textContent = 'That did not go through. Check the address and try again.';
+      }
+    } finally {
+      button.disabled = false;
+    }
+    return;
+  }
   try {
     const res = await fetch(endpoint(SETTINGS.subscribeEmail), {
       method: 'POST',

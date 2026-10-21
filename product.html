@@ -13,7 +13,7 @@
   <link rel="icon" href="images/favicon.png">
   <link rel="preload" href="fonts/inter-tight-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="site.css">
-  <script>document.documentElement.classList.add('js');try{if(sessionStorage.getItem('mh-intro'))document.documentElement.classList.add('seen-intro');else sessionStorage.setItem('mh-intro','1')}catch(e){}</script>
+  <script src="boot.js"></script>
 </head>
 <body>
   <div class="loader" aria-hidden="true">
@@ -133,7 +133,7 @@
         <button class="btn" type="submit">JOIN</button>
       </div>
       <p class="sub__msg" data-sub-msg role="status" aria-live="polite"></p>
-      <p class="sub__consent">By joining you agree to get emails from MOYEN HILLS. Unsubscribe any time. <a href="privacy.html">Privacy policy</a></p>
+      <p class="sub__consent">By joining you agree to get emails about MOYEN HILLS drops and news. Unsubscribe any time from any email. <a href="privacy.html">Privacy policy</a></p>
     </form>
     <ul class="foot__links" data-reveal>
       <li><a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">instagram</a></li>
@@ -146,6 +146,8 @@
       <a href="mailto:moyenhills@gmail.com">Contact</a>
       <a href="terms.html">Terms</a>
       <a href="privacy.html">Privacy</a>
+      <a href="privacy.html#device">Cookies</a>
+      <a href="withdraw.html">Cancel an order</a>
     </nav>
     <p class="foot__legal">© <span data-year>2026</span> MOYEN HILLS · <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></p>
     <p class="foot__credit">Designed &amp; built by Archit Gajjar</p>
@@ -205,7 +207,7 @@
         <label>Email<input name="email" type="email" autocomplete="email" required></label>
         <div class="phone">
           <label>Country code<input name="phone_code" list="dial-codes" value="+371" inputmode="tel" autocomplete="tel-country-code" pattern="\+?[0-9]{1,4}" title="Country code, for example +371" placeholder="+371"></label>
-          <label>Phone<input name="phone" type="tel" autocomplete="tel-national" placeholder="20 000 000"></label>
+          <label>Phone<input name="phone" type="tel" autocomplete="tel-national" placeholder="20 000 000" pattern="[0-9 \(\)\.\/\-]{4,30}" title="Numbers only, for example 20 000 000"></label>
         </div>
         <p class="phone__hint">Choose your country code or type it yourself.</p>
         <datalist id="dial-codes">
@@ -265,16 +267,16 @@
         </div>
         <label>Country<input name="country" autocomplete="country-name" value="Latvia" required></label>
         <label>Note (optional)<textarea name="note" rows="2"></textarea></label>
-        <input type="text" name="_honey" class="sr" tabindex="-1" autocomplete="off">
+        <input type="text" name="_honey" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true">
         <p class="checkout__account" data-checkout-account hidden>Signed in — this order will be saved to your account.</p>
-        <p class="checkout__legal">By placing an order you agree to our <a href="terms.html">Terms of sale</a> and <a href="privacy.html">Privacy policy</a>.</p>
-        <button class="btn btn--wide" type="submit">Place order</button>
+        <p class="checkout__legal">Prices are in euro. Delivery cost is added in our confirmation email, before you pay. By sending this order you accept our <a href="terms.html">Terms of sale</a>. How we use your details: <a href="privacy.html">Privacy policy</a>.</p>
+        <button class="btn btn--wide" type="submit">Send order request</button>
         <p class="checkout__msg" data-checkout-msg role="status" aria-live="polite"></p>
       </form>
     </div>
     <div class="cart__done" data-cart-done hidden>
       <p class="cart__done-title">Order received</p>
-      <p>Thank you. We will email you within a day to confirm your order and send the payment details.</p>
+      <p>Thank you. We will email you within a day to confirm your order and send the payment details. Changed your mind? You can <a href="withdraw.html">cancel</a> up to 14 days after it arrives.</p>
       <button type="button" class="btn" data-close-cart>Keep looking</button>
     </div>
   </dialog>
@@ -285,5 +287,6 @@
   <script src="data.js" defer></script>
   <script src="app.js" defer></script>
   <script src="auth.js" defer></script>
+  <script src="cookie.js" defer></script>
 </body>
 </html>

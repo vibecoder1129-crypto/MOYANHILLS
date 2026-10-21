@@ -12,11 +12,15 @@ Open `index.html` in a browser, or host the folder on GitHub Pages, Netlify or V
 - `account.html`: customer sign-in, saved details and past orders
 - `admin.html` + `admin.js` + `admin.css`: the admin page (products, prices, stock, photos, promo codes, orders)
 - `terms.html`, `privacy.html`: terms of sale and privacy policy (fill in the yellow highlighted parts before launch)
+- `withdraw.html` + `withdraw.js`: **Cancel an order**, the EU withdrawal button (linked in every footer)
+- `boot.js`: tiny start-up script in each page's head (kept in a file so the security policy can block inline scripts)
 - `catalog.js`: **everything you sell**: products, prices, sizes, stock, photos, promo codes, and where emails go
 - `data.js`: loads the products and checks promo codes (from Supabase when connected, otherwise `catalog.js`)
 - `app.js`: cart, checkout, newsletter and gallery. You shouldn't need to edit it to change what you sell.
 - `auth.js` + `config.js`: customer accounts (Supabase); `vendor/supabase.js` is the Supabase library
 - `supabase/schema.sql`: the database: accounts, orders, products, promo codes, admins
+- `supabase/privacy.sql`: privacy and EU rules on top of it: delete/download my data, cancellations, 30-day price rule, retention. **Run it after `schema.sql`, every time.**
+- `vercel.json` + `.vercelignore`: security headers, and files kept off the public site
 - `fonts/`: the Inter Tight font, self-hosted
 - `site.css`: the design
 - `images/`: logo and product photos
@@ -68,7 +72,8 @@ day, a maximum number of uses (e.g. 1 for a one-off code for one client), and on
 
 ## Make yourself an admin (once Supabase is connected)
 
-1. Run `supabase/schema.sql` in **SQL Editor** (again, if you ran an older copy: it is safe to re-run).
+1. Run `supabase/schema.sql` in **SQL Editor** (again, if you ran an older copy: it is safe to re-run),
+   then run `supabase/privacy.sql` the same way. Always run both, in that order.
 2. Create an account on the site's account page with your email, and confirm it.
 3. In **SQL Editor**, run (with your email):
    ```sql
@@ -112,14 +117,42 @@ The first time you connect the database, the shop shows what's in the `products`
 schema already adds the ART WILL TEE there; if you changed `catalog.js` before, make the same
 changes on the admin page.
 
+## Privacy and EU rules
+
+What the site does for you (details in `supabase/privacy.sql`, `terms.html`, `privacy.html`):
+
+- **Cancel an order (EU withdrawal button).** Every footer links to `withdraw.html`. The customer fills
+  in the form, checks it and presses **Confirm withdrawal**. You get an email, the customer gets an
+  automatic confirmation email, and it is saved in the Supabase table `withdrawals` (tick `handled`
+  once refunded). EU law requires this button since 19 June 2026.
+- **Download my data / Delete my account** on the account page. Deleting removes the sign-in and
+  saved details; orders stay as order records (needed for accounting) but are no longer linked.
+  Admins must be removed as admins before they can delete their account.
+- **Crossed-out prices follow the EU 30-day rule.** The database keeps a price history and refuses an
+  "old price" higher than the lowest price of the 30 days before the reduction. (In `catalog.js`
+  mode, check this yourself.)
+- **No tracking, so no cookie banner.** The site only stores the cart, the intro flag and the
+  sign-in in the browser. If you ever add analytics, pixels or embeds, you need a consent banner first.
+- **Rate-limit fingerprints** are salted, one-way and forgotten after 24 hours.
+- **Retention.** About once a year, delete records accounting law no longer needs, in SQL Editor:
+  `select public.purge_old_records(5);` (use the number of years your accountant confirms).
+- **Security headers** apply to every page: only the site's own scripts can run, and data can only be
+  sent to Supabase and FormSubmit.
+
+Requests by email (someone without an account asks for their data or for deletion): find their rows
+in Table Editor (`orders`, `withdrawals`), send or delete them within one month, and keep order
+records only as long as accounting law requires.
+
 ## Where orders go
 
-The site has no server of its own. When a buyer presses **Place order**, `app.js` does two things at once:
+The site has no server of its own. When a buyer presses **Send order request**, `app.js` does two things at once:
 
 1. **Email (always on).** The order is sent through [FormSubmit](https://formsubmit.co) to
-   `orderEmail` in `catalog.js` (now `markuss.suna.veid@gmail.com`). The email has the items,
+   `orderEmail` in `catalog.js` (now `ordersmoyenhills@gmail.com`, which also gets cancellations from `withdraw.html`). The email has the items,
    sizes, total and the buyer's name, email, phone, address and note. Reply to it to send the buyer
    payment details; the reply goes straight to the buyer.
+   After changing `orderEmail`, place one test order on the live site: FormSubmit sends an
+   **Activate** link to the new address first, and nothing is forwarded until you click it.
 2. **Stored record (once Supabase is set up).** The same order is saved in Supabase under
    **Table Editor → orders**, for guests and signed-in customers alike (guest orders have an empty
    `user_id`). Until `config.js` has the Supabase keys, this step is skipped.
@@ -128,13 +161,16 @@ The buyer only sees "Order received" if at least one of the two worked. If neith
 kept and the buyer gets a link that opens their email app with the whole order written out,
 addressed to `contactEmail` in `catalog.js` (`moyenhills@gmail.com`).
 
-Newsletter sign-ups are emailed the same way to `moyenhills@gmail.com`.
+Newsletter sign-ups ("Join the Hills family") go to **Brevo**, to the form in `newsletterForm` in
+`catalog.js`. Brevo emails each person a confirmation link (double opt-in) and only adds them to the
+list once they click it. See and email subscribers in Brevo → Contacts. If `newsletterForm` is
+empty, sign-ups are emailed through FormSubmit to `subscribeEmail` instead.
 
 **One-time activation (do this before launch):** FormSubmit does not deliver anything to an address
 until it is activated. Place one test order on the live site; FormSubmit then emails an
 **Activate Form** link to the order address. Click it, then place a second test order and check it
 arrives. Until then, buyers see "The order could not be sent" (the site checks FormSubmit's answer,
-so an order is never shown as received when it was not). Do the same for the newsletter form.
+so an order is never shown as received when it was not).
 
 After activating, FormSubmit gives you a random alias. Put it in `orderEmail` in `catalog.js`
 in place of the plain email address, so the address is not visible in the page source.
@@ -142,8 +178,8 @@ in place of the plain email address, so the address is not visible in the page s
 To send orders to a different inbox, change `orderEmail` in `catalog.js` and activate the new address the
 same way.
 
-To send marketing emails to subscribers, copy the sign-ups into a newsletter tool (Mailchimp,
-Brevo, MailerLite) and send from `moyenhills@gmail.com`.
+Send newsletters from Brevo → Campaigns, to the list the form fills. Every Brevo email has an
+unsubscribe link; don't import email addresses from elsewhere without their confirmation.
 
 ## Customer accounts (Google, Apple, email)
 
@@ -152,7 +188,8 @@ the account page says "coming soon" and everyone orders as a guest, exactly as b
 
 ### 1. Create the project and tables
 1. Sign up at supabase.com and create a project (region: Frankfurt or Stockholm is closest to Latvia).
-2. **SQL Editor → New query**: paste everything from `supabase/schema.sql` and press **Run**.
+2. **SQL Editor → New query**: paste everything from `supabase/schema.sql` and press **Run**. Then do the
+   same with `supabase/privacy.sql`.
 3. **Project Settings → API**: copy the **Project URL** and the **anon public** key into `config.js`.
 4. **Authentication → URL Configuration**:
    - **Site URL**: your live site, e.g. `https://moyenhills.com`

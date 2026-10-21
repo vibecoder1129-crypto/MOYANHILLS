@@ -13,7 +13,7 @@
   <link rel="icon" href="images/favicon.png">
   <link rel="preload" href="fonts/inter-tight-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="site.css">
-  <script>document.documentElement.classList.add('js');try{if(sessionStorage.getItem('mh-intro'))document.documentElement.classList.add('seen-intro');else sessionStorage.setItem('mh-intro','1')}catch(e){}</script>
+  <script src="boot.js"></script>
 </head>
 <body>
   <div class="loader" aria-hidden="true">
@@ -55,30 +55,46 @@
         <dl class="legal__seller">
           <dt>Seller</dt><dd><mark class="todo">[Your full name or company name]</mark>, trading as MOYEN HILLS</dd>
           <dt>Registration no.</dt><dd><mark class="todo">[Company or self-employed registration number, if you have one]</mark></dd>
-          <dt>Address</dt><dd><mark class="todo">[Contact address in Latvia]</mark></dd>
+          <dt>VAT no.</dt><dd><mark class="todo">[LV VAT number, or “Not VAT-registered”]</mark></dd>
+          <dt>Address</dt><dd><mark class="todo">[Geographic address in Latvia where you can be reached]</mark></dd>
           <dt>Email</dt><dd><a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></dd>
         </dl>
 
-        <h2>1. Ordering</h2>
-        <p>Add the tee to your cart, enter your details and press <b>Place order</b>. This sends us an order request. We reply by email within one working day to confirm the order, the total including delivery, and how to pay. The contract is made when we confirm your order and you pay.</p>
+        <h2 id="ordering">1. Ordering</h2>
+        <p>Add a piece to your cart, enter your details and press <b>Send order request</b>. This sends us an order request; it does not oblige you to pay yet. We reply by email within one working day to confirm the order, the final total including delivery, and how to pay. The contract is made when we confirm your order and you pay. Our confirmation email is your copy of the contract; these terms stay available on this page. Contracts are in English.</p>
 
-        <h2>2. Prices and payment</h2>
-        <p>Prices are shown in euro. <mark class="todo">[State whether prices include VAT, or that you are not VAT-registered]</mark>. Delivery costs are added in our confirmation email before you pay. Payment is made using the details in that email.</p>
+        <h2 id="prices">2. Prices and payment</h2>
+        <p>Prices are shown in euro. <mark class="todo">[“All prices include VAT.” — or — “We are not VAT-registered, so no VAT is charged.”]</mark> Delivery costs are not included in the shown price: they are added in our confirmation email, before you pay, and you can still decide not to go ahead. Payment is made using the details in that email.</p>
+        <p>When a product shows a crossed-out old price, that old price is the lowest price we charged for it in the 30 days before the price reduction.</p>
 
-        <h2>3. Delivery</h2>
-        <p>Every tee is pre-made. We send your order within 1–3 days after payment. <mark class="todo">[Carriers you use, e.g. Omniva or DPD, countries you ship to and typical delivery times]</mark></p>
+        <h2 id="delivery">3. Delivery</h2>
+        <p>Every piece is pre-made. We send your order within 1–3 days after payment. <mark class="todo">[Carriers you use, e.g. Omniva or DPD, countries you ship to, delivery costs and typical delivery times]</mark></p>
 
-        <h2>4. Your right to cancel (14 days)</h2>
-        <p>If you live in the EU you can cancel your purchase within 14 days of receiving it, without giving a reason. Email us at <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a> with your order number and the words “I want to cancel my order”. Send the tee back unworn, unwashed and with its label within 14 days of telling us. We refund the price and the standard delivery cost within 14 days of receiving the tee back, using the same payment method. <mark class="todo">[Who pays for the return shipping — usually the customer]</mark></p>
+        <h2 id="withdrawal">4. Your right to cancel (14 days)</h2>
+        <p>You have the right to withdraw from this contract within 14 days without giving any reason. The withdrawal period ends 14 days after the day you, or someone you name other than the carrier, receive the goods. If one order arrives in several parcels, it ends 14 days after the last one arrives.</p>
+        <p><b>How to cancel:</b> use the <a href="withdraw.html">Cancel an order</a> page (the quickest way; you get an email confirmation straight away), or tell us by email at <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a> or by post to the address above, for example with the model form below. It is enough to send your notice before the 14 days run out.</p>
+        <p><b>Sending it back:</b> send the goods back to <mark class="todo">[return address]</mark> without undue delay and no later than 14 days after telling us. <mark class="todo">[“You pay the direct cost of returning the goods.” — or — “We pay for the return.”]</mark> You are only responsible for any loss in value caused by handling the goods beyond what is needed to check them (as you would in a shop), so please return them unworn and unwashed.</p>
+        <p><b>Refund:</b> we refund all payments received from you, including the standard delivery cost (not extra costs if you chose a more expensive delivery method), without undue delay and no later than 14 days after we receive your notice. We use the same payment method you used, unless you agree otherwise; you pay no fees for the refund. We may wait to refund until we have received the goods back or you have shown proof that you sent them, whichever is earlier.</p>
 
-        <h2>5. Faulty items</h2>
-        <p>If something is wrong with your tee, contact us. You have the legal guarantee of conformity for two years from delivery under Latvian and EU consumer law.</p>
+        <h3 id="withdrawal-form">Model withdrawal form</h3>
+        <p>(Complete and return this form only if you wish to withdraw from the contract.)</p>
+        <div class="legal__form">To: <mark class="todo">[Your full name or company name]</mark>, MOYEN HILLS, <mark class="todo">[address]</mark>, moyenhills@gmail.com
+I/We (*) hereby give notice that I/We (*) withdraw from my/our (*) contract of sale of the following goods:
+Ordered on (*) / received on (*):
+Name of consumer(s):
+Address of consumer(s):
+Signature of consumer(s) (only if this form is sent on paper):
+Date:
+(*) Delete as appropriate.</div>
 
-        <h2>6. Questions and complaints</h2>
-        <p>Write to <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a> and we will reply within a few days. If we cannot solve it together, you can contact the Consumer Rights Protection Centre of Latvia (PTAC, <a href="https://www.ptac.gov.lv" target="_blank" rel="noopener">ptac.gov.lv</a>).</p>
+        <h2 id="faults">5. Faulty items</h2>
+        <p>If something is wrong with your order, contact us. You have the legal guarantee of conformity for two years from delivery under Latvian and EU consumer law, whatever else these terms say.</p>
 
-        <h2>7. Law</h2>
-        <p>These terms are governed by the law of the Republic of Latvia. If you are a consumer living in another EU country, you also keep the protection of the consumer law of your country.</p>
+        <h2 id="complaints">6. Questions and complaints</h2>
+        <p>Write to <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a> and we will reply within a few days. If we cannot solve it together, you can contact the Consumer Rights Protection Centre of Latvia (PTAC, <a href="https://www.ptac.gov.lv" target="_blank" rel="noopener">ptac.gov.lv</a>), which also handles out-of-court consumer disputes. If you live in another EU country, the European Consumer Centre in your country can help (<a href="https://www.eccnet.eu" target="_blank" rel="noopener">eccnet.eu</a>).</p>
+
+        <h2 id="law">7. Law</h2>
+        <p>These terms are governed by the law of the Republic of Latvia. If you are a consumer living in another EU country, you also keep the protection of the mandatory consumer law of your country.</p>
       </article>
   </main>
 
@@ -93,7 +109,7 @@
         <button class="btn" type="submit">JOIN</button>
       </div>
       <p class="sub__msg" data-sub-msg role="status" aria-live="polite"></p>
-      <p class="sub__consent">By joining you agree to get emails from MOYEN HILLS. Unsubscribe any time. <a href="privacy.html">Privacy policy</a></p>
+      <p class="sub__consent">By joining you agree to get emails about MOYEN HILLS drops and news. Unsubscribe any time from any email. <a href="privacy.html">Privacy policy</a></p>
     </form>
     <ul class="foot__links" data-reveal>
       <li><a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">instagram</a></li>
@@ -106,6 +122,8 @@
       <a href="mailto:moyenhills@gmail.com">Contact</a>
       <a href="terms.html">Terms</a>
       <a href="privacy.html">Privacy</a>
+      <a href="privacy.html#device">Cookies</a>
+      <a href="withdraw.html">Cancel an order</a>
     </nav>
     <p class="foot__legal">© <span data-year>2026</span> MOYEN HILLS · <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></p>
     <p class="foot__credit">Designed &amp; built by Archit Gajjar</p>
@@ -165,7 +183,7 @@
         <label>Email<input name="email" type="email" autocomplete="email" required></label>
         <div class="phone">
           <label>Country code<input name="phone_code" list="dial-codes" value="+371" inputmode="tel" autocomplete="tel-country-code" pattern="\+?[0-9]{1,4}" title="Country code, for example +371" placeholder="+371"></label>
-          <label>Phone<input name="phone" type="tel" autocomplete="tel-national" placeholder="20 000 000"></label>
+          <label>Phone<input name="phone" type="tel" autocomplete="tel-national" placeholder="20 000 000" pattern="[0-9 \(\)\.\/\-]{4,30}" title="Numbers only, for example 20 000 000"></label>
         </div>
         <p class="phone__hint">Choose your country code or type it yourself.</p>
         <datalist id="dial-codes">
@@ -225,16 +243,16 @@
         </div>
         <label>Country<input name="country" autocomplete="country-name" value="Latvia" required></label>
         <label>Note (optional)<textarea name="note" rows="2"></textarea></label>
-        <input type="text" name="_honey" class="sr" tabindex="-1" autocomplete="off">
+        <input type="text" name="_honey" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true">
         <p class="checkout__account" data-checkout-account hidden>Signed in — this order will be saved to your account.</p>
-        <p class="checkout__legal">By placing an order you agree to our <a href="terms.html">Terms of sale</a> and <a href="privacy.html">Privacy policy</a>.</p>
-        <button class="btn btn--wide" type="submit">Place order</button>
+        <p class="checkout__legal">Prices are in euro. Delivery cost is added in our confirmation email, before you pay. By sending this order you accept our <a href="terms.html">Terms of sale</a>. How we use your details: <a href="privacy.html">Privacy policy</a>.</p>
+        <button class="btn btn--wide" type="submit">Send order request</button>
         <p class="checkout__msg" data-checkout-msg role="status" aria-live="polite"></p>
       </form>
     </div>
     <div class="cart__done" data-cart-done hidden>
       <p class="cart__done-title">Order received</p>
-      <p>Thank you. We will email you within a day to confirm your order and send the payment details.</p>
+      <p>Thank you. We will email you within a day to confirm your order and send the payment details. Changed your mind? You can <a href="withdraw.html">cancel</a> up to 14 days after it arrives.</p>
       <button type="button" class="btn" data-close-cart>Keep looking</button>
     </div>
   </dialog>
@@ -245,5 +263,6 @@
   <script src="data.js" defer></script>
   <script src="app.js" defer></script>
   <script src="auth.js" defer></script>
+  <script src="cookie.js" defer></script>
 </body>
 </html>

@@ -13,7 +13,7 @@
   <link rel="icon" href="images/favicon.png">
   <link rel="preload" href="fonts/inter-tight-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="site.css">
-  <script>document.documentElement.classList.add('js');try{if(sessionStorage.getItem('mh-intro'))document.documentElement.classList.add('seen-intro');else sessionStorage.setItem('mh-intro','1')}catch(e){}</script>
+  <script src="boot.js"></script>
 </head>
 <body>
   <div class="loader" aria-hidden="true">
@@ -52,7 +52,7 @@
 
         <h1 class="legal__title">Privacy policy</h1>
         <p class="legal__date">Last updated: <mark class="todo">[date you publish]</mark></p>
-        <p>This page explains what personal data MOYEN HILLS collects, why, and your rights. The person responsible for your data (the controller) is:</p>
+        <p>This page explains what personal data MOYEN HILLS collects, why, how long we keep it, and your rights under the EU General Data Protection Regulation (GDPR). The person responsible for your data (the controller) is:</p>
         <dl class="legal__seller">
           <dt>Seller</dt><dd><mark class="todo">[Your full name or company name]</mark>, trading as MOYEN HILLS</dd>
           <dt>Registration no.</dt><dd><mark class="todo">[Company or self-employed registration number, if you have one]</mark></dd>
@@ -60,29 +60,62 @@
           <dt>Email</dt><dd><a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></dd>
         </dl>
 
-        <h2>What we collect and why</h2>
+        <h2 id="what">What we collect, why, and on what legal basis</h2>
         <ul>
-          <li><b>Orders:</b> your name, email, phone, delivery address and any note, to process, deliver and support your order (to perform our contract with you) and to keep records required by accounting law.</li>
-          <li><b>“Join the Hills family”:</b> your email address, to send you news about drops and updates (with your consent). Every email has a way to unsubscribe, or write to us and we remove you.</li>
-          <li><b>Accounts</b> (if you create one): your email, name, phone, address and your past orders, so you can see your orders and check out faster.</li>
-          <li><b>On your device:</b> the site stores your cart and whether you have seen the intro in your browser’s storage. This stays on your device and is not sent to us. We do not use advertising or tracking cookies.</li>
+          <li><b>Orders:</b> your name, email, phone (optional), delivery address, the items and any note. We use them to confirm, deliver and support your order (to perform our contract with you) and keep order records because accounting and tax law require it (legal obligation).</li>
+          <li><b>Cancellations:</b> if you use <a href="withdraw.html">Cancel an order</a>, your name, email, order number and the items, to handle your withdrawal (legal obligation).</li>
+          <li><b>Accounts</b> (only if you create one): your email, password (stored only as a secure hash by our sign-in provider), name, phone, address and your orders, so you can see your orders and check out faster (contract).</li>
+          <li><b>“Join the Hills family”:</b> your email address, to send you news about drops (your consent). We first email you a link to confirm it is really you (double opt-in). You can withdraw consent any time with the unsubscribe link in every email, or by writing to us.</li>
+          <li><b>Abuse protection:</b> when you place an order or try a promo code, our database keeps a one-way, salted fingerprint of your internet address for up to 24 hours, to limit fake orders and code guessing (our legitimate interest in keeping the shop safe). The address itself is not stored by us.</li>
+          <li><b>Website hosting:</b> our host processes technical data such as your IP address and browser type to deliver the site and keep it secure (legitimate interest).</li>
         </ul>
+        <p>We do not use your data for automated decisions or profiling, and we never sell it.</p>
 
-        <h2>Who helps us</h2>
+        <h2 id="device">Cookies and storage on your device</h2>
+        <p>We do not use advertising, analytics or tracking cookies, so we do not ask for cookie consent. The site only stores what it needs to work, in your browser:</p>
+        <table class="legal__table">
+          <thead><tr><th scope="col">Name</th><th scope="col">What it is for</th><th scope="col">How long</th></tr></thead>
+          <tbody>
+            <tr><td>mh-cart</td><td>The items in your cart</td><td>Until you empty the cart or clear your browser</td></tr>
+            <tr><td>mh-intro</td><td>Plays the opening animation only once per visit</td><td>Until you close the tab</td></tr>
+            <tr><td>sb-…-auth-token</td><td>Keeps you signed in (only if you sign in)</td><td>Until you sign out</td></tr>
+            <tr><td>mh-cookie-ok</td><td>Remembers that you closed this cookie notice</td><td>Until you clear your browser</td></tr>
+          </tbody>
+        </table>
+        <p>Links to Instagram and TikTok take you to those sites, which have their own privacy policies. Nothing from them loads on our pages.</p>
+
+        <h2 id="processors">Who helps us</h2>
+        <p>These service providers process data for us under data processing terms, and only for the purposes above:</p>
         <ul>
-          <li><b>FormSubmit</b> (formsubmit.co) forwards order and sign-up forms to our email.</li>
+          <li><b>Supabase</b> stores orders, accounts and cancellations. Database region: <mark class="todo">[region chosen for the Supabase project, e.g. EU (Frankfurt)]</mark>.</li>
+          <li><b>FormSubmit</b> (formsubmit.co) forwards order and cancellation forms to our email inbox. <mark class="todo">[Check FormSubmit’s location and terms, or replace it with an EU email service]</mark></li>
           <li><b>Google</b> (Gmail) hosts our email inbox.</li>
-          <li><b>Supabase</b> stores customer accounts and orders, if you create an account; Google or Apple only if you choose to sign in with them.</li>
-          <li><b><mark class="todo">[Your website host, e.g. Netlify or Vercel]</mark></b> hosts this website.</li>
-          <li><mark class="todo">[Your newsletter tool, e.g. Brevo or MailerLite, if you use one]</mark></li>
+          <li><b>Vercel</b> hosts this website.</li>
+          <li><b>Google or Apple</b>, only if you choose to sign in with them.</li>
+          <li><b>Brevo</b> (Sendinblue SAS, France) stores newsletter sign-ups and sends our newsletter.</li>
+          <li>Your delivery carrier receives your name, address and phone to deliver the parcel. <mark class="todo">[Name the carrier(s)]</mark></li>
         </ul>
-        <p>Some of these companies may process data outside the EU under the safeguards required by the GDPR. We never sell your data.</p>
+        <p>Some of these companies are based in, or use servers in, the United States. Transfers there rely on the EU–US Data Privacy Framework or the European Commission’s standard contractual clauses.</p>
 
-        <h2>How long we keep it</h2>
-        <p>Order records: as long as accounting law requires. Newsletter email: until you unsubscribe. Account: until you ask us to delete it.</p>
+        <h2 id="retention">How long we keep it</h2>
+        <ul>
+          <li>Orders and cancellations: for the period Latvian accounting and tax law requires, <mark class="todo">[number] years</mark> after the end of the year of the order, then deleted.</li>
+          <li>Account: until you delete it (you can do this yourself on the <a href="account.html">Account</a> page). Your orders then stay only as order records, no longer linked to an account.</li>
+          <li>Newsletter: until you unsubscribe. We keep a record of when you signed up and unsubscribed, to show we had your consent.</li>
+          <li>Abuse-protection fingerprints: 24 hours.</li>
+        </ul>
 
-        <h2>Your rights</h2>
-        <p>You can ask to see, correct or delete your data, to restrict or object to its use, to receive a copy, and to withdraw consent at any time. Email <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a>. You can also complain to the Data State Inspectorate of Latvia (<a href="https://www.dvi.gov.lv" target="_blank" rel="noopener">dvi.gov.lv</a>).</p>
+        <h2 id="rights">Your rights</h2>
+        <p>You can ask to see, correct or delete your data, to restrict or object to its use, to receive a copy in a portable format, and to withdraw consent at any time. If you have an account, you can download your data and delete your account yourself on the <a href="account.html">Account</a> page. Otherwise email <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a>; we reply within one month. You can also complain to the Data State Inspectorate of Latvia (<a href="https://www.dvi.gov.lv" target="_blank" rel="noopener">dvi.gov.lv</a>) or the data protection authority where you live.</p>
+
+        <h2 id="security">How we protect it</h2>
+        <p>The site runs only over encrypted connections (HTTPS). Database rules let each customer see only their own orders and details. Only named staff, signing in with a password and a second code from an authenticator app, can see orders, and every admin change is logged.</p>
+
+        <h2 id="children">Children</h2>
+        <p>Our shop is not aimed at children under 16. If you are under 16, please ask a parent or guardian to order for you.</p>
+
+        <h2 id="changes">Changes</h2>
+        <p>If we change this policy, we update the date at the top. If a change is significant, we tell account holders by email.</p>
       </article>
   </main>
 
@@ -97,7 +130,7 @@
         <button class="btn" type="submit">JOIN</button>
       </div>
       <p class="sub__msg" data-sub-msg role="status" aria-live="polite"></p>
-      <p class="sub__consent">By joining you agree to get emails from MOYEN HILLS. Unsubscribe any time. <a href="privacy.html">Privacy policy</a></p>
+      <p class="sub__consent">By joining you agree to get emails about MOYEN HILLS drops and news. Unsubscribe any time from any email. <a href="privacy.html">Privacy policy</a></p>
     </form>
     <ul class="foot__links" data-reveal>
       <li><a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">instagram</a></li>
@@ -110,6 +143,8 @@
       <a href="mailto:moyenhills@gmail.com">Contact</a>
       <a href="terms.html">Terms</a>
       <a href="privacy.html">Privacy</a>
+      <a href="privacy.html#device">Cookies</a>
+      <a href="withdraw.html">Cancel an order</a>
     </nav>
     <p class="foot__legal">© <span data-year>2026</span> MOYEN HILLS · <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></p>
     <p class="foot__credit">Designed &amp; built by Archit Gajjar</p>
@@ -169,7 +204,7 @@
         <label>Email<input name="email" type="email" autocomplete="email" required></label>
         <div class="phone">
           <label>Country code<input name="phone_code" list="dial-codes" value="+371" inputmode="tel" autocomplete="tel-country-code" pattern="\+?[0-9]{1,4}" title="Country code, for example +371" placeholder="+371"></label>
-          <label>Phone<input name="phone" type="tel" autocomplete="tel-national" placeholder="20 000 000"></label>
+          <label>Phone<input name="phone" type="tel" autocomplete="tel-national" placeholder="20 000 000" pattern="[0-9 \(\)\.\/\-]{4,30}" title="Numbers only, for example 20 000 000"></label>
         </div>
         <p class="phone__hint">Choose your country code or type it yourself.</p>
         <datalist id="dial-codes">
@@ -229,16 +264,16 @@
         </div>
         <label>Country<input name="country" autocomplete="country-name" value="Latvia" required></label>
         <label>Note (optional)<textarea name="note" rows="2"></textarea></label>
-        <input type="text" name="_honey" class="sr" tabindex="-1" autocomplete="off">
+        <input type="text" name="_honey" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true">
         <p class="checkout__account" data-checkout-account hidden>Signed in — this order will be saved to your account.</p>
-        <p class="checkout__legal">By placing an order you agree to our <a href="terms.html">Terms of sale</a> and <a href="privacy.html">Privacy policy</a>.</p>
-        <button class="btn btn--wide" type="submit">Place order</button>
+        <p class="checkout__legal">Prices are in euro. Delivery cost is added in our confirmation email, before you pay. By sending this order you accept our <a href="terms.html">Terms of sale</a>. How we use your details: <a href="privacy.html">Privacy policy</a>.</p>
+        <button class="btn btn--wide" type="submit">Send order request</button>
         <p class="checkout__msg" data-checkout-msg role="status" aria-live="polite"></p>
       </form>
     </div>
     <div class="cart__done" data-cart-done hidden>
       <p class="cart__done-title">Order received</p>
-      <p>Thank you. We will email you within a day to confirm your order and send the payment details.</p>
+      <p>Thank you. We will email you within a day to confirm your order and send the payment details. Changed your mind? You can <a href="withdraw.html">cancel</a> up to 14 days after it arrives.</p>
       <button type="button" class="btn" data-close-cart>Keep looking</button>
     </div>
   </dialog>
@@ -249,5 +284,6 @@
   <script src="data.js" defer></script>
   <script src="app.js" defer></script>
   <script src="auth.js" defer></script>
+  <script src="cookie.js" defer></script>
 </body>
 </html>
