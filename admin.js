@@ -145,7 +145,13 @@
   const mfaMsg = $('[data-mfa-msg]');
   let factorId = null;
 
-  async function startMfa() {
+  // Sign-in fires more than one auth event, so this can be asked to start twice at once
+  let mfaStarting = null;
+  function startMfa() {
+    mfaStarting ||= runMfa().finally(() => { mfaStarting = null; });
+    return mfaStarting;
+  }
+  async function runMfa() {
     show('mfa');
     say(mfaMsg, '');
     mfaForm.reset();
@@ -158,7 +164,7 @@
     if (ready) { factorId = ready.id; mfaForm.code.focus(); return; }
     // Clear any half-finished setup, then start a new one
     for (const f of data.all.filter((x) => x.status !== 'verified')) await sb.auth.mfa.unenroll({ factorId: f.id });
-    const en = await sb.auth.mfa.enroll({ factorType: 'totp', friendlyName: 'MOYEN HILLS admin', issuer: 'MOYEN HILLS' });
+    const en = await sb.auth.mfa.enroll({ factorType: 'totp', friendlyName: `MOYEN HILLS admin ${new Date().toISOString().slice(0, 19)}`, issuer: 'MOYEN HILLS' });
     if (en.error) { say(mfaMsg, en.error.message, true); return; }
     factorId = en.data.id;
     $('[data-mfa-qr]').src = en.data.totp.qr_code;
