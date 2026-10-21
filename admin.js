@@ -148,6 +148,9 @@
   // Sign-in fires more than one auth event, so this can be asked to start twice at once
   let mfaStarting = null;
   function startMfa() {
+    // Already showing a code to scan or type: keep it (the browser also fires
+    // "signed in" when you come back to the tab, which must not make a new QR code)
+    if (factorId && !$('[data-view="mfa"]').hidden) return Promise.resolve();
     mfaStarting ||= runMfa().finally(() => { mfaStarting = null; });
     return mfaStarting;
   }
@@ -180,6 +183,7 @@
     const { error } = await sb.auth.mfa.challengeAndVerify({ factorId, code });
     if (error) { say(mfaMsg, 'That code didn’t work. Codes change every 30 seconds; try the newest one.', true); mfaForm.code.select(); return; }
     say(mfaMsg, '');
+    factorId = null;
     route();
   });
 
