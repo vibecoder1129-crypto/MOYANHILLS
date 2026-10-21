@@ -161,13 +161,16 @@ The buyer only sees "Order received" if at least one of the two worked. If neith
 kept and the buyer gets a link that opens their email app with the whole order written out,
 addressed to `contactEmail` in `catalog.js` (`moyenhills@gmail.com`).
 
-Newsletter sign-ups are emailed the same way to `moyenhills@gmail.com`.
+Newsletter sign-ups ("Join the Hills family") go to **Brevo**, to the form in `newsletterForm` in
+`catalog.js`. Brevo emails each person a confirmation link (double opt-in) and only adds them to the
+list once they click it. See and email subscribers in Brevo → Contacts. If `newsletterForm` is
+empty, sign-ups are emailed through FormSubmit to `subscribeEmail` instead.
 
 **One-time activation (do this before launch):** FormSubmit does not deliver anything to an address
 until it is activated. Place one test order on the live site; FormSubmit then emails an
 **Activate Form** link to the order address. Click it, then place a second test order and check it
 arrives. Until then, buyers see "The order could not be sent" (the site checks FormSubmit's answer,
-so an order is never shown as received when it was not). Do the same for the newsletter form.
+so an order is never shown as received when it was not).
 
 After activating, FormSubmit gives you a random alias. Put it in `orderEmail` in `catalog.js`
 in place of the plain email address, so the address is not visible in the page source.
@@ -175,8 +178,8 @@ in place of the plain email address, so the address is not visible in the page s
 To send orders to a different inbox, change `orderEmail` in `catalog.js` and activate the new address the
 same way.
 
-To send marketing emails to subscribers, copy the sign-ups into a newsletter tool (Mailchimp,
-Brevo, MailerLite) and send from `moyenhills@gmail.com`.
+Send newsletters from Brevo → Campaigns, to the list the form fills. Every Brevo email has an
+unsubscribe link; don't import email addresses from elsewhere without their confirmation.
 
 ## Customer accounts (Google, Apple, email)
 
