@@ -137,6 +137,7 @@
     say(msg, '');
     route();
   });
+  $('[data-google]').hidden = !window.MH_CONFIG?.providers?.google;
   if (sb) $('[data-google]').addEventListener('click', async () => {
     const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.href.split('#')[0] } });
     if (error) say($('[data-signin-msg]'), error.message, true);

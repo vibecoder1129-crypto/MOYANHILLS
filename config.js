@@ -7,8 +7,9 @@
  * accounts are coming soon.
  */
 window.MH_CONFIG = {
-  supabaseUrl: '',
-  supabaseAnonKey: '',
-  // Sign-in buttons to show on the account page.
-  providers: { google: true, apple: true, email: true },
+  supabaseUrl: 'https://kvykvcjwqjzaepdiwydd.supabase.co',
+  supabaseAnonKey: 'sb_publishable_3r7gOR4-BLAnIlMnbQ-mvg_wy07p1tp',
+  // Sign-in buttons to show. Turn Google/Apple on once they are set up in
+  // Supabase → Authentication → Sign In / Providers (see the README).
+  providers: { google: false, apple: false, email: true },
 };
