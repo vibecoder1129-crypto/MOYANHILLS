@@ -23,6 +23,7 @@ Open `index.html` in a browser, or host the folder on GitHub Pages, Netlify or V
 - `supabase/privacy.sql`: privacy and EU rules on top of it: delete/download my data, cancellations, 30-day price rule, retention. **Run it after `schema.sql`, every time.**
 - `supabase/notify.sql`: order and cancellation emails, sent by the database through Brevo. Run it third (see "Where orders go").
 - `supabase/payments.sql` + `supabase/functions/`: card payments with Stripe (delivery prices, payment page, webhook). **Run it after `notify.sql`, every time.** See [Card payments](#card-payments-stripe)
+- `supabase/tracking.sql`: parcel tracking numbers and the "your order is on its way" email. **Run it last** (after `payments.sql`, or after `notify.sql` without card payments). See [Shipping and tracking](#shipping-and-tracking)
 - `vercel.json` + `.vercelignore` (Vercel) or `netlify.toml` (Netlify): security headers, and files kept off the public site
 - `fonts/`: the Inter Tight font, self-hosted
 - `site.css`: the design
@@ -199,6 +200,22 @@ list once they click it. See and email subscribers in Brevo → Contacts.
 
 Send newsletters from Brevo → Campaigns, to the list the form fills. Every Brevo email has an
 unsubscribe link; don't import email addresses from elsewhere without their confirmation.
+
+## Shipping and tracking
+
+Run `supabase/tracking.sql` once in the SQL Editor (and again, last, whenever you re-run the other files).
+
+When you post an order: admin page → **Orders** → pick the carrier (DPD, Omniva, Latvijas Pasts,
+Venipak, DHL or Other), paste the tracking number and press **Save & mark shipped**. That:
+- sets the order to **Shipped** and stamps the date,
+- emails the customer, in their language, with the number and a link to the carrier's live tracking page,
+- shows the carrier, number and a **Track your parcel** link on the customer's account page.
+
+Changing the number later sends one new email. Set **Delivered** when it arrives (no email).
+Marking an order Shipped without a number sends a short "on its way" email with no link.
+DPD and DHL link to their own tracking pages; the others go to 17TRACK, which finds the parcel by its number.
+The status shown is the carrier's own page, so it is always current. Showing the status inside the site
+itself needs a carrier API (a DPD business account, or a service like 17TRACK/AfterShip).
 
 ## Card payments (Stripe)
 

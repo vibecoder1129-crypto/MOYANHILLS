@@ -92,6 +92,20 @@
   const show = (name) => Object.entries(views).forEach(([k, el]) => { if (el) el.hidden = k !== name; });
   const say = (sel, text, isError) => { const el = $(sel, page); if (el) { el.textContent = text; el.classList.toggle('is-error', !!isError); } };
 
+  // Parcel tracking (supabase/tracking.sql). Same carriers and links as admin.js.
+  const CARRIERS = { dpd: 'DPD', omniva: 'Omniva', latvijas_pasts: 'Latvijas Pasts', venipak: 'Venipak', dhl: 'DHL' };
+  const trackUrl = (c, n) => (c === 'dpd' ? `https://tracking.dpd.de/status/en_US/parcel/${encodeURIComponent(n)}`
+    : c === 'dhl' ? `https://www.dhl.com/lv-en/home/tracking.html?tracking-id=${encodeURIComponent(n)}`
+    : `https://t.17track.net/en#nums=${encodeURIComponent(n)}`);
+  function tracking(o) {
+    if (!o.tracking_number && !o.shipped_at) return '';
+    const day = (d) => new Date(d).toLocaleDateString(LV ? 'lv-LV' : 'en-GB', { day: 'numeric', month: 'short' });
+    const when = o.delivered_at ? t('Delivered {date}', { date: day(o.delivered_at) }) : o.shipped_at ? t('Shipped {date}', { date: day(o.shipped_at) }) : '';
+    const parcel = o.tracking_number ? `${esc(CARRIERS[o.carrier] || t('Parcel'))} ${esc(o.tracking_number)}` : '';
+    const link = o.tracking_number && !o.delivered_at ? `<a href="${esc(trackUrl(o.carrier, o.tracking_number))}" target="_blank" rel="noopener">${esc(t('Track your parcel'))} ↗</a>` : '';
+    return `<p class="order__track"><span>${[esc(when), parcel].filter(Boolean).join(' · ')}</span>${link}</p>`;
+  }
+
   async function renderAccount() {
     const p = await loadProfile();
     $('[data-hello]', page).textContent = p?.full_name ? t('Hi, {name}', { name: p.full_name.split(' ')[0] }) : t('Your account');
@@ -111,6 +125,7 @@
         <div class="order__top"><span>${esc(t('Order #{id}', { id: o.id }))}</span><span class="order__status order__status--${esc(o.status)}">${esc(t(o.status))}</span></div>
         <p class="order__items">${items}</p>
         <div class="order__bottom"><span>${esc(date)}</span><b>${esc(money(Number(o.total ?? o.subtotal), o.currency))}</b></div>
+        ${tracking(o)}
       </li>`;
     }).join('');
   }

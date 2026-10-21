@@ -68,6 +68,9 @@
 .adm__order-row .adm__rowmain { gap: 4px; }
 .adm__order-row a { color: inherit; }
 .adm__orderside { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.adm__track { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.adm__track input { flex: 1 1 160px; width: auto; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.adm__track .btn { padding: 8px 14px; }
 .adm select, .adm input, .adm textarea {
   font: inherit; font-size: var(--t-sm); color: var(--ink); background: var(--bg);
   border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; width: 100%; box-sizing: border-box;

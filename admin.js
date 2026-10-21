@@ -51,6 +51,7 @@
     },
     orders: () => sb.from('orders').select('*').order('created_at', { ascending: false }).limit(200),
     setStatus: (id, status) => sb.from('orders').update({ status }).eq('id', id),
+    setTracking: (id, row) => sb.from('orders').update(row).eq('id', id),
   };
 
   /* Preview mode: a draft of catalog.js kept in this browser (data.js shows it in the shop) */
@@ -113,6 +114,7 @@
     upload: async (photo, path) => ({ src: photo.dataUrl, file: `images/${path.replace(/\//g, '-')}` }),
     orders: () => ok([]),
     setStatus: () => ok(),
+    setTracking: () => ok(),
   };
   const api = remote || local;
 
@@ -578,7 +580,13 @@
 
   /* ---------- Orders ---------- */
   const orderList = $('[data-orders]');
-  const STATUSES = ['received', 'paid', 'shipped', 'cancelled'];
+  const STATUSES = ['received', 'paid', 'shipped', 'delivered', 'cancelled'];
+  // Parcel carriers. Same list as supabase/tracking.sql and auth.js.
+  const CARRIERS = { dpd: 'DPD', omniva: 'Omniva', latvijas_pasts: 'Latvijas Pasts', venipak: 'Venipak', dhl: 'DHL', other: 'Other' };
+  const trackUrl = (c, n) => (c === 'dpd' ? `https://tracking.dpd.de/status/en_US/parcel/${encodeURIComponent(n)}`
+    : c === 'dhl' ? `https://www.dhl.com/lv-en/home/tracking.html?tracking-id=${encodeURIComponent(n)}`
+    : `https://t.17track.net/en#nums=${encodeURIComponent(n)}`);
+  const shortDay = (d) => new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
   // Card orders (Stripe). Only ship ones that say "Card: paid".
   const PAYMENT = { unpaid: 'Card: not paid yet', pending: 'Card: bank payment on its way', paid: 'Card: paid', failed: 'Card: payment failed', expired: 'Card: never paid' };
 
@@ -598,6 +606,12 @@
           <span class="adm__muted">${when} · <a href="mailto:${esc(o.email)}">${esc(o.email)}</a>${o.phone ? ` · ${esc(o.phone)}` : ''}</span>
           ${addr ? `<span class="adm__muted">${addr}</span>` : ''}
           ${o.note ? `<span class="adm__muted">Note: ${esc(o.note)}</span>` : ''}
+          ${o.status === 'cancelled' ? '' : `<form class="adm__track" data-track="${o.id}" data-was="${esc(o.status)}">
+            <select name="carrier" aria-label="Carrier for order ${o.id}">${Object.entries(CARRIERS).map(([k, v]) => `<option value="${k}" ${k === (o.carrier || 'dpd') ? 'selected' : ''}>${v}</option>`).join('')}</select>
+            <input name="number" value="${esc(o.tracking_number || '')}" placeholder="Tracking number" aria-label="Tracking number for order ${o.id}" autocomplete="off" spellcheck="false" maxlength="60">
+            <button type="submit" class="btn btn--line">${o.tracking_number ? 'Update' : 'Save & mark shipped'}</button>
+          </form>`}
+          ${o.tracking_number ? `<span class="adm__muted">${esc(CARRIERS[o.carrier] || 'Parcel')} <a href="${esc(trackUrl(o.carrier, o.tracking_number))}" target="_blank" rel="noopener">${esc(o.tracking_number)} ↗</a>${o.shipped_at ? ` · shipped ${shortDay(o.shipped_at)}` : ''}${o.delivered_at ? ` · delivered ${shortDay(o.delivered_at)}` : ''}</span>` : ''}
         </div>
         <div class="adm__orderside">
           <span class="adm__price">${eur(o.total ?? o.subtotal)}</span>
@@ -618,6 +632,23 @@
     sel.disabled = false;
     if (error) { alert(error.message); loadOrders(); return; }
     if (sel.value === 'cancelled') loadProducts();
+  });
+  // Tracking number: saving it marks the order shipped and emails the customer (supabase/tracking.sql)
+  orderList.addEventListener('submit', async (e) => {
+    const form = e.target.closest('[data-track]');
+    if (!form) return;
+    e.preventDefault();
+    const number = form.elements.number.value.replace(/\s/g, '').toUpperCase();
+    if (number && !/^[A-Z0-9-]{4,40}$/.test(number)) { alert('That tracking number doesn’t look right: use only letters, numbers and dashes.'); return; }
+    if (!number && !confirm('Remove the tracking number from this order?')) return;
+    const row = { carrier: number ? form.elements.carrier.value : null, tracking_number: number || null };
+    if (number && ['received', 'paid'].includes(form.dataset.was)) row.status = 'shipped';
+    const btn = form.querySelector('button');
+    btn.disabled = true;
+    const { error } = await api.setTracking(Number(form.dataset.track), row);
+    btn.disabled = false;
+    if (error) { alert(/tracking/.test(error.message) ? error.message : `Could not save the tracking number: ${error.message}. Has supabase/tracking.sql been run?`); return; }
+    loadOrders();
   });
   $('[data-reload-orders]').addEventListener('click', loadOrders);
 
