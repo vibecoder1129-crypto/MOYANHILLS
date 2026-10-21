@@ -332,7 +332,8 @@ $('[data-promo-remove]')?.addEventListener('click', () => { promo = null; $('[da
  * pieces and adds delivery. Then the create-checkout function opens a Stripe payment page for
  * exactly that order. Stripe tells the database when it is paid; an unpaid order cancels itself
  * after about 30 minutes and its pieces go back on sale. */
-const cardPayments = () => !!(window.MH_CONFIG?.cardPayments && window.mhData.supabase && window.mhAccount?.enabled);
+// (auth.js loads after this file, so don't wait for window.mhAccount here; it is there by checkout)
+const cardPayments = () => !!(window.MH_CONFIG?.cardPayments && window.mhData.supabase);
 let pending = null; // { token, key }: an order already saved whose payment page didn't open
 
 async function openPayment(token) {
