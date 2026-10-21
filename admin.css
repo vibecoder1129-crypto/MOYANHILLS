@@ -106,7 +106,18 @@
 .adm__dialog .adm__form { padding: 20px clamp(16px, 4vw, 28px); }
 .adm__dhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 
+/* Two-step code, admins, change log */
+.adm__qr { display: block; width: 200px; height: 200px; margin: 8px auto; background: #fff; border: 1px solid var(--line); border-radius: 8px; }
+.adm__adminrow { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center; padding: 12px 16px; }
+.adm__addadmin { grid-template-columns: 1fr auto auto; align-items: end; margin-top: 16px; }
+.adm__addadmin select { width: 100%; }
+.adm__logrow { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 12px 16px; }
+.adm__logrow .adm__muted { word-break: break-word; }
+.adm__when { white-space: nowrap; }
+
 @media (max-width: 640px) {
+  .adm__addadmin { grid-template-columns: 1fr; }
+  .adm__logrow { grid-template-columns: 1fr; }
   .adm__logo { width: 110px; }
   .adm__rowbtn { grid-template-columns: auto 1fr auto; gap: 12px; }
   .adm__rowbtn:not(:has(.adm__thumb)) { grid-template-columns: 1fr auto; }
@@ -119,3 +130,4 @@
   .adm__photo img { width: 56px; height: 56px; }
   .adm__photo .adm__order { grid-column: 1 / -1; justify-content: flex-end; }
 }
+.adm__card [data-mfa-setup] > * + * { margin-top: 12px; }

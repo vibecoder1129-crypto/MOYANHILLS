@@ -80,24 +80,80 @@ create trigger on_auth_user_created
 -- Safe to run again after changes: it only adds what is missing.
 -- =====================================================================
 
--- Who may use the admin page. After running this file, add yourself:
---   insert into public.admins (email) values ('moyenhills@gmail.com');
--- then sign in on admin.html with that email (it must be confirmed).
+-- Who may use the admin page. After running this file, add yourself as the owner:
+--   insert into public.admins (email, role) values ('you@example.com', 'owner');
+-- then sign in on admin.html with that email (it must be confirmed) and set up
+-- the two-step code it asks for. Owners can then add other admins on the admin page.
+--   owner:  everything, including who is an admin, deleting products, and the change log
+--   editor: products, prices, stock, photos, promo codes and orders
 create table if not exists public.admins (
   email text primary key,
   added_at timestamptz not null default now()
 );
-alter table public.admins enable row level security; -- no policies: the list can't be read or changed from the website
+-- Admins added before roles existed become owners; new ones are editors unless chosen
+alter table public.admins add column if not exists role text not null default 'owner' check (role in ('owner', 'editor'));
+alter table public.admins alter column role set default 'editor';
+alter table public.admins enable row level security;
 
+-- An admin is someone on the list, with a confirmed email, who signed in with
+-- their password AND a code from their authenticator app (aal2). A stolen
+-- password alone can't change anything.
 create or replace function public.is_admin()
 returns boolean language sql stable security definer set search_path = public as $$
-  select exists (
+  select coalesce(auth.jwt() ->> 'aal', '') = 'aal2' and exists (
     select 1 from auth.users u
     join public.admins a on lower(a.email) = lower(u.email)
     where u.id = auth.uid() and u.email_confirmed_at is not null
   );
 $$;
 grant execute on function public.is_admin() to anon, authenticated;
+
+create or replace function public.is_owner()
+returns boolean language sql stable security definer set search_path = public as $$
+  select public.is_admin() and exists (
+    select 1 from auth.users u
+    join public.admins a on lower(a.email) = lower(u.email)
+    where u.id = auth.uid() and a.role = 'owner'
+  );
+$$;
+grant execute on function public.is_owner() to anon, authenticated;
+
+-- What the admin page needs to know about whoever is signed in: on the list?
+-- which role? email confirmed? two-step code done?
+create or replace function public.admin_status()
+returns jsonb language sql stable security definer set search_path = public as $$
+  select jsonb_build_object(
+    'listed', a.email is not null, 'role', a.role,
+    'confirmed', u.email_confirmed_at is not null,
+    'aal2', coalesce(auth.jwt() ->> 'aal', '') = 'aal2')
+  from auth.users u left join public.admins a on lower(a.email) = lower(u.email)
+  where u.id = auth.uid();
+$$;
+revoke execute on function public.admin_status() from public, anon;
+grant execute on function public.admin_status() to authenticated;
+
+drop policy if exists "admins: admins read" on public.admins;
+drop policy if exists "admins: owners manage" on public.admins;
+create policy "admins: admins read"   on public.admins for select using (public.is_admin());
+create policy "admins: owners manage" on public.admins for all using (public.is_owner()) with check (public.is_owner());
+
+-- Emails are kept in lower case, and there is always at least one owner
+create or replace function public.guard_admins()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  if tg_op in ('INSERT', 'UPDATE') then
+    new.email := lower(trim(new.email));
+  end if;
+  if tg_op in ('UPDATE', 'DELETE') and old.role = 'owner'
+     and (tg_op = 'DELETE' or new.role <> 'owner' or new.email <> old.email)
+     and not exists (select 1 from public.admins where role = 'owner' and email <> old.email) then
+    raise exception 'There must always be at least one owner.';
+  end if;
+  return coalesce(new, old);
+end;
+$$;
+drop trigger if exists admins_guard on public.admins;
+create trigger admins_guard before insert or update or delete on public.admins for each row execute function public.guard_admins();
 
 -- Products (the same fields as catalog.js)
 create table if not exists public.products (
@@ -123,8 +179,13 @@ create table if not exists public.products (
 alter table public.products enable row level security;
 drop policy if exists "products: shop reads" on public.products;
 drop policy if exists "products: admin writes" on public.products;
-create policy "products: shop reads"   on public.products for select using (active or public.is_admin());
-create policy "products: admin writes" on public.products for all using (public.is_admin()) with check (public.is_admin());
+drop policy if exists "products: admin adds" on public.products;
+drop policy if exists "products: admin changes" on public.products;
+drop policy if exists "products: owner deletes" on public.products;
+create policy "products: shop reads"      on public.products for select using (active or public.is_admin());
+create policy "products: admin adds"      on public.products for insert with check (public.is_admin());
+create policy "products: admin changes"   on public.products for update using (public.is_admin()) with check (public.is_admin());
+create policy "products: owner deletes"   on public.products for delete using (public.is_owner());
 
 -- Promo codes. Private: the website can only ask "is this code valid?" through check_promo().
 alter table public.products add column if not exists was_price numeric(10, 2) check (was_price >= 0); -- old price, shown crossed out
@@ -169,10 +230,37 @@ end;
 $$;
 revoke execute on function public.promo_result(text, numeric) from public, anon, authenticated;
 
--- What the cart calls to check a code
-create or replace function public.check_promo(p_code text, p_subtotal numeric)
-returns jsonb language sql stable security definer set search_path = public as $$
-  select public.promo_result(p_code, p_subtotal);
+-- Who is calling, as a one-way fingerprint of their internet address (for rate limits;
+-- the address itself is never stored)
+create or replace function public.client_hash()
+returns text language sql stable as $$
+  select md5('moyen-hills:' || coalesce(
+    split_part(coalesce(current_setting('request.headers', true), '{}')::jsonb ->> 'x-forwarded-for', ',', 1),
+    'unknown'));
+$$;
+revoke execute on function public.client_hash() from public, anon, authenticated;
+
+-- Promo code tries, so nobody can guess codes by trying thousands of them
+create table if not exists public.promo_attempts (
+  client text not null,
+  at timestamptz not null default now()
+);
+create index if not exists promo_attempts_client on public.promo_attempts (client, at);
+alter table public.promo_attempts enable row level security; -- no policies: not readable from the website
+
+-- What the cart calls to check a code (at most 15 tries per 10 minutes per visitor)
+drop function if exists public.check_promo(text, numeric);
+create function public.check_promo(p_code text, p_subtotal numeric)
+returns jsonb language plpgsql volatile security definer set search_path = public as $$
+declare me text := public.client_hash();
+begin
+  delete from public.promo_attempts where at < now() - interval '1 day';
+  if (select count(*) from public.promo_attempts where client = me and at > now() - interval '10 minutes') >= 15 then
+    return jsonb_build_object('ok', false, 'message', 'Too many tries. Please wait a few minutes.');
+  end if;
+  insert into public.promo_attempts (client) values (me);
+  return public.promo_result(left(p_code, 40), p_subtotal);
+end;
 $$;
 grant execute on function public.check_promo(text, numeric) to anon, authenticated;
 
@@ -180,6 +268,7 @@ grant execute on function public.check_promo(text, numeric) to anon, authenticat
 alter table public.orders add column if not exists promo_code text;
 alter table public.orders add column if not exists discount numeric(10, 2) not null default 0;
 alter table public.orders add column if not exists total numeric(10, 2);
+alter table public.orders add column if not exists client text; -- fingerprint for the order rate limit
 
 -- Every new order: prices come from the products table (so they can't be changed in the
 -- browser), the promo code is checked again and counted, and the stock goes down.
@@ -192,17 +281,32 @@ declare
   sub numeric := 0;
   promo jsonb;
 begin
+  -- At most 5 orders per 10 minutes from one visitor, so nobody can empty the stock with fake orders
+  new.client := public.client_hash();
+  if (select count(*) from public.orders where client = new.client and created_at > now() - interval '10 minutes') >= 5 then
+    raise exception 'Too many orders in a short time. Please wait a few minutes or email us.';
+  end if;
+  if jsonb_typeof(new.items) <> 'array' or jsonb_array_length(new.items) not between 1 and 20 then
+    raise exception 'The order is empty or too big.';
+  end if;
+  new.status := 'received';
+  new.note := left(new.note, 2000);
+  new.full_name := left(new.full_name, 200); new.email := left(new.email, 200); new.phone := left(new.phone, 50);
+  new.address := left(new.address, 400); new.city := left(new.city, 100); new.postcode := left(new.postcode, 20); new.country := left(new.country, 100);
   for it in select * from jsonb_to_recordset(new.items) as x(id text, name text, colour text, size text, qty int, price numeric) loop
-    if it.qty is null or it.qty < 1 then raise exception 'Bad quantity'; end if;
-    select * into p from public.products where id = it.id;
-    if found then
-      it.price := p.price; it.name := p.name; it.colour := p.colour;
-      update public.products set sizes = (
-        select coalesce(jsonb_agg(case when s ->> 'size' = it.size
-          then jsonb_set(s, '{stock}', to_jsonb(greatest(0, (s ->> 'stock')::int - it.qty))) else s end order by n), '[]')
-        from jsonb_array_elements(sizes) with ordinality as e(s, n)
-      ), updated_at = now() where id = it.id;
+    if it.qty is null or it.qty not between 1 and 10 then raise exception 'Bad quantity'; end if;
+    -- Only real products, in a size that exists, from stock that is there
+    select * into p from public.products where id = it.id and active for update;
+    if not found then raise exception 'That product is no longer available.'; end if;
+    if p.sold_out or coalesce((select (s ->> 'stock')::int from jsonb_array_elements(p.sizes) s where s ->> 'size' = it.size), 0) < it.qty then
+      raise exception '% in % is sold out.', p.name, it.size;
     end if;
+    it.price := p.price; it.name := p.name; it.colour := p.colour;
+    update public.products set sizes = (
+      select coalesce(jsonb_agg(case when s ->> 'size' = it.size
+        then jsonb_set(s, '{stock}', to_jsonb((s ->> 'stock')::int - it.qty)) else s end order by n), '[]')
+      from jsonb_array_elements(sizes) with ordinality as e(s, n)
+    ), updated_at = now() where id = it.id;
     items := items || jsonb_build_object('id', it.id, 'name', it.name, 'colour', it.colour, 'size', it.size, 'qty', it.qty, 'price', it.price);
     sub := sub + it.qty * coalesce(it.price, 0);
   end loop;
@@ -254,12 +358,62 @@ create policy "orders: admin updates" on public.orders for update using (public.
 
 -- Product photos uploaded on the admin page (public to view, only admins can upload)
 insert into storage.buckets (id, name, public) values ('products', 'products', true) on conflict (id) do nothing;
+-- Photos only, at most 8 MB each
+update storage.buckets set file_size_limit = 8388608, allowed_mime_types = array['image/jpeg', 'image/png', 'image/webp'] where id = 'products';
 drop policy if exists "product photos: admin upload" on storage.objects;
 drop policy if exists "product photos: admin change" on storage.objects;
 drop policy if exists "product photos: admin delete" on storage.objects;
 create policy "product photos: admin upload" on storage.objects for insert to authenticated with check (bucket_id = 'products' and public.is_admin());
 create policy "product photos: admin change" on storage.objects for update to authenticated using (bucket_id = 'products' and public.is_admin());
 create policy "product photos: admin delete" on storage.objects for delete to authenticated using (bucket_id = 'products' and public.is_admin());
+
+-- Change log: every change made on the admin page, who made it and when.
+-- Written only by the database itself; nobody (owners included) can edit or delete entries.
+create table if not exists public.admin_log (
+  id bigint generated always as identity primary key,
+  at timestamptz not null default now(),
+  email text,
+  action text not null,   -- e.g. "update products"
+  target text,            -- the product id, promo code, order number or admin email
+  changes jsonb           -- for updates: {"price": {"from": 35, "to": 30}}
+);
+alter table public.admin_log enable row level security;
+drop policy if exists "change log: admins read" on public.admin_log;
+create policy "change log: admins read" on public.admin_log for select using (public.is_admin());
+revoke insert, update, delete, truncate on public.admin_log from anon, authenticated;
+
+create or replace function public.log_admin_change()
+returns trigger language plpgsql security definer set search_path = public as $$
+declare
+  target_key text;
+  diff jsonb;
+begin
+  -- Only direct changes by a signed-in person (not stock moved by an order)
+  if pg_trigger_depth() > 1 or auth.uid() is null then return coalesce(new, old); end if;
+  target_key := coalesce(to_jsonb(new), to_jsonb(old)) ->> tg_argv[0];
+  if tg_op = 'UPDATE' then
+    select jsonb_object_agg(key, jsonb_build_object('from', o.value, 'to', n.value)) into diff
+    from jsonb_each(to_jsonb(new)) n join jsonb_each(to_jsonb(old)) o using (key)
+    where n.value is distinct from o.value and key <> 'updated_at';
+    if diff is null then return new; end if;
+  elsif tg_op = 'INSERT' then
+    diff := to_jsonb(new);
+  else
+    diff := to_jsonb(old);
+  end if;
+  insert into public.admin_log (email, action, target, changes)
+  values ((select email from auth.users where id = auth.uid()), lower(tg_op) || ' ' || tg_table_name, target_key, diff);
+  return coalesce(new, old);
+end;
+$$;
+drop trigger if exists products_log on public.products;
+drop trigger if exists promo_codes_log on public.promo_codes;
+drop trigger if exists orders_log on public.orders;
+drop trigger if exists admins_log on public.admins;
+create trigger products_log    after insert or update or delete on public.products    for each row execute function public.log_admin_change('id');
+create trigger promo_codes_log after insert or update or delete on public.promo_codes for each row execute function public.log_admin_change('code');
+create trigger orders_log      after update or delete on public.orders                for each row execute function public.log_admin_change('id');
+create trigger admins_log      after insert or update or delete on public.admins      for each row execute function public.log_admin_change('email');
 
 -- Start with the ART WILL TEE (skipped if it's already there)
 insert into public.products (id, name, colour, price, featured, label, blurb, description, details, fit, note, sizes, images)

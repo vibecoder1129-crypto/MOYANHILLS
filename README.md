@@ -72,9 +72,41 @@ day, a maximum number of uses (e.g. 1 for a one-off code for one client), and on
 2. Create an account on the site's account page with your email, and confirm it.
 3. In **SQL Editor**, run (with your email):
    ```sql
-   insert into public.admins (email) values ('you@example.com');
+   insert into public.admins (email, role) values ('you@example.com', 'owner');
    ```
-4. Open `admin.html` and sign in. To remove an admin: `delete from public.admins where email = '…';`
+   (Admins added before roles existed became owners automatically.)
+4. Open `admin.html`, sign in, and set up the two-step code: scan the QR code with Google
+   Authenticator, Microsoft Authenticator or Authy, then type the 6-digit code. From then on you
+   need your password **and** a code from the app each time.
+5. Add other admins on the admin page under **Admins**.
+
+## How the admin is protected
+
+- **Two-step login is required.** The database only accepts admin changes from someone who signed
+  in with their password *and* an authenticator code. A stolen password alone can't change anything.
+- **Roles.** Owners can do everything, including adding/removing admins and deleting products.
+  Editors can change products, prices, stock, photos, promo codes and orders. There is always at
+  least one owner.
+- **Change log.** Every change on the admin page is recorded with who made it and when, under
+  **Change log**. Nobody, owners included, can edit or delete entries.
+- **The database does the checking.** Hiding `admin.html` isn't what protects it: every rule lives in
+  `supabase/schema.sql`. Customers can only place orders and check a promo code they typed.
+- **Orders can't be faked cheaply.** Prices come from the database, orders for products, sizes or
+  amounts that aren't in stock are refused, and one visitor can place at most 5 orders per 10 minutes.
+- **Promo codes can't be guessed.** At most 15 tries per 10 minutes per visitor. For one-off client
+  codes, use something hard to guess, like `VIP-7KX2Q`.
+- **Photos only.** Uploads are limited to JPEG, PNG or WebP under 8 MB.
+- **Idle sign-out.** The admin page signs out after 30 minutes without use.
+- **Security headers** (in `vercel.json`): HTTPS only, the site can't be put inside another site's
+  frame, and the admin page only runs its own scripts.
+
+In Supabase, also check:
+- **Authentication → Sign In / Providers → Email:** "Confirm email" on.
+- **Authentication → Policies (Password security):** minimum length 12, require letters and numbers.
+  On a paid plan, turn on leaked password protection.
+- **Authentication → Multi-Factor:** TOTP (authenticator app) enabled. It is on by default.
+- Never put the `service_role` / secret key in the website or GitHub. Only the publishable key goes
+  in `config.js`.
 
 The first time you connect the database, the shop shows what's in the `products` table. The
 schema already adds the ART WILL TEE there; if you changed `catalog.js` before, make the same

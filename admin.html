@@ -57,6 +57,27 @@
       <p class="adm__muted">No password yet? Create an account on the <a href="account.html">account page</a> with the same email, confirm it, then come back.</p>
     </section>
 
+    <!-- Two-step code (required for every admin) -->
+    <section class="adm__card adm__card--narrow" data-view="mfa" hidden>
+      <h1 class="adm__title" data-mfa-title>Enter your code</h1>
+      <div data-mfa-setup hidden>
+        <p>For safety, the admin page needs a second step: a 6-digit code from an authenticator app on your phone, as well as your password.</p>
+        <ol class="adm__steps">
+          <li>Install <b>Google Authenticator</b>, <b>Microsoft Authenticator</b> or <b>Authy</b> on your phone.</li>
+          <li>In the app, tap <b>+</b> and scan this code:</li>
+        </ol>
+        <img class="adm__qr" data-mfa-qr alt="QR code to scan with your authenticator app" width="200" height="200">
+        <p class="adm__muted">Can’t scan? Enter this key in the app instead: <code data-mfa-secret></code></p>
+        <p>Then type the 6-digit code the app shows.</p>
+      </div>
+      <p data-mfa-ask class="adm__muted" hidden>Open your authenticator app and type the 6-digit code for MOYEN HILLS.</p>
+      <form class="adm__form" data-mfa-form>
+        <label>Code<input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required placeholder="123456"></label>
+        <button class="btn btn--wide" type="submit">Continue</button>
+      </form>
+      <p class="adm__msg" data-mfa-msg role="status" aria-live="polite"></p>
+    </section>
+
     <!-- Signed in, but not an admin -->
     <section class="adm__card adm__card--narrow" data-view="denied" hidden>
       <h1 class="adm__title">Not an admin</h1>
@@ -69,6 +90,8 @@
         <button type="button" role="tab" class="adm__tab is-on" data-tab="products" aria-selected="true">Products</button>
         <button type="button" role="tab" class="adm__tab" data-tab="promos" aria-selected="false">Promo codes</button>
         <button type="button" role="tab" class="adm__tab" data-tab="orders" aria-selected="false">Orders</button>
+        <button type="button" role="tab" class="adm__tab" data-tab="admins" aria-selected="false" data-owner-only hidden>Admins</button>
+        <button type="button" role="tab" class="adm__tab" data-tab="log" aria-selected="false">Change log</button>
       </nav>
 
       <!-- Products -->
@@ -96,6 +119,31 @@
           <button type="button" class="btn btn--line" data-reload-orders>Refresh</button>
         </div>
         <ul class="adm__list" data-orders></ul>
+      </div>
+
+      <!-- Admins (owners only) -->
+      <div class="adm__panel" data-panel="admins" hidden>
+        <div class="adm__head">
+          <h1 class="adm__title">Admins</h1>
+        </div>
+        <p class="adm__muted">Owners can do everything, including this page. Editors can change products, prices, stock, photos, promo codes and orders, but can’t delete products or change who is an admin. Everyone needs a confirmed account and the two-step code.</p>
+        <ul class="adm__list" data-admins></ul>
+        <form class="adm__form adm__addadmin" data-add-admin>
+          <label>Email<input name="email" type="email" required placeholder="name@example.com"></label>
+          <label>Role<select name="role"><option value="editor">Editor</option><option value="owner">Owner</option></select></label>
+          <button class="btn" type="submit">Add admin</button>
+        </form>
+        <p class="adm__msg" data-admins-msg role="status" aria-live="polite"></p>
+      </div>
+
+      <!-- Change log -->
+      <div class="adm__panel" data-panel="log" hidden>
+        <div class="adm__head">
+          <h1 class="adm__title">Change log</h1>
+          <button type="button" class="btn btn--line" data-reload-log>Refresh</button>
+        </div>
+        <p class="adm__muted">Every change made on this page: who, what and when. Nobody can edit or delete it.</p>
+        <ul class="adm__list" data-log></ul>
       </div>
     </section>
   </main>

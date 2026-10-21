@@ -113,18 +113,84 @@
   const who = $('[data-who]');
   const signOut = $('[data-signout]');
 
+  let role = 'owner';   // 'owner' or 'editor'; preview mode acts as owner
+  let myEmail = '';
+
   async function route() {
-    if (!sb) { show('app'); $('[data-preview]').hidden = false; loadProducts(); loadPromos(); loadOrders(); return; }
+    if (!sb) {
+      show('app');
+      $('[data-preview]').hidden = false;
+      $('[data-tab="log"]').hidden = true;
+      loadProducts(); loadPromos(); loadOrders();
+      return;
+    }
     const { data: { session } } = await sb.auth.getSession();
     if (!session) { who.textContent = ''; signOut.hidden = true; show('signin'); return; }
-    who.textContent = session.user.email;
+    myEmail = session.user.email;
+    who.textContent = myEmail;
     signOut.hidden = false;
-    const { data: ok, error } = await sb.rpc('is_admin');
-    if (error || !ok) { show('denied'); return; }
+    const { data: st, error } = await sb.rpc('admin_status');
+    if (error || !st || !st.listed || !st.confirmed) { show('denied'); return; }
+    if (!st.aal2) { startMfa(); return; }
+    role = st.role;
+    who.textContent = `${myEmail} · ${role === 'owner' ? 'Owner' : 'Editor'}`;
+    $$('[data-owner-only]').forEach((el) => { el.hidden = role !== 'owner'; });
     show('app');
-    loadProducts();
-    loadPromos();
-    loadOrders();
+    loadProducts(); loadPromos(); loadOrders(); loadLog();
+    if (role === 'owner') loadAdmins();
+  }
+
+  /* ---------- Two-step code (authenticator app) ---------- */
+  const mfaForm = $('[data-mfa-form]');
+  const mfaMsg = $('[data-mfa-msg]');
+  let factorId = null;
+
+  async function startMfa() {
+    show('mfa');
+    say(mfaMsg, '');
+    mfaForm.reset();
+    const { data, error } = await sb.auth.mfa.listFactors();
+    if (error) { say(mfaMsg, error.message, true); return; }
+    const ready = data.totp.find((f) => f.status === 'verified');
+    $('[data-mfa-setup]').hidden = !!ready;
+    $('[data-mfa-ask]').hidden = !ready;
+    $('[data-mfa-title]').textContent = ready ? 'Enter your code' : 'Set up the two-step code';
+    if (ready) { factorId = ready.id; mfaForm.code.focus(); return; }
+    // Clear any half-finished setup, then start a new one
+    for (const f of data.all.filter((x) => x.status !== 'verified')) await sb.auth.mfa.unenroll({ factorId: f.id });
+    const en = await sb.auth.mfa.enroll({ factorType: 'totp', friendlyName: 'MOYEN HILLS admin', issuer: 'MOYEN HILLS' });
+    if (en.error) { say(mfaMsg, en.error.message, true); return; }
+    factorId = en.data.id;
+    $('[data-mfa-qr]').src = en.data.totp.qr_code;
+    $('[data-mfa-secret]').textContent = en.data.totp.secret;
+    mfaForm.code.focus();
+  }
+
+  if (sb) mfaForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const code = mfaForm.code.value.replace(/\D/g, '');
+    if (code.length !== 6 || !factorId) { say(mfaMsg, 'Type the 6-digit code from the app.', true); return; }
+    say(mfaMsg, 'Checking…');
+    const { error } = await sb.auth.mfa.challengeAndVerify({ factorId, code });
+    if (error) { say(mfaMsg, 'That code didn’t work. Codes change every 30 seconds; try the newest one.', true); mfaForm.code.select(); return; }
+    say(mfaMsg, '');
+    route();
+  });
+
+  /* Sign out after 30 minutes without using the page */
+  if (sb) {
+    let idle;
+    const nudge = () => {
+      clearTimeout(idle);
+      idle = setTimeout(async () => {
+        const { data: { session } } = await sb.auth.getSession();
+        if (!session) return;
+        await sb.auth.signOut();
+        say($('[data-signin-msg]'), 'You were signed out after 30 minutes without activity.');
+      }, 30 * 60 * 1000);
+    };
+    ['pointerdown', 'keydown', 'scroll'].forEach((ev) => addEventListener(ev, nudge, { passive: true }));
+    nudge();
   }
 
   if (sb) $('[data-signin]').addEventListener('submit', async (e) => {
@@ -311,7 +377,7 @@
     sizesEl.replaceChildren(...(v.sizes || []).map(sizeRow));
     photos = (v.images || []).map((x) => ({ ...x }));
     renderPhotos();
-    $('[data-delete-product]').hidden = !p;
+    $('[data-delete-product]').hidden = !p || role !== 'owner';
     pDialog.showModal();
     pForm.name.focus();
   }
@@ -508,6 +574,77 @@
     if (sel.value === 'cancelled') loadProducts();
   });
   $('[data-reload-orders]').addEventListener('click', loadOrders);
+
+  /* ---------- Admins (owners only) ---------- */
+  const adminList = $('[data-admins]');
+  const adminsMsg = $('[data-admins-msg]');
+
+  async function loadAdmins() {
+    const { data, error } = await sb.from('admins').select('*').order('added_at');
+    if (error) { adminList.innerHTML = `<li class="adm__empty is-bad">${esc(error.message)}</li>`; return; }
+    adminList.innerHTML = data.map((a) => `<li class="adm__row adm__adminrow">
+      <span class="adm__rowmain"><b>${esc(a.email)}</b><span class="adm__muted">Added ${new Date(a.added_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}${a.email === myEmail.toLowerCase() ? ' · you' : ''}</span></span>
+      <select data-admin-role="${esc(a.email)}" aria-label="Role of ${esc(a.email)}">
+        <option value="owner" ${a.role === 'owner' ? 'selected' : ''}>Owner</option>
+        <option value="editor" ${a.role === 'editor' ? 'selected' : ''}>Editor</option>
+      </select>
+      <button type="button" class="adm__icon" data-admin-remove="${esc(a.email)}" aria-label="Remove ${esc(a.email)}">✕</button>
+    </li>`).join('');
+  }
+  if (sb) {
+    adminList.addEventListener('change', async (e) => {
+      const sel = e.target.closest('[data-admin-role]');
+      if (!sel) return;
+      const { error } = await sb.from('admins').update({ role: sel.value }).eq('email', sel.dataset.adminRole);
+      say(adminsMsg, error ? error.message : 'Saved.', !!error);
+      loadAdmins();
+      if (!error && sel.dataset.adminRole === myEmail.toLowerCase()) route();
+    });
+    adminList.addEventListener('click', async (e) => {
+      const b = e.target.closest('[data-admin-remove]');
+      if (!b) return;
+      if (!confirm(`Remove ${b.dataset.adminRemove} as an admin?`)) return;
+      const { error } = await sb.from('admins').delete().eq('email', b.dataset.adminRemove);
+      say(adminsMsg, error ? error.message : 'Removed.', !!error);
+      loadAdmins();
+    });
+    $('[data-add-admin]').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = e.currentTarget;
+      const { error } = await sb.from('admins').insert({ email: f.email.value.trim().toLowerCase(), role: f.role.value });
+      if (error) { say(adminsMsg, /duplicate/.test(error.message) ? 'That email is already an admin.' : error.message, true); return; }
+      say(adminsMsg, 'Added. They sign in on this page with that email and set up their own two-step code.');
+      f.reset();
+      loadAdmins();
+    });
+  }
+
+  /* ---------- Change log ---------- */
+  const logList = $('[data-log]');
+  const WHAT = { products: 'product', promo_codes: 'promo code', orders: 'order', admins: 'admin' };
+  const VERB = { insert: 'added', update: 'changed', delete: 'deleted' };
+  const short = (v) => { const t = typeof v === 'string' ? v : JSON.stringify(v); return t && t.length > 60 ? `${t.slice(0, 57)}…` : t ?? 'empty'; };
+
+  async function loadLog() {
+    if (!sb) return;
+    const { data, error } = await sb.from('admin_log').select('*').order('at', { ascending: false }).limit(200);
+    if (error) { logList.innerHTML = `<li class="adm__empty is-bad">${esc(error.message)}</li>`; return; }
+    if (!data.length) { logList.innerHTML = '<li class="adm__empty">No changes yet.</li>'; return; }
+    logList.innerHTML = data.map((l) => {
+      const [op, table] = l.action.split(' ');
+      const changes = op === 'update' && l.changes
+        ? Object.entries(l.changes).map(([k, v]) => `${esc(k.replace(/_/g, ' '))}: ${esc(short(v.from))} → ${esc(short(v.to))}`).join('<br>')
+        : '';
+      return `<li class="adm__row adm__logrow">
+        <span class="adm__rowmain">
+          <b>${esc(l.email || 'Unknown')} ${VERB[op] || esc(op)} ${WHAT[table] || esc(table)} ${esc(l.target || '')}</b>
+          ${changes ? `<span class="adm__muted">${changes}</span>` : ''}
+        </span>
+        <span class="adm__muted adm__when">${new Date(l.at).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+      </li>`;
+    }).join('');
+  }
+  $('[data-reload-log]').addEventListener('click', loadLog);
 
   /* ---------- Preview mode: download / undo ---------- */
   const save = (name, blob) => {

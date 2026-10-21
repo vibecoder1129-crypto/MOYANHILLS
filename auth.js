@@ -89,7 +89,7 @@
 
     const list = $('[data-orders]', page);
     list.innerHTML = '<li class="orders__empty">Loading your orders…</li>';
-    const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending: false });
+    const { data, error } = await sb.from('orders').select('*').eq('user_id', state.user.id).order('created_at', { ascending: false });
     if (error) { list.innerHTML = `<li class="orders__empty">Could not load your orders. ${esc(error.message)}</li>`; return; }
     if (!data.length) { list.innerHTML = '<li class="orders__empty">No orders yet. <a href="shop.html">Visit the shop</a></li>'; return; }
     list.innerHTML = data.map((o) => {
