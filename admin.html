@@ -34,8 +34,8 @@
         <summary>Connect the database (so the admin works live, from anywhere)</summary>
       <ol class="adm__steps">
         <li>Create a free project at <a href="https://supabase.com" target="_blank" rel="noopener">supabase.com</a>.</li>
-        <li>In <b>SQL Editor</b>, paste everything from <code>supabase/schema.sql</code> and press <b>Run</b>.</li>
-        <li>Still in the SQL Editor, add yourself as an admin:<br><code>insert into public.admins (email) values ('you@example.com');</code></li>
+        <li>In <b>SQL Editor</b>, paste everything from <code>supabase/schema.sql</code> and press <b>Run</b>. Then do the same with <code>supabase/privacy.sql</code>.</li>
+        <li>Still in the SQL Editor, add yourself as the owner:<br><code>insert into public.admins (email, role) values ('you@example.com', 'owner');</code></li>
         <li>Copy the <b>Project URL</b> and <b>anon public</b> key (Project Settings → API) into <code>config.js</code>.</li>
         <li>Come back here and sign in with that email.</li>
       </ol>
@@ -90,6 +90,7 @@
         <button type="button" role="tab" class="adm__tab is-on" data-tab="products" aria-selected="true">Products</button>
         <button type="button" role="tab" class="adm__tab" data-tab="promos" aria-selected="false">Promo codes</button>
         <button type="button" role="tab" class="adm__tab" data-tab="orders" aria-selected="false">Orders</button>
+        <button type="button" role="tab" class="adm__tab" data-tab="withdrawals" aria-selected="false">Cancellations <span class="adm__count" data-wd-count hidden></span></button>
         <button type="button" role="tab" class="adm__tab" data-tab="admins" aria-selected="false" data-owner-only hidden>Admins</button>
         <button type="button" role="tab" class="adm__tab" data-tab="log" aria-selected="false">Change log</button>
       </nav>
@@ -121,12 +122,22 @@
         <ul class="adm__list" data-orders></ul>
       </div>
 
+      <!-- Cancellations sent on withdraw.html -->
+      <div class="adm__panel" data-panel="withdrawals" hidden>
+        <div class="adm__head">
+          <h1 class="adm__title">Cancellations</h1>
+          <button type="button" class="btn btn--line" data-reload-wd>Refresh</button>
+        </div>
+        <p class="adm__muted">Customers who used “Cancel an order”. They have 14 days to send the items back; refund within 14 days of getting them. Tick “Sorted” once it’s done.</p>
+        <ul class="adm__list" data-withdrawals></ul>
+      </div>
+
       <!-- Admins (owners only) -->
       <div class="adm__panel" data-panel="admins" hidden>
         <div class="adm__head">
           <h1 class="adm__title">Admins</h1>
         </div>
-        <p class="adm__muted">Owners can do everything, including this page. Editors can change products, prices, stock, photos, promo codes and orders, but can’t delete products or change who is an admin. Everyone needs a confirmed account and the two-step code.</p>
+        <p class="adm__muted">Owners can do everything, including this page. Editors can add, change and delete products, and manage prices, stock, photos, promo codes, orders and cancellations, but can’t change who is an admin. Everyone needs a confirmed account and the two-step code.</p>
         <ul class="adm__list" data-admins></ul>
         <form class="adm__form adm__addadmin" data-add-admin>
           <label>Email<input name="email" type="email" required placeholder="name@example.com"></label>

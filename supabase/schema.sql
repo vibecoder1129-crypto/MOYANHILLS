@@ -84,8 +84,9 @@ create trigger on_auth_user_created
 --   insert into public.admins (email, role) values ('you@example.com', 'owner');
 -- then sign in on admin.html with that email (it must be confirmed) and set up
 -- the two-step code it asks for. Owners can then add other admins on the admin page.
---   owner:  everything, including who is an admin, deleting products, and the change log
---   editor: products, prices, stock, photos, promo codes and orders
+--   owner:  everything, including who is an admin
+--   editor: adding, changing and deleting products, prices, stock, photos, promo codes,
+--           orders and cancellations (not who is an admin)
 create table if not exists public.admins (
   email text primary key,
   added_at timestamptz not null default now()
@@ -182,10 +183,11 @@ drop policy if exists "products: admin writes" on public.products;
 drop policy if exists "products: admin adds" on public.products;
 drop policy if exists "products: admin changes" on public.products;
 drop policy if exists "products: owner deletes" on public.products;
+drop policy if exists "products: admin deletes" on public.products;
 create policy "products: shop reads"      on public.products for select using (active or public.is_admin());
 create policy "products: admin adds"      on public.products for insert with check (public.is_admin());
 create policy "products: admin changes"   on public.products for update using (public.is_admin()) with check (public.is_admin());
-create policy "products: owner deletes"   on public.products for delete using (public.is_owner());
+create policy "products: admin deletes"   on public.products for delete using (public.is_admin());
 
 -- Promo codes. Private: the website can only ask "is this code valid?" through check_promo().
 alter table public.products add column if not exists was_price numeric(10, 2) check (was_price >= 0); -- old price, shown crossed out
@@ -330,11 +332,15 @@ $$;
 drop trigger if exists orders_prepare on public.orders;
 create trigger orders_prepare before insert on public.orders for each row execute function public.prepare_order();
 
--- A cancelled order puts its pieces back in stock
+-- A cancelled order puts its pieces back in stock. It stays cancelled: undoing that would
+-- need the stock taken out again, so a new order is the way back.
 create or replace function public.restock_cancelled()
 returns trigger language plpgsql security definer set search_path = public as $$
 declare it record;
 begin
+  if old.status = 'cancelled' and new.status <> 'cancelled' then
+    raise exception 'A cancelled order can’t be reopened: its pieces are already back in stock.';
+  end if;
   if new.status = 'cancelled' and old.status <> 'cancelled' then
     for it in select * from jsonb_to_recordset(new.items) as x(id text, size text, qty int) loop
       update public.products set sizes = (
