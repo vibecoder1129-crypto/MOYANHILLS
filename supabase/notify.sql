@@ -1,0 +1,141 @@
+-- MOYEN HILLS — order and cancellation emails, sent by the database through Brevo
+-- Run this AFTER schema.sql and privacy.sql (and again whenever you run those):
+--   Dashboard → SQL Editor → New query → paste → Run.
+-- Safe to run again.
+--
+-- Why here and not in the browser: the browser used to email orders through
+-- FormSubmit, which some Latvian internet providers block (their DNS filter), so
+-- those emails silently never left. Now the browser only saves the order, and the
+-- database emails it, so it works on every network.
+--
+-- What it sends (from the Brevo sender below, which must be verified in Brevo):
+--   new order        → the shop (order details, reply goes to the customer)
+--                    → the customer (a copy of their order request)
+--   new cancellation → the shop, and a dated confirmation to the customer
+--
+-- ONE-TIME SETUP (the key never goes in this file or in the code):
+--   1. Brevo → your name (top right) → SMTP & API → API keys → Generate a new API key.
+--   2. Here in the SQL Editor, run this one line with your key, then delete it from the editor:
+--        select vault.create_secret('xkeysib-…your key…', 'brevo_api_key');
+--      To replace it later: select vault.update_secret((select id from vault.secrets where name = 'brevo_api_key'), 'new key');
+--   3. Check the emails below and change them here if needed.
+-- Emails are sent a few seconds after the order. If something fails, the order is
+-- still saved (admin page → Orders) and the reason is in net._http_response.
+
+create extension if not exists pg_net;
+
+-- Who sends and who receives (change the values and run again)
+insert into private.secrets (name, value) values
+  ('mail_from', 'ordersmoyenhills@gmail.com'),     -- the verified Brevo sender
+  ('mail_from_name', 'MOYEN HILLS'),
+  ('mail_shop', 'ordersmoyenhills@gmail.com'),     -- where new orders and cancellations go
+  ('mail_reply', 'moyenhills@gmail.com')           -- where customers' replies go
+on conflict (name) do nothing;
+
+-- Text made safe to put inside an email's HTML
+create or replace function private.h(t text)
+returns text language sql immutable as $$
+  select replace(replace(replace(replace(coalesce(t, ''), '&', '&amp;'), '<', '&lt;'), '>', '&gt;'), '"', '&quot;');
+$$;
+
+create or replace function private.eur(n numeric)
+returns text language sql immutable as $$
+  select '€' || trim(trailing '.' from trim(trailing '0' from to_char(coalesce(n, 0), 'FM999999990.00')));
+$$;
+
+-- Send one email through Brevo. Never fails the order: without a key it just skips.
+create or replace function private.send_mail(p_to text, p_to_name text, p_subject text, p_html text, p_reply text default null)
+returns void language plpgsql security definer set search_path = public, private as $$
+declare
+  k text;
+  cfg jsonb;
+begin
+  begin
+    select decrypted_secret into k from vault.decrypted_secrets where name = 'brevo_api_key' limit 1;
+  exception when others then k := null;
+  end;
+  if k is null or coalesce(p_to, '') = '' then
+    raise warning 'Email "%" not sent: no Brevo key in Vault yet (see supabase/notify.sql).', p_subject;
+    return;
+  end if;
+  select jsonb_object_agg(name, value) into cfg from private.secrets where name like 'mail\_%';
+  perform net.http_post(
+    url := 'https://api.brevo.com/v3/smtp/email',
+    headers := jsonb_build_object('api-key', k, 'content-type', 'application/json', 'accept', 'application/json'),
+    body := jsonb_build_object(
+      'sender', jsonb_build_object('email', cfg ->> 'mail_from', 'name', cfg ->> 'mail_from_name'),
+      'to', jsonb_build_array(jsonb_build_object('email', p_to, 'name', left(coalesce(nullif(p_to_name, ''), p_to), 70))),
+      'replyTo', jsonb_build_object('email', coalesce(p_reply, cfg ->> 'mail_reply')),
+      'subject', left(p_subject, 200),
+      'htmlContent', p_html)
+  );
+exception when others then
+  raise warning 'Email "%" not sent: %', p_subject, sqlerrm;
+end;
+$$;
+
+-- New order → shop + customer
+create or replace function private.mail_new_order()
+returns trigger language plpgsql security definer set search_path = public, private as $$
+declare
+  rows text;
+  sums text;
+  who text;
+  shop text := (select value from private.secrets where name = 'mail_shop');
+begin
+  select string_agg(format('<tr><td>%s × %s%s</td><td>Size %s</td><td align="right">%s</td></tr>',
+      private.h(i ->> 'qty'), private.h(i ->> 'name'),
+      case when coalesce(i ->> 'colour', '') <> '' then ' (' || private.h(i ->> 'colour') || ')' else '' end,
+      private.h(i ->> 'size'), private.eur((i ->> 'qty')::numeric * (i ->> 'price')::numeric)), '')
+    into rows from jsonb_array_elements(new.items) i;
+  sums := format('<tr><td colspan="2">Subtotal</td><td align="right">%s</td></tr>', private.eur(new.subtotal))
+    || case when coalesce(new.discount, 0) > 0
+         then format('<tr><td colspan="2">Promo code %s</td><td align="right">−%s</td></tr>', private.h(new.promo_code), private.eur(new.discount)) else '' end
+    || format('<tr><td colspan="2"><b>Total</b></td><td align="right"><b>%s</b></td></tr>', private.eur(coalesce(new.total, new.subtotal)));
+  who := format('<p>%s<br>%s<br>%s<br>%s %s, %s</p>',
+    private.h(new.full_name), private.h(new.email) || coalesce(' · ' || nullif(private.h(new.phone), ''), ''),
+    private.h(new.address), private.h(new.postcode), private.h(new.city), private.h(new.country))
+    || case when coalesce(new.note, '') <> '' then '<p>Note: ' || private.h(new.note) || '</p>' else '' end;
+
+  perform private.send_mail(shop, 'MOYEN HILLS orders',
+    format('New order #%s: %s, %s', new.id, private.eur(coalesce(new.total, new.subtotal)), left(new.full_name, 60)),
+    format('<h2>New order #%s</h2><table cellpadding="6" style="border-collapse:collapse">%s%s</table><h3>Customer</h3>%s<p>Manage it on the admin page → Orders.</p>',
+      new.id, rows, sums, who),
+    new.email);
+
+  perform private.send_mail(new.email, new.full_name,
+    format('MOYEN HILLS: we received your order #%s', new.id),
+    format('<p>Hi %s,</p><p>Thank you! We received your order request <b>#%s</b>. We’ll email you shortly to confirm it, with payment and delivery details.</p><table cellpadding="6" style="border-collapse:collapse">%s%s</table><h3>Delivery to</h3>%s<p>Changed your mind? You can cancel within 14 days of receiving your order: <a href="https://moyenhills.com/withdraw.html?order=%s">moyenhills.com/withdraw.html</a>.</p><p>MOYEN HILLS</p>',
+      private.h(split_part(new.full_name, ' ', 1)), new.id, rows, sums, who, new.id));
+  return new;
+end;
+$$;
+drop trigger if exists orders_mail on public.orders;
+create trigger orders_mail after insert on public.orders for each row execute function private.mail_new_order();
+
+-- New cancellation → shop + a dated confirmation to the customer (EU: on a durable medium)
+create or replace function private.mail_new_withdrawal()
+returns trigger language plpgsql security definer set search_path = public, private as $$
+declare
+  shop text := (select value from private.secrets where name = 'mail_shop');
+  stamp text := to_char(new.created_at at time zone 'Europe/Riga', 'FMDD Month YYYY, HH24:MI');
+  body text;
+begin
+  body := format('<p>I hereby give notice that I withdraw from my contract for the sale of the following goods: %s.</p><p>Order number: %s<br>Ordered / received on: %s<br>Name: %s<br>Email: %s<br>Sent on: %s (Riga time)</p>',
+    private.h(coalesce(nullif(new.items, ''), 'The whole order')), private.h(coalesce(new.order_ref, 'not given')),
+    coalesce(to_char(new.order_date, 'FMDD Month YYYY'), 'not given'), private.h(new.full_name), private.h(new.email), stamp);
+  perform private.send_mail(shop, 'MOYEN HILLS orders',
+    format('Cancellation: order %s from %s', coalesce(new.order_ref, '(no number)'), left(new.full_name, 60)),
+    '<h2>Order cancelled (withdrawal)</h2>' || body || '<p>See the admin page → Cancellations. The items should come back within 14 days; refund within 14 days of receiving them.</p>',
+    new.email);
+  perform private.send_mail(new.email, new.full_name,
+    'MOYEN HILLS: we received your cancellation',
+    format('<p>Hi %s,</p><p>We received your withdrawal on %s. This email is your confirmation.</p>%s<p>Please send the items back within 14 days. We refund you within 14 days of receiving them, to the same payment method.</p><p>MOYEN HILLS</p>',
+      private.h(split_part(new.full_name, ' ', 1)), stamp, body));
+  return new;
+end;
+$$;
+drop trigger if exists withdrawals_mail on public.withdrawals;
+create trigger withdrawals_mail after insert on public.withdrawals for each row execute function private.mail_new_withdrawal();
+
+revoke all on all functions in schema private from public, anon, authenticated;

@@ -15,7 +15,8 @@
 window.MH_CATALOG = {
   settings: {
     currency: 'EUR',
-    // New orders are emailed here (via formsubmit.co, no server needed).
+    // The orders inbox. Order and cancellation emails are sent by the database
+    // (supabase/notify.sql: change 'mail_shop' there to move them).
     orderEmail: 'ordersmoyenhills@gmail.com',
     // "Join the Hills family" sign-ups go to this Brevo form (double opt-in: Brevo emails a
     // confirmation link). Brevo → Contacts → Forms → your form → Share → the form's `action` URL.
