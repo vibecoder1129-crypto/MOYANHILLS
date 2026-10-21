@@ -1,5 +1,5 @@
 -- MOYEN HILLS — card payments with Stripe
--- Run this AFTER schema.sql and privacy.sql, every time you run those two
+-- Run this AFTER schema.sql, privacy.sql and notify.sql, every time you run those
 -- (Dashboard → SQL Editor → New query → paste → Run). Safe to re-run.
 --
 -- How a card order works:
@@ -81,3 +81,18 @@ returns integer language sql security definer set search_path = public as $$
 $$;
 revoke execute on function public.release_unpaid_orders() from public, anon, authenticated;
 grant execute on function public.release_unpaid_orders() to service_role;
+
+-- Emails (notify.sql): a card order is mailed to the shop and the buyer once it is paid, not when
+-- the payment page opens. Other orders are mailed when they are placed, as before.
+do $$
+begin
+  if to_regprocedure('private.mail_new_order()') is not null then
+    drop trigger if exists orders_mail on public.orders;
+    create trigger orders_mail after insert on public.orders
+      for each row when (new.pay_token is null) execute function private.mail_new_order();
+    drop trigger if exists orders_mail_paid on public.orders;
+    create trigger orders_mail_paid after update of payment on public.orders
+      for each row when (new.payment = 'paid' and old.payment is distinct from 'paid') execute function private.mail_new_order();
+  end if;
+end;
+$$;

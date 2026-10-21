@@ -20,7 +20,8 @@ Open `index.html` in a browser, or host the folder on GitHub Pages, Netlify or V
 - `auth.js` + `config.js`: customer accounts (Supabase); `vendor/supabase.js` is the Supabase library
 - `supabase/schema.sql`: the database: accounts, orders, products, promo codes, admins
 - `supabase/privacy.sql`: privacy and EU rules on top of it: delete/download my data, cancellations, 30-day price rule, retention. **Run it after `schema.sql`, every time.**
-- `supabase/payments.sql` + `supabase/functions/`: card payments with Stripe (delivery prices, payment page, webhook). **Run it after `privacy.sql`, every time.** See [Card payments](#card-payments-stripe)
+- `supabase/notify.sql`: order and cancellation emails, sent by the database through Brevo. Run it third (see "Where orders go").
+- `supabase/payments.sql` + `supabase/functions/`: card payments with Stripe (delivery prices, payment page, webhook). **Run it after `notify.sql`, every time.** See [Card payments](#card-payments-stripe)
 - `vercel.json` + `.vercelignore` (Vercel) or `netlify.toml` (Netlify): security headers, and files kept off the public site
 - `fonts/`: the Inter Tight font, self-hosted
 - `site.css`: the design
@@ -74,7 +75,7 @@ day, a maximum number of uses (e.g. 1 for a one-off code for one client), and on
 ## Make yourself an admin (once Supabase is connected)
 
 1. Run `supabase/schema.sql` in **SQL Editor** (again, if you ran an older copy: it is safe to re-run),
-   then run `supabase/privacy.sql` the same way. Always run both, in that order.
+   then `supabase/privacy.sql`, then `supabase/notify.sql`. Always run all three, in that order.
 2. Create an account on the site's account page with your email, and confirm it.
 3. In **SQL Editor**, run (with your email):
    ```sql
@@ -141,7 +142,7 @@ What the site does for you (details in `supabase/privacy.sql`, `terms.html`, `pr
 - **Retention.** About once a year, delete records accounting law no longer needs, in SQL Editor:
   `select public.purge_old_records(5);` (use the number of years your accountant confirms).
 - **Security headers** apply to every page: only the site's own scripts can run, and data can only be
-  sent to Supabase and FormSubmit.
+  sent to Supabase and Brevo's sign-up form.
 
 Requests by email (someone without an account asks for their data or for deletion): find their rows
 in Table Editor (`orders`, `withdrawals`), send or delete them within one month, and keep order
@@ -149,38 +150,38 @@ records only as long as accounting law requires.
 
 ## Where orders go
 
-The site has no server of its own. When a buyer presses **Send order request**, `app.js` does two things at once:
+The site has no server of its own. When a buyer presses **Send order request**, `app.js` saves the
+order in Supabase (**Table Editor → orders**, or the admin page → Orders), for guests and signed-in
+customers alike. The database then emails it, through Brevo (`supabase/notify.sql`):
 
-1. **Email (always on).** The order is sent through [FormSubmit](https://formsubmit.co) to
-   `orderEmail` in `catalog.js` (now `ordersmoyenhills@gmail.com`, which also gets cancellations from `withdraw.html`). The email has the items,
-   sizes, total and the buyer's name, email, phone, address and note. Reply to it to send the buyer
-   payment details; the reply goes straight to the buyer.
-   After changing `orderEmail`, place one test order on the live site: FormSubmit sends an
-   **Activate** link to the new address first, and nothing is forwarded until you click it.
-2. **Stored record (once Supabase is set up).** The same order is saved in Supabase under
-   **Table Editor → orders**, for guests and signed-in customers alike (guest orders have an empty
-   `user_id`). Until `config.js` has the Supabase keys, this step is skipped.
+- to the shop (`mail_shop`, now `ordersmoyenhills@gmail.com`): items, sizes, total and the buyer's
+  name, email, phone, address and note. Reply to it to send the buyer payment details; the reply goes
+  straight to the buyer.
+- to the buyer: a copy of their order request, with the link to cancel.
 
-The buyer only sees "Order received" if at least one of the two worked. If neither did, the cart is
-kept and the buyer gets a link that opens their email app with the whole order written out,
-addressed to `contactEmail` in `catalog.js` (`moyenhills@gmail.com`).
+Cancellations from `withdraw.html` work the same way: saved, then emailed to the shop with a dated
+confirmation to the buyer.
+
+The emails used to be sent from the browser through FormSubmit, but some Latvian internet providers
+block formsubmit.co, so they silently never left. Sending from the database works on every network.
+
+The buyer only sees "Order received" once the order is saved. If it can't be saved (or Supabase is
+not set up yet), the cart is kept and the buyer gets a link that opens their email app with the whole
+order written out, addressed to `contactEmail` in `catalog.js` (`moyenhills@gmail.com`).
+
+**One-time email setup:**
+1. In Brevo, check that the sender (`mail_from`, now `ordersmoyenhills@gmail.com`) is verified:
+   Settings → Senders.
+2. Brevo → your name (top right) → **SMTP & API** → **API keys** → Generate a new API key.
+3. Supabase → SQL Editor, run with your key (then clear the editor; the key is stored encrypted in Vault):
+   `select vault.create_secret('xkeysib-…', 'brevo_api_key');`
+4. Run `supabase/notify.sql` (after `schema.sql` and `privacy.sql`). Place a test order.
+If an email doesn't arrive, the order is still saved; Brevo → Transactional → Logs, or
+`select * from net._http_response order by created desc limit 5;` in SQL Editor, shows why.
 
 Newsletter sign-ups ("Join the Hills family") go to **Brevo**, to the form in `newsletterForm` in
 `catalog.js`. Brevo emails each person a confirmation link (double opt-in) and only adds them to the
-list once they click it. See and email subscribers in Brevo → Contacts. If `newsletterForm` is
-empty, sign-ups are emailed through FormSubmit to `subscribeEmail` instead.
-
-**One-time activation (do this before launch):** FormSubmit does not deliver anything to an address
-until it is activated. Place one test order on the live site; FormSubmit then emails an
-**Activate Form** link to the order address. Click it, then place a second test order and check it
-arrives. Until then, buyers see "The order could not be sent" (the site checks FormSubmit's answer,
-so an order is never shown as received when it was not).
-
-After activating, FormSubmit gives you a random alias. Put it in `orderEmail` in `catalog.js`
-in place of the plain email address, so the address is not visible in the page source.
-
-To send orders to a different inbox, change `orderEmail` in `catalog.js` and activate the new address the
-same way.
+list once they click it. See and email subscribers in Brevo → Contacts.
 
 Send newsletters from Brevo → Campaigns, to the list the form fills. Every Brevo email has an
 unsubscribe link; don't import email addresses from elsewhere without their confirmation.
@@ -203,14 +204,15 @@ With it on, the cart button says **Continue to payment**:
 On the admin page each card order says **Card: paid**, **not paid yet**, **never paid** or
 **payment failed**. Only ship orders that say **Card: paid**. Refunds are made in Stripe
 (Payments → the payment → Refund); cancelling the order on the admin page only puts the stock back.
-No order email is sent through FormSubmit for card orders: turn on Stripe's emails instead (below).
+Card orders are emailed (shop + buyer, through `notify.sql`) once they are paid, not when the
+payment page opens, so an unpaid order never lands in the inbox.
 
 The Stripe secret key lives only in Supabase. Never put it in `config.js`, this repository or a chat.
 
 ### Set it up (test mode first)
 1. **Stripe:** create an account at stripe.com (country Latvia, currency EUR). Stay in **Test mode**.
 2. **Supabase → SQL Editor:** run `supabase/payments.sql`. From now on the order is always
-   `schema.sql`, then `privacy.sql`, then `payments.sql`.
+   `schema.sql`, then `privacy.sql`, then `notify.sql`, then `payments.sql`.
 3. **Supabase → Table Editor → shipping_rates:** set your delivery prices. `country` is the country
    as buyers type it, in small letters (`latvia`, `lithuania`, …); `*` is everywhere else (delete it to
    only ship to the listed countries). `label` is shown on the payment page. They start at €0.
@@ -233,8 +235,8 @@ The Stripe secret key lives only in Supabase. Never put it in `config.js`, this 
 7. Set `cardPayments: true` in `config.js`, publish, and order with the test card
    `4242 4242 4242 4242` (any future date, any CVC). The order should turn **paid** on the admin page.
    Also try leaving the payment page: after about 30 minutes the order is cancelled and the stock is back.
-8. **Stripe → Settings:** turn on **Customer emails → Successful payments** (the buyer's receipt) and
-   your own **Email notifications → Successful payments**; fill in the business details, the
+8. **Stripe → Settings:** turn on **Customer emails → Successful payments** (the buyer's receipt);
+   fill in the business details, the
    statement descriptor (`MOYEN HILLS`) and **Branding** (logo, black).
 9. **Going live:** finish Stripe's account activation, switch off Test mode, add the same webhook again
    in live mode, and replace `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` with the live ones.
@@ -248,7 +250,7 @@ the account page says "coming soon" and everyone orders as a guest, exactly as b
 ### 1. Create the project and tables
 1. Sign up at supabase.com and create a project (region: Frankfurt or Stockholm is closest to Latvia).
 2. **SQL Editor → New query**: paste everything from `supabase/schema.sql` and press **Run**. Then do the
-   same with `supabase/privacy.sql`.
+   same with `supabase/privacy.sql`, then `supabase/notify.sql`.
 3. **Project Settings → API**: copy the **Project URL** and the **anon public** key into `config.js`.
 4. **Authentication → URL Configuration**:
    - **Site URL**: your live site, e.g. `https://moyenhills.com`

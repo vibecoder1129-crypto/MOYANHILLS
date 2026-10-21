@@ -87,13 +87,12 @@
         <h2 id="processors">Who helps us</h2>
         <p>These service providers process data for us under data processing terms, and only for the purposes above:</p>
         <ul>
-          <li><b>Supabase</b> stores orders, accounts and cancellations. Database region: <mark class="todo">[region chosen for the Supabase project, e.g. EU (Frankfurt)]</mark>.</li>
-          <li><b>FormSubmit</b> (formsubmit.co) forwards order and cancellation forms to our email inbox. <mark class="todo">[Check FormSubmit’s location and terms, or replace it with an EU email service]</mark></li>
+          <li><b>Supabase</b> stores orders, accounts and cancellations. Database region: EU (Ireland).</li>
           <li><b>Stripe</b> (Stripe Payments Europe, Ireland) processes card payments. It gets your name, email, the order total and your payment details; we never see your card number. Stripe is also responsible for some of this data itself, for fraud prevention and its legal duties: see <a href="https://stripe.com/privacy" rel="noopener">Stripe’s privacy policy</a>.</li>
           <li><b>Google</b> (Gmail) hosts our email inbox.</li>
           <li><b>Vercel</b> hosts this website.</li>
           <li><b>Google or Apple</b>, only if you choose to sign in with them.</li>
-          <li><b>Brevo</b> (Sendinblue SAS, France) stores newsletter sign-ups and sends our newsletter.</li>
+          <li><b>Brevo</b> (Sendinblue SAS, France) sends the order and cancellation emails (to us, and your copy) and, if you join, stores your sign-up and sends our newsletter.</li>
           <li>Your delivery carrier receives your name, address and phone to deliver the parcel. <mark class="todo">[Name the carrier(s)]</mark></li>
         </ul>
         <p>Some of these companies are based in, or use servers in, the United States. Transfers there rely on the EU–US Data Privacy Framework or the European Commission’s standard contractual clauses.</p>
@@ -274,7 +273,7 @@
     </div>
     <div class="cart__done" data-cart-done hidden>
       <p class="cart__done-title">Order received</p>
-      <p>Thank you. We will email you within a day to confirm your order and send the payment details. Changed your mind? You can <a href="withdraw.html">cancel</a> up to 14 days after it arrives.</p>
+      <p>Thank you. A copy of your order is on its way to your inbox, and we will email you within a day to confirm it and send the payment details. Changed your mind? You can <a href="withdraw.html">cancel</a> up to 14 days after it arrives.</p>
       <button type="button" class="btn" data-close-cart>Keep looking</button>
     </div>
   </dialog>
