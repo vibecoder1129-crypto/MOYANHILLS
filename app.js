@@ -415,6 +415,40 @@ $('[data-subscribe]')?.addEventListener('submit', async (e) => {
   const button = form.querySelector('button');
   button.disabled = true;
   msg.textContent = 'Joining…';
+  // Brevo form (double opt-in): Brevo emails a link to confirm the address
+  if (SETTINGS.newsletterForm) {
+    const body = new FormData();
+    body.append('EMAIL', email);
+    body.append('email_address_check', ''); // Brevo's own bot trap, must stay empty
+    body.append('locale', 'en');
+    try {
+      const res = await fetch(`${SETTINGS.newsletterForm}?isAjax=1`, { method: 'POST', body });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.success === false) throw new Error(data.message || res.status);
+      form.reset();
+      msg.textContent = 'Almost there: check your inbox and tap the link to confirm.';
+    } catch (err) {
+      if (err instanceof TypeError) {
+        // Brevo could not be reached from the page: send the form the plain way, in a new tab
+        const f = document.createElement('form');
+        f.method = 'POST';
+        f.action = SETTINGS.newsletterForm;
+        f.target = '_blank';
+        f.hidden = true;
+        for (const [k, v] of body) f.append(Object.assign(document.createElement('input'), { type: 'hidden', name: k, value: v }));
+        document.body.append(f);
+        f.submit();
+        f.remove();
+        form.reset();
+        msg.textContent = 'Almost there: check your inbox and tap the link to confirm.';
+      } else {
+        msg.textContent = 'That did not go through. Check the address and try again.';
+      }
+    } finally {
+      button.disabled = false;
+    }
+    return;
+  }
   try {
     const res = await fetch(endpoint(SETTINGS.subscribeEmail), {
       method: 'POST',
