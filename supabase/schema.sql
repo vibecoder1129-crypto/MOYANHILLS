@@ -179,6 +179,9 @@ create table if not exists public.products (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+-- Latvian text for the Latvian site: {"colour", "label", "blurb", "description", "details", "fit", "note"};
+-- anything left out shows in English. Edited on the admin page.
+alter table public.products add column if not exists lv jsonb not null default '{}';
 alter table public.products enable row level security;
 drop policy if exists "products: shop reads" on public.products;
 drop policy if exists "products: admin writes" on public.products;
@@ -273,6 +276,7 @@ alter table public.orders add column if not exists promo_code text;
 alter table public.orders add column if not exists discount numeric(10, 2) not null default 0;
 alter table public.orders add column if not exists total numeric(10, 2);
 alter table public.orders add column if not exists client text; -- fingerprint for the order rate limit
+alter table public.orders add column if not exists lang text not null default 'en'; -- the site language: 'en' or 'lv', for the emails
 
 -- Every new order: prices come from the products table (so they can't be changed in the
 -- browser), the promo code is checked again and counted, and the stock goes down.
@@ -297,6 +301,10 @@ begin
   new.note := left(new.note, 2000);
   new.full_name := left(new.full_name, 200); new.email := left(new.email, 200); new.phone := left(new.phone, 50);
   new.address := left(new.address, 400); new.city := left(new.city, 100); new.postcode := left(new.postcode, 20); new.country := left(new.country, 100);
+  new.lang := case when new.lang = 'lv' then 'lv' else 'en' end;
+  -- The Latvian site starts the country box as "Latvija": store the English name the delivery prices use
+  new.country := case lower(trim(new.country)) when 'latvija' then 'Latvia' when 'lietuva' then 'Lithuania'
+    when 'igaunija' then 'Estonia' when 'eesti' then 'Estonia' else new.country end;
   for it in select * from jsonb_to_recordset(new.items) as x(id text, name text, colour text, size text, qty int, price numeric) loop
     if it.qty is null or it.qty not between 1 and 10 then raise exception 'Bad quantity'; end if;
     -- Only real products, in a size that exists, from stock that is there

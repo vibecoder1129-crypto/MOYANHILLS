@@ -15,12 +15,16 @@ let PRODUCTS = [];
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const money = (n) => new Intl.NumberFormat('en-IE', { style: 'currency', currency: SETTINGS.currency, maximumFractionDigits: n % 1 ? 2 : 0 }).format(n);
+// Text in the visitor's language (i18n.js); English if that file is missing
+const t = window.mhT || ((en, v) => (v ? en.replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)) : en));
+const tMsg = window.mhTMessage || ((m) => m);
+const LV = window.mhLang === 'lv';
+const money = (n) => new Intl.NumberFormat(LV ? 'lv-LV' : 'en-IE', { style: 'currency', currency: SETTINGS.currency, maximumFractionDigits: n % 1 ? 2 : 0 }).format(n);
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const productUrl = (p) => `product.html?id=${encodeURIComponent(p.id)}`;
 // Price, with the old price crossed out when there is one
 const priceHtml = (p) => (p.wasPrice > p.price
-  ? `<s class="was" aria-label="Was ${money(p.wasPrice)}">${money(p.wasPrice)}</s> ${money(p.price)}`
+  ? `<s class="was" aria-label="${esc(t('Was {price}', { price: money(p.wasPrice) }))}">${money(p.wasPrice)}</s> ${money(p.price)}`
   : money(p.price));
 
 const byId = (id) => PRODUCTS.find((p) => p.id === id);
@@ -36,7 +40,7 @@ let current = null;
 /* Images: catalog photos may carry a srcset; uploaded ones are a plain src */
 function imgTag(im, { cls = '', sizes = '(max-width: 720px) 100vw, 50vw', lazy = true, alt } = {}) {
   if (!im) return '';
-  return `<img${cls ? ` class="${cls}"` : ''} src="${esc(im.src)}"${im.srcset ? ` srcset="${esc(im.srcset)}" sizes="${sizes}"` : ''}${im.width ? ` width="${Number(im.width) || ''}" height="${Number(im.height) || ''}"` : ''} alt="${esc(alt ?? im.alt ?? '')}"${lazy ? ' loading="lazy"' : ' fetchpriority="high"'}>`;
+  return `<img${cls ? ` class="${cls}"` : ''} src="${esc(im.src)}"${im.srcset ? ` srcset="${esc(im.srcset)}" sizes="${sizes}"` : ''}${im.width ? ` width="${Number(im.width) || ''}" height="${Number(im.height) || ''}"` : ''} alt="${esc(alt ?? t(im.alt ?? ''))}"${lazy ? ' loading="lazy"' : ' fetchpriority="high"'}>`;
 }
 const smallSrc = (im) => (im?.srcset ? im.srcset.split(',')[0].trim().split(' ')[0] : im?.src || '');
 
@@ -55,9 +59,9 @@ const grandTotal = () => Math.max(0, subtotal() - discount());
 
 /* Add a product in a size; returns an error message or '' */
 function addToCart(p, size) {
-  if (sizeOff(p, size)) return `${size} is sold out.`;
+  if (sizeOff(p, size)) return t('{size} is sold out.', { size });
   const line = cart.find((i) => i.id === p.id && i.size === size);
-  if ((line ? line.qty : 0) >= stockOf(p, size)) return `No more ${size} left.`;
+  if ((line ? line.qty : 0) >= stockOf(p, size)) return t('No more {size} left.', { size });
   if (line) line.qty += 1; else cart.push({ id: p.id, size, qty: 1 });
   save();
   bumpCount();
@@ -78,7 +82,7 @@ function renderCommon(p) {
   const left = sizesOf(p).reduce((n, s) => n + Math.max(0, s.stock), 0);
   $$('[data-stock-left]').forEach((el) => {
     el.hidden = !p || soldOut;
-    $('[data-stock-text]', el).textContent = left <= 10 ? `Almost gone — only ${left} left` : `Limited stock — only ${left} left`;
+    $('[data-stock-text]', el).textContent = t(left <= 10 ? 'Almost gone — only {n} left' : 'Limited stock — only {n} left', { n: left });
   });
 
   // Small product card in the full-screen menu
@@ -99,10 +103,10 @@ function renderFeature(p) {
   if (!p) { box.hidden = true; return; }
   const media = $('.feature__media', box);
   media.href = productUrl(p);
-  media.setAttribute('aria-label', `${p.name}, all photos and details`);
+  media.setAttribute('aria-label', t('{name}, all photos and details', { name: p.name }));
   const [a, b] = p.images;
   media.innerHTML = imgTag(a, { cls: 'feature__img' })
-    + (b ? imgTag(b, { cls: 'feature__img feature__img--alt', alt: '' }) + '<span class="feature__hint">Front / back</span>' : '');
+    + (b ? imgTag(b, { cls: 'feature__img feature__img--alt', alt: '' }) + `<span class="feature__hint">${esc(t('Front / back'))}</span>` : '');
   $('[data-feature-label]', box).textContent = p.label || '';
   $('[data-feature-label]', box).hidden = !p.label;
   $('[data-feature-blurb]', box).textContent = p.blurb || p.description || '';
@@ -114,7 +118,7 @@ function renderFeature(p) {
 function renderShop() {
   const grid = $('[data-shop]');
   if (!grid) return;
-  if (!PRODUCTS.length) { grid.innerHTML = '<p class="shop__empty">New pieces are on the way. Join the Hills family below to hear first.</p>'; return; }
+  if (!PRODUCTS.length) { grid.innerHTML = `<p class="shop__empty">${esc(t('New pieces are on the way. Join the Hills family below to hear first.'))}</p>`; return; }
   grid.innerHTML = PRODUCTS.map((p) => {
     const off = isSoldOut(p);
     const [a, b] = p.images;
@@ -125,7 +129,7 @@ function renderShop() {
       </a>
       <h2 class="pcard__name"><a href="${productUrl(p)}">${esc(p.name)}</a></h2>
       <p class="pcard__price">${priceHtml(p)}${p.colour ? ` · ${esc(p.colour)}` : ''}</p>
-      ${off ? '<p class="soldout">SOLD OUT, DONT BE LATE</p>' : ''}
+      ${off ? `<p class="soldout">${esc(t('SOLD OUT, DONT BE LATE'))}</p>` : ''}
     </article>`;
   }).join('');
   $$('[data-reveal]', grid).forEach(reveal);
@@ -136,7 +140,7 @@ function renderProductPage(p) {
   const pdp = $('[data-pdp]');
   if (!pdp) return;
   if (!p) {
-    pdp.innerHTML = '<section class="pdp__missing"><h1 class="pdp__name">This piece is gone</h1><p>It may have sold out or been taken down.</p><a class="btn" href="shop.html">Back to the shop</a></section>';
+    pdp.innerHTML = `<section class="pdp__missing"><h1 class="pdp__name">${esc(t('This piece is gone'))}</h1><p>${esc(t('It may have sold out or been taken down.'))}</p><a class="btn" href="shop.html">${esc(t('Back to the shop'))}</a></section>`;
     return;
   }
   document.title = `${p.name} — MOYEN HILLS`;
@@ -144,8 +148,8 @@ function renderProductPage(p) {
   // Gallery
   const gal = $('[data-gallery]', pdp);
   const n = p.images.length;
-  $('[data-track]', gal).innerHTML = p.images.map((im, i) => `<li class="gallery__slide" aria-label="${i + 1} of ${n}">${imgTag(im, { lazy: i > 0 })}</li>`).join('');
-  $('.gallery__thumbs', gal).innerHTML = n > 1 ? p.images.map((im, i) => `<button type="button" class="gallery__thumb${i ? '' : ' is-on'}" data-go="${i}" aria-label="Show photo ${i + 1}"><img src="${esc(smallSrc(im))}"${im.width ? ` width="${Number(im.width) || ''}" height="${Number(im.height) || ''}"` : ''} alt="" loading="lazy"></button>`).join('') : '';
+  $('[data-track]', gal).innerHTML = p.images.map((im, i) => `<li class="gallery__slide" aria-label="${esc(t('{i} of {n}', { i: i + 1, n }))}">${imgTag(im, { lazy: i > 0 })}</li>`).join('');
+  $('.gallery__thumbs', gal).innerHTML = n > 1 ? p.images.map((im, i) => `<button type="button" class="gallery__thumb${i ? '' : ' is-on'}" data-go="${i}" aria-label="${esc(t('Show photo {n}', { n: i + 1 }))}"><img src="${esc(smallSrc(im))}"${im.width ? ` width="${Number(im.width) || ''}" height="${Number(im.height) || ''}"` : ''} alt="" loading="lazy"></button>`).join('') : '';
   $('[data-count]', gal).innerHTML = `<span data-index>1</span> / ${n}`;
   $$('.gallery__arrow, [data-count]', gal).forEach((el) => { el.hidden = n < 2; });
   initGallery(gal);
@@ -167,17 +171,17 @@ function renderProductPage(p) {
     const label = document.createElement('label');
     label.className = 'size';
     label.innerHTML = `<input type="radio" name="size" value="${esc(size)}" ${sizeOff(p, size) ? 'disabled' : ''}><span>${esc(size)}</span>`;
-    if (sizeOff(p, size)) label.title = `${size} is sold out`;
+    if (sizeOff(p, size)) label.title = t('{size} is sold out', { size });
     row.append(label);
   }
   const note = $('[data-size-note]', pdp);
   row.addEventListener('change', (e) => {
     const left = stockOf(p, e.target.value);
-    note.textContent = left > 0 && left <= 3 ? `Only ${left} left in ${e.target.value}` : '';
+    note.textContent = left > 0 && left <= 3 ? t('Only {n} left in {size}', { n: left, size: e.target.value }) : '';
   });
   const add = $('[data-add]', pdp);
   add.disabled = isSoldOut(p);
-  add.textContent = isSoldOut(p) ? 'Sold out' : 'Add to cart';
+  add.textContent = t(isSoldOut(p) ? 'Sold out' : 'Add to cart');
 }
 
 const buy = $('[data-buy]');
@@ -187,8 +191,8 @@ if (buy) {
     const msg = $('[data-buy-msg]');
     if (!current) return;
     const size = new FormData(buy).get('size');
-    if (!size) { msg.textContent = 'Choose a size first.'; return; }
-    msg.textContent = addToCart(current, size) || `Added to cart: ${current.name}, size ${size}.`;
+    if (!size) { msg.textContent = t('Choose a size first.'); return; }
+    msg.textContent = addToCart(current, size) || t('Added to cart: {name}, size {size}.', { name: current.name, size });
   });
 }
 
@@ -222,7 +226,7 @@ function save() { store.write(cart); renderCart(); if (promo) recheckPromo(); }
 
 function renderCart() {
   $$('[data-cart-count]').forEach((el) => { el.textContent = totalQty(); });
-  $$('[data-open-cart].bar__cart').forEach((el) => el.setAttribute('aria-label', `Open cart, ${totalQty()} item${totalQty() === 1 ? '' : 's'}`));
+  $$('[data-open-cart].bar__cart').forEach((el) => el.setAttribute('aria-label', t(totalQty() === 1 ? 'Open cart, {n} item' : 'Open cart, {n} items', { n: totalQty() })));
   if (!dialog) return;
   const list = $('[data-cart-items]');
   list.innerHTML = '';
@@ -237,12 +241,12 @@ function renderCart() {
         <p class="cart__item-name">${esc(p.name)}</p>
         <p class="cart__item-meta">${p.colour ? `${esc(p.colour)} · ` : ''}${esc(item.size)} · ${money(p.price)}</p>
         <div class="qty">
-          <button type="button" data-dec aria-label="One less">−</button>
+          <button type="button" data-dec aria-label="${esc(t('One less'))}">−</button>
           <span>${item.qty}</span>
-          <button type="button" data-inc aria-label="One more">+</button>
+          <button type="button" data-inc aria-label="${esc(t('One more'))}">+</button>
         </div>
       </div>
-      <button type="button" class="link-u" data-remove>Remove</button>`;
+      <button type="button" class="link-u" data-remove>${esc(t('Remove'))}</button>`;
     li.querySelector('[data-dec]').onclick = () => { item.qty -= 1; if (item.qty < 1) cart = cart.filter((i) => i !== item); save(); };
     li.querySelector('[data-inc]').onclick = () => { if (item.qty < stockOf(p, item.size)) { item.qty += 1; save(); } };
     li.querySelector('[data-remove]').onclick = () => { cart = cart.filter((i) => i !== item); save(); };
@@ -279,7 +283,7 @@ function renderPromo() {
   box.hidden = empty || !!promo;
   $$('[data-discount-row]').forEach((el) => { el.hidden = empty || !promo; });
   if (promo) {
-    $('[data-promo-code]').textContent = `${promo.code}${promo.label ? ` · ${promo.label}` : ''}`;
+    $('[data-promo-code]').textContent = `${promo.code}${promo.label ? ` · ${tMsg(promo.label)}` : ''}`;
     $('[data-discount]').textContent = `−${money(discount())}`;
     $('[data-grand-total]').textContent = money(grandTotal());
   }
@@ -290,17 +294,17 @@ async function applyPromo() {
   const msg = $('[data-promo-msg]');
   const btn = $('[data-promo-apply]');
   btn.disabled = true;
-  msg.textContent = 'Checking…';
+  msg.textContent = t('Checking…');
   msg.classList.remove('is-error');
   try {
     const res = await window.mhData.checkPromo(input.value, subtotal());
-    if (!res?.ok) { msg.textContent = res?.message || 'That code is not valid.'; msg.classList.add('is-error'); return; }
+    if (!res?.ok) { msg.textContent = tMsg(res?.message || 'That code is not valid.'); msg.classList.add('is-error'); return; }
     promo = { code: res.code, discount: Number(res.discount) || 0, label: res.label || '' };
     input.value = '';
-    msg.textContent = `Code applied: you save ${money(discount())}.`;
+    msg.textContent = t('Code applied: you save {amount}.', { amount: money(discount()) });
     renderPromo();
   } catch {
-    msg.textContent = 'Could not check the code. Please try again.';
+    msg.textContent = t('Could not check the code. Please try again.');
     msg.classList.add('is-error');
   } finally {
     btn.disabled = false;
@@ -317,7 +321,7 @@ function recheckPromo() {
     try {
       const res = await window.mhData.checkPromo(promo.code, subtotal());
       if (res?.ok) { promo = { ...promo, discount: Number(res.discount) || 0 }; $('[data-promo-msg]').textContent = ''; }
-      else { promo = null; $('[data-promo-msg]').textContent = res?.message || 'The code no longer applies.'; }
+      else { promo = null; $('[data-promo-msg]').textContent = tMsg(res?.message || 'The code no longer applies.'); }
     } catch { /* keep the code; checkout will show it */ }
     renderPromo();
   }, 250);
@@ -344,7 +348,7 @@ async function openPayment(token) {
     body: JSON.stringify({ token, page: location.pathname }),
   });
   const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(body.error || 'The payment page could not be opened. Please try again.');
+  if (!res.ok) throw new Error(tMsg(body.error || 'The payment page could not be opened. Please try again.'));
   return body; // { url } or { paid: true }
 }
 
@@ -352,17 +356,23 @@ function showDone(title, html) {
   $('[data-cart-view]').hidden = true;
   const done = $('[data-cart-done]');
   done.hidden = false;
-  done.querySelector('.cart__done-title').textContent = title;
-  done.querySelector('p:not(.cart__done-title)').innerHTML = html;
+  done.querySelector('.cart__done-title').textContent = t(title);
+  // One paragraph in the visitor's language replaces the page's two (data-lang)
+  const paras = [...done.querySelectorAll('p:not(.cart__done-title)')];
+  paras.slice(1).forEach((p) => p.remove());
+  paras[0].removeAttribute('data-lang');
+  paras[0].innerHTML = html;
   done.querySelector('[data-pay-again]')?.remove();
 }
 
 if (cardPayments()) {
   const form = $('[data-checkout]');
   if (form) {
-    form.querySelector('button[type=submit]').textContent = 'Continue to payment';
-    const legal = form.querySelector('.checkout__legal');
-    if (legal) legal.innerHTML = 'Prices are in euro. Delivery is added on the next page, where you see the full total before you pay. Card payments are handled by Stripe. By ordering you accept our <a href="terms.html">Terms of sale</a>. How we use your details: <a href="privacy.html">Privacy policy</a>.';
+    form.querySelector('button[type=submit]').textContent = t('Continue to payment');
+    const [legal, ...others] = form.querySelectorAll('.checkout__legal');
+    others.forEach((p) => p.remove());
+    legal?.removeAttribute('data-lang');
+    if (legal) legal.innerHTML = t('Prices are in euro. Delivery is added on the next page, where you see the full total before you pay. Card payments are handled by Stripe. By ordering you accept our <a href="terms.html">Terms of sale</a>. How we use your details: <a href="privacy.html">Privacy policy</a>.');
   }
   // Back from the Stripe payment page
   const q = new URLSearchParams(location.search);
@@ -372,21 +382,21 @@ if (cardPayments()) {
     if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open', '');
     if (back === 'done') {
       cart = []; promo = null; save();
-      showDone('Thank you, it’s paid', `Order #${esc(q.get('order') || '')} is paid. Stripe emails you a receipt, and we email you when it ships. Changed your mind? You can <a href="withdraw.html">cancel</a> up to 14 days after it arrives.`);
+      showDone('Thank you, it’s paid', t('Order #{id} is paid. Stripe emails you a receipt, and we email you when it ships. Changed your mind? You can <a href="withdraw.html">cancel</a> up to 14 days after it arrives.', { id: esc(q.get('order') || '') }));
     } else if (back === 'cancelled' && /^[0-9a-f-]{36}$/i.test(q.get('token') || '')) {
       const token = q.get('token');
-      showDone('Payment not finished', 'Your order is kept for about 30 minutes, then it cancels itself and nothing is charged. <span data-pay-msg role="status"></span>');
+      showDone('Payment not finished', `${esc(t('Your order is kept for about 30 minutes, then it cancels itself and nothing is charged.'))} <span data-pay-msg role="status"></span>`);
       const again = document.createElement('button');
       again.type = 'button';
       again.className = 'btn';
       again.dataset.payAgain = '';
-      again.textContent = 'Pay now';
+      again.textContent = t('Pay now');
       again.onclick = async () => {
         again.disabled = true;
         try {
           const r = await openPayment(token);
           if (r.url) { location.assign(r.url); return; }
-          showDone('Thank you, it’s paid', 'This order is already paid. Stripe emailed you a receipt.');
+          showDone('Thank you, it’s paid', esc(t('This order is already paid. Stripe emailed you a receipt.')));
         } catch (err) {
           $('[data-pay-msg]').textContent = err.message;
           again.disabled = false;
@@ -402,25 +412,27 @@ async function payByCard(order, msg) {
   if (pending?.key !== key) {
     pending = null;
     const token = crypto.randomUUID();
-    msg.textContent = 'Saving your order…';
+    msg.textContent = t('Saving your order…');
     const error = await window.mhAccount.saveOrder({ ...order, pay_token: token });
-    if (error) { msg.textContent = error; msg.classList.add('is-error'); return; }
+    if (error) { msg.textContent = tMsg(error); msg.classList.add('is-error'); return; }
     pending = { token, key };
   }
-  msg.textContent = 'Opening the payment page…';
+  msg.textContent = t('Opening the payment page…');
   try {
     const r = await openPayment(pending.token);
     cart = []; promo = null; save();
     pending = null;
     if (r.url) { location.assign(r.url); return; }
-    showDone('Thank you, it’s paid', 'This order is already paid. Stripe emailed you a receipt.');
+    showDone('Thank you, it’s paid', esc(t('This order is already paid. Stripe emailed you a receipt.')));
   } catch (err) {
-    msg.textContent = `${err.message} Your order is saved: press the button again to pay.`;
+    msg.textContent = `${err.message} ${t('Your order is saved: press the button again to pay.')}`;
     msg.classList.add('is-error');
   }
 }
 
 /* ---------------- Checkout: the order is saved, and the database emails it ---------------- */
+// In Latvian the country box starts as "Latvija" (the database reads it as Latvia)
+if (LV) $$('[data-checkout] input[name=country]').forEach((i) => { if (i.defaultValue === 'Latvia') i.defaultValue = 'Latvija'; });
 $('[data-checkout]')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const form = e.target;
@@ -435,7 +447,7 @@ $('[data-checkout]')?.addEventListener('submit', async (e) => {
   const text = lines.map(({ item, p }) => `${item.qty} × ${p.name}${p.colour ? ` (${p.colour})` : ''}, size ${item.size}, ${money(item.qty * p.price)}`).join('\n');
   const button = form.querySelector('button[type=submit]');
   button.disabled = true;
-  msg.textContent = 'Sending your order…';
+  msg.textContent = t('Sending your order…');
   const order = {
     items: lines.map(({ item, p }) => ({ id: p.id, name: p.name, colour: p.colour, size: item.size, qty: item.qty, price: p.price })),
     subtotal: subtotal(),
@@ -443,6 +455,7 @@ $('[data-checkout]')?.addEventListener('submit', async (e) => {
     discount: discount(),
     total: grandTotal(),
     currency: SETTINGS.currency,
+    lang: LV ? 'lv' : 'en', // the language of the order emails
     full_name: data.name, email: data.email, phone: data.phone || null,
     address: data.address, city: data.city, postcode: data.postcode, country: data.country, note: data.note || null,
   };
@@ -471,7 +484,7 @@ $('[data-checkout]')?.addEventListener('submit', async (e) => {
     // Nothing reached the shop: let the buyer send the order themselves, already written out.
     const mail = `mailto:${SETTINGS.contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
       `${text}\nSubtotal: ${money(subtotal())}\nPromo code: ${promoText}\nTotal: ${money(grandTotal())}\n\nName: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone || '—'}\nAddress: ${address}\nNote: ${data.note || '—'}`)}`;
-    msg.innerHTML = `The order could not be sent. Please try again, or <a href="${mail}">email the order to ${esc(SETTINGS.contactEmail)}</a>.`;
+    msg.innerHTML = t('The order could not be sent. Please try again, or <a href="{mail}">email the order to {email}</a>.', { mail: esc(mail), email: esc(SETTINGS.contactEmail) });
   } finally {
     button.disabled = false;
   }
@@ -484,22 +497,22 @@ $('[data-subscribe]')?.addEventListener('submit', async (e) => {
   const input = form.email;
   const msg = $('[data-sub-msg]');
   const email = input.value.trim();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.textContent = 'Enter a valid email address.'; input.focus(); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.textContent = t('Enter a valid email address.'); input.focus(); return; }
   const button = form.querySelector('button');
   button.disabled = true;
-  msg.textContent = 'Joining…';
+  msg.textContent = t('Joining…');
   // Brevo form (double opt-in): Brevo emails a link to confirm the address
   if (SETTINGS.newsletterForm) {
     const body = new FormData();
     body.append('EMAIL', email);
     body.append('email_address_check', ''); // Brevo's own bot trap, must stay empty
-    body.append('locale', 'en');
+    body.append('locale', LV ? 'lv' : 'en');
     try {
       const res = await fetch(`${SETTINGS.newsletterForm}?isAjax=1`, { method: 'POST', body });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || data.success === false) throw new Error(data.message || res.status);
       form.reset();
-      msg.textContent = 'Almost there: check your inbox and tap the link to confirm. Didn’t get it within a few minutes? Check your spam or promotions folder.';
+      msg.textContent = t('Almost there: check your inbox and tap the link to confirm. Didn’t get it within a few minutes? Check your spam or promotions folder.');
     } catch (err) {
       if (err instanceof TypeError) {
         // Brevo could not be reached from the page: send the form the plain way, in a new tab
@@ -513,16 +526,16 @@ $('[data-subscribe]')?.addEventListener('submit', async (e) => {
         f.submit();
         f.remove();
         form.reset();
-        msg.textContent = 'Almost there: check your inbox and tap the link to confirm. Didn’t get it within a few minutes? Check your spam or promotions folder.';
+        msg.textContent = t('Almost there: check your inbox and tap the link to confirm. Didn’t get it within a few minutes? Check your spam or promotions folder.');
       } else {
-        msg.textContent = 'That did not go through. Check the address and try again.';
+        msg.textContent = t('That did not go through. Check the address and try again.');
       }
     } finally {
       button.disabled = false;
     }
     return;
   }
-  msg.textContent = 'Sign-ups open soon.';
+  msg.textContent = t('Sign-ups open soon.');
   button.disabled = false;
 });
 
@@ -586,7 +599,7 @@ if (sticky && 'IntersectionObserver' in window && $('[data-add]')) {
     const form = $('[data-buy]');
     if (new FormData(form).get('size')) { form.requestSubmit(); return; }
     $('[data-sizes]').scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'center' });
-    $('[data-buy-msg]').textContent = 'Choose a size first.';
+    $('[data-buy-msg]').textContent = t('Choose a size first.');
   });
 }
 

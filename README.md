@@ -13,7 +13,8 @@ Open `index.html` in a browser, or host the folder on GitHub Pages, Netlify or V
 - `admin.html` + `admin.js` + `admin.css`: the admin page (products, prices, stock, photos, promo codes, orders)
 - `terms.html`, `privacy.html`: terms of sale and privacy policy (fill in the yellow highlighted parts before launch)
 - `withdraw.html` + `withdraw.js`: **Cancel an order**, the EU withdrawal button (linked in every footer)
-- `boot.js`: tiny start-up script in each page's head (kept in a file so the security policy can block inline scripts)
+- `boot.js`: tiny start-up script in each page's head (kept in a file so the security policy can block inline scripts); it also picks the language
+- `i18n.js`: **the Latvian for every piece of text** on the site, and the LV / EN switch (see [Latvian and English](#latvian-and-english))
 - `catalog.js`: **everything you sell**: products, prices, sizes, stock, photos, promo codes, and where emails go
 - `data.js`: loads the products and checks promo codes (from Supabase when connected, otherwise `catalog.js`)
 - `app.js`: cart, checkout, newsletter and gallery. You shouldn't need to edit it to change what you sell.
@@ -26,6 +27,18 @@ Open `index.html` in a browser, or host the folder on GitHub Pages, Netlify or V
 - `fonts/`: the Inter Tight font, self-hosted
 - `site.css`: the design
 - `images/`: logo and product photos
+
+## Latvian and English
+
+The whole shop works in Latvian and English, with a small **LV / EN** switch in the header (and in the menu).
+
+- **Which language a visitor gets:** their own choice on the switch (remembered in that browser), otherwise the language of their phone or computer: Latvian devices get Latvian, everything else English. A link can force one: `moyenhills.com/?lang=lv` or `?lang=en`.
+- **Change a translation:** open `i18n.js`, find the English on the left and edit the Latvian on the right. Text with no line there just stays in English.
+- **Longer paragraphs and the legal pages** (`terms.html`, `privacy.html`, a few paragraphs with links) are written out in both languages in the page itself, marked `data-lang="en"` and `data-lang="lv"`. When you change one, change the other too.
+- **Products:** each product has Latvian text: `lv: { … }` in `catalog.js`, or the **Latvian text** box on the admin page. An empty box shows the English.
+- **Emails:** customers get their order and cancellation emails in the language they used on the site; the shop's copies stay in English and say when the customer wrote in Latvian. Card payments open Stripe's payment page in Latvian too.
+- **Not translated here:** the admin page, Supabase's sign-up and password emails (Supabase → Authentication → Emails), and Brevo's newsletter confirmation email (Brevo → your form). Write those in Latvian there if you want them in both.
+- **Legal:** Latvian law expects consumer information in Latvian. The Latvian terms and privacy policy are careful translations, but have the lawyer check them together with the English.
 
 ## Add, change or remove products
 

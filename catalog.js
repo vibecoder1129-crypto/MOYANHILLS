@@ -43,6 +43,17 @@ window.MH_CATALOG = {
       details: ['100% cotton', 'Cut-off style bottom', 'MADE IN LATVIA'],
       fit: 'Boxy, with short sleeves and a cut-off style bottom, so it sits wide and a little short.',
       note: 'Pre-made. Please allow 1–3 days for order fulfilling.',
+      // The same text in Latvian, for visitors who see the site in Latvian. Leave a line out
+      // (or empty) and the English shows instead.
+      lv: {
+        colour: 'Balta',
+        label: 'Ierobežota pirmā kolekcija',
+        blurb: 'Hills ģimene uz šo pieteicās jau laikus. Iepriekš izgatavots nelielā skaitā, sietspiede no trim pusēm, ražots Latvijā. Kad beigsies, tad beigsies.',
+        description: 'Plata piegriezuma t-krekls ar īsām piedurknēm un sietspiedes grafiku priekšpusē, aizmugurē un uz kakla etiķetes.',
+        details: ['100% kokvilna', 'Nogriezta apakšmala', 'RAŽOTS LATVIJĀ'],
+        fit: 'Plats, ar īsām piedurknēm un nogrieztu apakšmalu, tāpēc sēž brīvi un ir mazliet īsāks.',
+        note: 'Jau izgatavots. Pasūtījumu sagatavojam 1–3 dienās.',
+      },
       // Pieces left per size, in the order they are shown. 0 = that size is sold out.
       sizes: [
         { size: 'S', stock: 10 },
