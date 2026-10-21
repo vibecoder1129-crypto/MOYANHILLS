@@ -397,11 +397,13 @@
   /* The LV / EN switch: remember the choice and reload in that language */
   document.addEventListener('click', (e) => {
     const a = e.target.closest('[data-set-lang]');
-    if (!a) return;
+    // A click on the globe or the pill around the letters switches to the other language
+    const pill = !a && e.target.closest('.langs');
+    if (!a && !pill) return;
     e.preventDefault();
-    let next = a.dataset.setLang;
+    let next = pill ? (lang === 'lv' ? 'en' : 'lv') : a.dataset.setLang;
     // On phones only the current language shows: tapping it switches to the other one
-    if (next === lang && !a.parentElement.querySelector(`[data-set-lang]:not([data-set-lang="${lang}"])`)?.offsetParent) next = lang === 'lv' ? 'en' : 'lv';
+    if (a && next === lang && !a.parentElement.querySelector(`[data-set-lang]:not([data-set-lang="${lang}"])`)?.offsetParent) next = lang === 'lv' ? 'en' : 'lv';
     const url = new URL(location.href);
     url.searchParams.delete('lang');
     try { localStorage.setItem('mh-lang', next); } catch { url.searchParams.set('lang', next); /* no storage: keep it in the link */ }
