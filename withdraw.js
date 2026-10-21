@@ -1,7 +1,8 @@
 /* MOYEN HILLS — "Cancel an order" (withdraw.html)
- * The EU withdrawal button: fill in, check, confirm. The notice is emailed to the
- * shop (FormSubmit, with an automatic confirmation to the buyer) and stored in
- * Supabase when it is connected. Either one reaching the shop counts.
+ * The EU withdrawal button: fill in, check, confirm. The notice is stored in
+ * Supabase, and the database emails it to the shop with a dated confirmation to
+ * the buyer (supabase/notify.sql). If it can't be stored, the buyer gets the notice
+ * written out to email themselves.
  */
 (() => {
   const box = document.querySelector('[data-withdraw]');
@@ -61,37 +62,15 @@
     const stamp = when.toLocaleString('en-GB', { dateStyle: 'long', timeStyle: 'short' });
     const text = `I hereby give notice that I withdraw from my contract for the sale of the following goods: ${notice.items}. Order number: ${notice.order || 'not given'}. Ordered/received on: ${notice.order_date || 'not given'}. Name: ${notice.name}. Email: ${notice.email}. Sent on ${stamp}.`;
 
-    const emailed = settings.orderEmail ? fetch(`https://formsubmit.co/ajax/${encodeURIComponent(settings.orderEmail)}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({
-        _subject: `Withdrawal: order ${notice.order || '(no number)'} from ${notice.name}`,
-        _template: 'table',
-        _replyto: notice.email,
-        email: notice.email,
-        // The buyer's confirmation on a durable medium (an email), sent by FormSubmit
-        _autoresponse: `MOYEN HILLS received your withdrawal on ${stamp}.\n\n${text}\n\nPlease send the items back within 14 days. We refund you within 14 days of receiving them. Questions: ${settings.contactEmail || ''}`,
-        Notice: text,
-        Name: notice.name,
-        'Order number': notice.order || '—',
-        Items: notice.items,
-        Received: stamp,
-      }),
-    }).then(async (res) => {
-      const body = await res.json().catch(() => ({}));
-      if (!res.ok || String(body.success) !== 'true') throw new Error(body.message || res.status);
-      return true;
-    }).catch((err) => { console.warn('Withdrawal email not sent:', err.message); return false; }) : Promise.resolve(false);
-
     const stored = sb ? sb.rpc('request_withdrawal', {
       p_name: notice.name, p_email: notice.email, p_order: notice.order || null,
       p_order_date: notice.order_date || null, p_items: notice.items,
     }).then(({ error }) => { if (error) throw error; return true; })
       .catch((err) => { console.warn('Withdrawal not stored:', err.message); return false; }) : Promise.resolve(false);
 
-    const [sent, saved] = await Promise.all([emailed, stored]);
+    const saved = await stored;
     btn.disabled = false;
-    if (!sent && !saved) {
+    if (!saved) {
       const mail = `mailto:${settings.contactEmail}?subject=${encodeURIComponent('Withdrawal')}&body=${encodeURIComponent(text)}`;
       msg.textContent = '';
       msg.classList.add('is-error');
@@ -105,7 +84,7 @@
     say('');
     check.hidden = true;
     done.hidden = false;
-    $('[data-wd-done-text]').textContent = `We received your withdrawal on ${stamp}${sent ? `, and sent a confirmation to ${notice.email}` : ''}. Keep this page or take a screenshot as your record.`;
+    $('[data-wd-done-text]').textContent = `We received your withdrawal on ${stamp}. A confirmation is on its way to ${notice.email}. Keep this page or take a screenshot as your record too.`;
     $('#wd-done-title').focus();
   });
 })();

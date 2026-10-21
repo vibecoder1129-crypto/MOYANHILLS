@@ -16,7 +16,6 @@ const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const money = (n) => new Intl.NumberFormat('en-IE', { style: 'currency', currency: SETTINGS.currency, maximumFractionDigits: n % 1 ? 2 : 0 }).format(n);
-const endpoint = (email) => `https://formsubmit.co/ajax/${encodeURIComponent(email)}`;
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const productUrl = (p) => `product.html?id=${encodeURIComponent(p.id)}`;
 // Price, with the old price crossed out when there is one
@@ -328,7 +327,7 @@ $('[data-promo-apply]')?.addEventListener('click', applyPromo);
 $('[data-promo-input]')?.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); applyPromo(); } });
 $('[data-promo-remove]')?.addEventListener('click', () => { promo = null; $('[data-promo-msg]').textContent = ''; renderPromo(); });
 
-/* ---------------- Checkout: the order is emailed to the shop owner ---------------- */
+/* ---------------- Checkout: the order is saved, and the database emails it ---------------- */
 $('[data-checkout]')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const form = e.target;
@@ -358,34 +357,10 @@ $('[data-checkout]')?.addEventListener('submit', async (e) => {
   const address = `${data.address}, ${data.postcode} ${data.city}, ${data.country}`;
   const promoText = promo ? `${promo.code} (−${money(discount())})` : '—';
   try {
-    // 1. Email the owner. FormSubmit answers 200 even when it did not send
-    //    (for example before the address is activated), so check `success`.
-    const emailed = fetch(endpoint(SETTINGS.orderEmail), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({
-        _subject: subject,
-        _template: 'table',
-        _replyto: data.email,
-        Order: text,
-        Subtotal: money(subtotal()),
-        'Promo code': promoText,
-        Total: money(grandTotal()),
-        Name: data.name,
-        Email: data.email,
-        Phone: data.phone || '—',
-        Address: address,
-        Note: data.note || '—',
-      }),
-    }).then(async (res) => {
-      const body = await res.json().catch(() => ({}));
-      if (!res.ok || String(body.success) !== 'true') throw new Error(body.message || res.status);
-      return true;
-    }).catch((err) => { console.warn('Order email not sent:', err.message); return false; });
-    // 2. Store the order in Supabase (every order, signed in or guest), once accounts are set up.
-    const stored = window.mhAccount?.recordOrder(order) ?? Promise.resolve(false);
-    const [sent, saved] = await Promise.all([emailed, stored]);
-    if (!sent && !saved) throw new Error('not delivered');
+    // Save the order in Supabase. The database then emails it to the shop and a copy
+    // to the buyer (supabase/notify.sql), so no email is sent from the browser.
+    const saved = await (window.mhAccount?.recordOrder(order) ?? Promise.resolve(false));
+    if (!saved) throw new Error('not delivered');
     cart = [];
     promo = null;
     save();
@@ -449,21 +424,8 @@ $('[data-subscribe]')?.addEventListener('submit', async (e) => {
     }
     return;
   }
-  try {
-    const res = await fetch(endpoint(SETTINGS.subscribeEmail), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ _subject: 'New member of the Hills family', _template: 'table', Email: email, _replyto: email }),
-    });
-    const body = await res.json().catch(() => ({}));
-    if (!res.ok || String(body.success) !== 'true') throw new Error(body.message || res.status);
-    form.reset();
-    msg.textContent = 'Welcome to the Hills family. New drops and news will come to your inbox.';
-  } catch {
-    msg.textContent = 'That did not go through. Please try again in a moment.';
-  } finally {
-    button.disabled = false;
-  }
+  msg.textContent = 'Sign-ups open soon.';
+  button.disabled = false;
 });
 
 /* ---------------- Product gallery: swipe, arrows, thumbnails, keyboard ---------------- */
