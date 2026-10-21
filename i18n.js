@@ -394,7 +394,9 @@
     const a = e.target.closest('[data-set-lang]');
     if (!a) return;
     e.preventDefault();
-    const next = a.dataset.setLang;
+    let next = a.dataset.setLang;
+    // On phones only the current language shows: tapping it switches to the other one
+    if (next === lang && !a.parentElement.querySelector(`[data-set-lang]:not([data-set-lang="${lang}"])`)?.offsetParent) next = lang === 'lv' ? 'en' : 'lv';
     const url = new URL(location.href);
     url.searchParams.delete('lang');
     try { localStorage.setItem('mh-lang', next); } catch { url.searchParams.set('lang', next); /* no storage: keep it in the link */ }
