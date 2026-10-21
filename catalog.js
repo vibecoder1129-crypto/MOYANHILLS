@@ -16,7 +16,7 @@ window.MH_CATALOG = {
   settings: {
     currency: 'EUR',
     // New orders are emailed here (via formsubmit.co, no server needed).
-    orderEmail: 'markuss.suna.veid@gmail.com',
+    orderEmail: 'ordersmoyenhills@gmail.com',
     // New newsletter sign-ups are emailed here.
     subscribeEmail: 'moyenhills@gmail.com',
     // Shown to buyers if an order cannot be sent.

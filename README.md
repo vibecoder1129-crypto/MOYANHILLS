@@ -145,12 +145,14 @@ records only as long as accounting law requires.
 
 ## Where orders go
 
-The site has no server of its own. When a buyer presses **Place order**, `app.js` does two things at once:
+The site has no server of its own. When a buyer presses **Send order request**, `app.js` does two things at once:
 
 1. **Email (always on).** The order is sent through [FormSubmit](https://formsubmit.co) to
-   `orderEmail` in `catalog.js` (now `markuss.suna.veid@gmail.com`). The email has the items,
+   `orderEmail` in `catalog.js` (now `ordersmoyenhills@gmail.com`, which also gets cancellations from `withdraw.html`). The email has the items,
    sizes, total and the buyer's name, email, phone, address and note. Reply to it to send the buyer
    payment details; the reply goes straight to the buyer.
+   After changing `orderEmail`, place one test order on the live site: FormSubmit sends an
+   **Activate** link to the new address first, and nothing is forwarded until you click it.
 2. **Stored record (once Supabase is set up).** The same order is saved in Supabase under
    **Table Editor → orders**, for guests and signed-in customers alike (guest orders have an empty
    `user_id`). Until `config.js` has the Supabase keys, this step is skipped.
