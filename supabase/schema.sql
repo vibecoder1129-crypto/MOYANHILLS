@@ -86,7 +86,8 @@ create trigger on_auth_user_created
 -- the two-step code it asks for. Owners can then add other admins on the admin page.
 --   owner:  everything, including who is an admin
 --   editor: adding, changing and deleting products, prices, stock, photos, promo codes,
---           orders and cancellations (not who is an admin)
+--           orders and cancellations. They see the other editors, but not who the
+--           owners are, and can't change who is an admin.
 create table if not exists public.admins (
   email text primary key,
   added_at timestamptz not null default now()
@@ -135,7 +136,8 @@ grant execute on function public.admin_status() to authenticated;
 
 drop policy if exists "admins: admins read" on public.admins;
 drop policy if exists "admins: owners manage" on public.admins;
-create policy "admins: admins read"   on public.admins for select using (public.is_admin());
+-- Editors only see the other editors: who the owners are stays private
+create policy "admins: admins read"   on public.admins for select using (public.is_owner() or (public.is_admin() and role = 'editor'));
 create policy "admins: owners manage" on public.admins for all using (public.is_owner()) with check (public.is_owner());
 
 -- Emails are kept in lower case, and there is always at least one owner
@@ -385,7 +387,12 @@ create table if not exists public.admin_log (
 );
 alter table public.admin_log enable row level security;
 drop policy if exists "change log: admins read" on public.admin_log;
-create policy "change log: admins read" on public.admin_log for select using (public.is_admin());
+-- Editors see what editors did, but not the owners' changes or changes to the admins list
+alter table public.admin_log add column if not exists by_owner boolean not null default false;
+update public.admin_log l set by_owner = true where not by_owner and exists (select 1 from public.admins a where a.email = lower(l.email) and a.role = 'owner');
+drop function if exists public.is_owner_email(text);
+create policy "change log: admins read" on public.admin_log for select using (
+  public.is_owner() or (public.is_admin() and not by_owner and action <> all (array['insert admins', 'update admins', 'delete admins'])));
 revoke insert, update, delete, truncate on public.admin_log from anon, authenticated;
 
 create or replace function public.log_admin_change()
@@ -407,8 +414,8 @@ begin
   else
     diff := to_jsonb(old);
   end if;
-  insert into public.admin_log (email, action, target, changes)
-  values ((select email from auth.users where id = auth.uid()), lower(tg_op) || ' ' || tg_table_name, target_key, diff);
+  insert into public.admin_log (email, action, target, changes, by_owner)
+  values ((select email from auth.users where id = auth.uid()), lower(tg_op) || ' ' || tg_table_name, target_key, diff, public.is_owner());
   return coalesce(new, old);
 end;
 $$;
