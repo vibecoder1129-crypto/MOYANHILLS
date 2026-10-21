@@ -26,7 +26,7 @@ create extension if not exists pg_net;
 
 -- Who sends and who receives (change the values and run again)
 insert into private.secrets (name, value) values
-  ('mail_from', 'ordersmoyenhills@gmail.com'),     -- the verified Brevo sender
+  ('mail_from', 'orders@moyenhillsofficial.com'),  -- sender on the Brevo-authenticated domain
   ('mail_from_name', 'MOYEN HILLS'),
   ('mail_shop', 'ordersmoyenhills@gmail.com'),     -- where new orders and cancellations go
   ('mail_reply', 'moyenhills@gmail.com')           -- where customers' replies go
