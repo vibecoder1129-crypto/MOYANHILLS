@@ -91,7 +91,7 @@
         <button type="button" role="tab" class="adm__tab" data-tab="promos" aria-selected="false">Promo codes</button>
         <button type="button" role="tab" class="adm__tab" data-tab="orders" aria-selected="false">Orders</button>
         <button type="button" role="tab" class="adm__tab" data-tab="withdrawals" aria-selected="false">Cancellations <span class="adm__count" data-wd-count hidden></span></button>
-        <button type="button" role="tab" class="adm__tab" data-tab="admins" aria-selected="false" data-owner-only hidden>Admins</button>
+        <button type="button" role="tab" class="adm__tab" data-tab="admins" aria-selected="false">Team</button>
         <button type="button" role="tab" class="adm__tab" data-tab="log" aria-selected="false">Change log</button>
       </nav>
 
@@ -132,14 +132,15 @@
         <ul class="adm__list" data-withdrawals></ul>
       </div>
 
-      <!-- Admins (owners only) -->
+      <!-- Team: owners manage it; editors only see the other editors -->
       <div class="adm__panel" data-panel="admins" hidden>
         <div class="adm__head">
-          <h1 class="adm__title">Admins</h1>
+          <h1 class="adm__title">Team</h1>
         </div>
-        <p class="adm__muted">Owners can do everything, including this page. Editors can add, change and delete products, and manage prices, stock, photos, promo codes, orders and cancellations, but can’t change who is an admin. Everyone needs a confirmed account and the two-step code.</p>
+        <p class="adm__muted" data-editor-only hidden>The other editors. Ask the owner to add or remove someone.</p>
+        <p class="adm__muted" data-owner-only hidden>Owners can do everything, including this page. Editors can add, change and delete products, and manage prices, stock, photos, promo codes, orders and cancellations, but can’t change who is an admin. Editors only see the other editors: they don’t see who the owners are, or the owners’ entries in the change log. Everyone needs a confirmed account and the two-step code.</p>
         <ul class="adm__list" data-admins></ul>
-        <form class="adm__form adm__addadmin" data-add-admin>
+        <form class="adm__form adm__addadmin" data-add-admin data-owner-only hidden>
           <label>Email<input name="email" type="email" required placeholder="name@example.com"></label>
           <label>Role<select name="role"><option value="editor">Editor</option><option value="owner">Owner</option></select></label>
           <button class="btn" type="submit">Add admin</button>

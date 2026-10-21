@@ -128,6 +128,7 @@
       show('app');
       $('[data-preview]').hidden = false;
       $('[data-tab="log"]').hidden = true;
+      $('[data-tab="admins"]').hidden = true;
       loadProducts(); loadPromos(); loadOrders(); loadWithdrawals();
       return;
     }
@@ -143,10 +144,10 @@
     role = st.role;
     who.textContent = `${myEmail} · ${role === 'owner' ? 'Owner' : 'Editor'}`;
     $$('[data-owner-only]').forEach((el) => { el.hidden = role !== 'owner'; });
+    $$('[data-editor-only]').forEach((el) => { el.hidden = role === 'owner'; });
     show('app');
     shownFor = myEmail;
-    loadProducts(); loadPromos(); loadOrders(); loadWithdrawals(); loadLog();
-    if (role === 'owner') loadAdmins();
+    loadProducts(); loadPromos(); loadOrders(); loadWithdrawals(); loadLog(); loadAdmins();
   }
 
   /* ---------- Two-step code (authenticator app) ---------- */
@@ -646,15 +647,24 @@
   });
   $('[data-reload-wd]').addEventListener('click', loadWithdrawals);
 
-  /* ---------- Admins (owners only) ---------- */
+  /* ---------- Admins (owners manage; editors see the other editors) ---------- */
   const adminList = $('[data-admins]');
   const adminsMsg = $('[data-admins-msg]');
 
   async function loadAdmins() {
     const { data, error } = await sb.from('admins').select('*').order('added_at');
     if (error) { adminList.innerHTML = `<li class="adm__empty is-bad">${esc(error.message)}</li>`; return; }
+    const added = (a) => `Added ${new Date(a.added_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}${a.email === myEmail.toLowerCase() ? ' · you' : ''}`;
+    // Editors get a plain list (the database only returns editors to them)
+    if (role !== 'owner') {
+      adminList.innerHTML = data.map((a) => `<li class="adm__row adm__adminrow">
+        <span class="adm__rowmain"><b>${esc(a.email)}</b><span class="adm__muted">${added(a)}</span></span>
+        <span class="adm__pill">Editor</span>
+      </li>`).join('');
+      return;
+    }
     adminList.innerHTML = data.map((a) => `<li class="adm__row adm__adminrow">
-      <span class="adm__rowmain"><b>${esc(a.email)}</b><span class="adm__muted">Added ${new Date(a.added_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}${a.email === myEmail.toLowerCase() ? ' · you' : ''}</span></span>
+      <span class="adm__rowmain"><b>${esc(a.email)}</b><span class="adm__muted">${added(a)}</span></span>
       <select data-admin-role="${esc(a.email)}" aria-label="Role of ${esc(a.email)}">
         <option value="owner" ${a.role === 'owner' ? 'selected' : ''}>Owner</option>
         <option value="editor" ${a.role === 'editor' ? 'selected' : ''}>Editor</option>
