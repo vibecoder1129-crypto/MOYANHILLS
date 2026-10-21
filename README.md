@@ -89,9 +89,11 @@ day, a maximum number of uses (e.g. 1 for a one-off code for one client), and on
 
 - **Two-step login is required.** The database only accepts admin changes from someone who signed
   in with their password *and* an authenticator code. A stolen password alone can't change anything.
-- **Roles.** Owners can do everything, including adding/removing admins and deleting products.
-  Editors can change products, prices, stock, photos, promo codes and orders. There is always at
-  least one owner.
+- **Roles.** Owners can do everything, including adding/removing admins. Editors can add, change
+  and delete products, and manage prices, stock, photos, promo codes, orders and cancellations.
+  There is always at least one owner.
+- **Cancellations** sent on withdraw.html show under the **Cancellations** tab; tick "Sorted" once
+  refunded. A cancelled order can't be reopened (its stock is already back).
 - **Change log.** Every change on the admin page is recorded with who made it and when, under
   **Change log**. Nobody, owners included, can edit or delete entries.
 - **The database does the checking.** Hiding `admin.html` isn't what protects it: every rule lives in

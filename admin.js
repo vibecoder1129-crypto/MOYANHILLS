@@ -26,13 +26,19 @@
   /* ---------- Where changes are saved ---------- */
   const remote = sb && {
     products: () => sb.from('products').select('*').order('sort').order('created_at'),
-    async saveProduct(row, id) {
-      // Only one product is on the home page at a time
-      if (row.featured) {
-        const r = await sb.from('products').update({ featured: false }).neq('id', row.id).eq('featured', true);
-        if (r.error) return r;
+    async saveProduct(row, id, since) {
+      // An edit only saves over the version that was opened, so stock taken by an
+      // order in the meantime isn't put back by an old copy of the sizes
+      const r = id
+        ? await sb.from('products').update(row).eq('id', id).eq('updated_at', since).select('id')
+        : await sb.from('products').insert(row);
+      if (r.error) return r;
+      if (id && !r.data?.length) {
+        return { error: { message: 'This product changed while you had it open (an order may have come in). Close it, open it again and redo your change.' } };
       }
-      return id ? sb.from('products').update(row).eq('id', id) : sb.from('products').insert(row);
+      // Only one product is on the home page at a time
+      if (row.featured) return sb.from('products').update({ featured: false }).neq('id', row.id).eq('featured', true);
+      return r;
     },
     deleteProduct: (id) => sb.from('products').delete().eq('id', id),
     promos: () => sb.from('promo_codes').select('*').order('created_at', { ascending: false }),
@@ -115,15 +121,17 @@
 
   let role = 'owner';   // 'owner' or 'editor'; preview mode acts as owner
   let myEmail = '';
+  let shownFor = '';    // whose admin is on screen
 
   async function route() {
     if (!sb) {
       show('app');
       $('[data-preview]').hidden = false;
       $('[data-tab="log"]').hidden = true;
-      loadProducts(); loadPromos(); loadOrders();
+      loadProducts(); loadPromos(); loadOrders(); loadWithdrawals();
       return;
     }
+    shownFor = '';
     const { data: { session } } = await sb.auth.getSession();
     if (!session) { who.textContent = ''; signOut.hidden = true; show('signin'); return; }
     myEmail = session.user.email;
@@ -136,7 +144,8 @@
     who.textContent = `${myEmail} · ${role === 'owner' ? 'Owner' : 'Editor'}`;
     $$('[data-owner-only]').forEach((el) => { el.hidden = role !== 'owner'; });
     show('app');
-    loadProducts(); loadPromos(); loadOrders(); loadLog();
+    shownFor = myEmail;
+    loadProducts(); loadPromos(); loadOrders(); loadWithdrawals(); loadLog();
     if (role === 'owner') loadAdmins();
   }
 
@@ -220,7 +229,11 @@
   });
   if (sb) {
     signOut.addEventListener('click', async () => { await sb.auth.signOut(); route(); });
-    sb.auth.onAuthStateChange((event) => { if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') route(); });
+    // "Signed in" also fires when the tab gets focus again: only a different person reloads the page.
+    // setTimeout: Supabase calls can't be made from inside this callback.
+    sb.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT' || (event === 'SIGNED_IN' && session?.user.email !== shownFor)) setTimeout(route);
+    });
   }
 
   /* ---------- Tabs ---------- */
@@ -239,6 +252,7 @@
   const sizesEl = $('[data-sizes]');
   const photosEl = $('[data-photos]');
   let editing = null;   // id of the product being edited, null for a new one
+  let editingSince = null; // its updated_at when it was opened
   let photos = [];
 
   async function loadProducts() {
@@ -368,6 +382,7 @@
 
   function openProduct(p) {
     editing = p ? p.id : null;
+    editingSince = p?.updated_at ?? null;
     pForm.reset();
     delete pForm.id.dataset.touched;
     say(pMsg, '');
@@ -387,7 +402,7 @@
     sizesEl.replaceChildren(...(v.sizes || []).map(sizeRow));
     photos = (v.images || []).map((x) => ({ ...x }));
     renderPhotos();
-    $('[data-delete-product]').hidden = !p || role !== 'owner';
+    $('[data-delete-product]').hidden = !p;
     pDialog.showModal();
     pForm.name.focus();
   }
@@ -427,7 +442,7 @@
       updated_at: new Date().toISOString(),
     };
     say(pMsg, 'Saving…');
-    const { error } = await api.saveProduct(row, editing);
+    const { error } = await api.saveProduct(row, editing, editingSince);
     if (error) { say(pMsg, error.message, true); return; }
     pDialog.close();
     loadProducts();
@@ -568,7 +583,7 @@
         <div class="adm__orderside">
           <span class="adm__price">${eur(o.total ?? o.subtotal)}</span>
           ${o.promo_code ? `<span class="adm__muted">${esc(o.promo_code)} −${eur(o.discount)}</span>` : ''}
-          <select data-status="${o.id}" aria-label="Status of order ${o.id}">${STATUSES.map((s) => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${s[0].toUpperCase() + s.slice(1)}</option>`).join('')}</select>
+          <select data-status="${o.id}" aria-label="Status of order ${o.id}" ${o.status === 'cancelled' && sb ? 'disabled title="Cancelled orders stay cancelled"' : ''}>${STATUSES.map((s) => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${s[0].toUpperCase() + s.slice(1)}</option>`).join('')}</select>
         </div>
       </li>`;
     }).join('');
@@ -584,6 +599,48 @@
     if (sel.value === 'cancelled') loadProducts();
   });
   $('[data-reload-orders]').addEventListener('click', loadOrders);
+
+  /* ---------- Cancellations (sent on withdraw.html) ---------- */
+  const wdList = $('[data-withdrawals]');
+  const wdCount = $('[data-wd-count]');
+  const day = (d) => new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+  async function loadWithdrawals() {
+    if (!sb) { wdList.innerHTML = '<li class="adm__empty">Cancellations show here once the database is connected. Until then they arrive by email.</li>'; return; }
+    wdList.innerHTML = '<li class="adm__empty">Loading…</li>';
+    const { data, error } = await sb.from('withdrawals').select('id, created_at, full_name, email, order_ref, order_date, items, handled')
+      .order('created_at', { ascending: false }).limit(200);
+    if (error) { wdList.innerHTML = `<li class="adm__empty is-bad">${esc(error.message)}</li>`; return; }
+    const open = data.filter((w) => !w.handled).length;
+    wdCount.hidden = !open;
+    wdCount.textContent = open;
+    if (!data.length) { wdList.innerHTML = '<li class="adm__empty">No cancellations yet.</li>'; return; }
+    wdList.innerHTML = data.map((w) => {
+      const sent = new Date(w.created_at);
+      const when = sent.toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+      const due = day(sent.getTime() + 14 * 864e5);
+      return `<li class="adm__row adm__order-row">
+        <div class="adm__rowmain">
+          <b>Order ${esc(w.order_ref || '(no number)')} · ${esc(w.full_name)}</b>
+          <span>${esc(w.items || 'The whole order')}</span>
+          <span class="adm__muted">Sent ${when} · <a href="mailto:${esc(w.email)}">${esc(w.email)}</a>${w.order_date ? ` · ordered/received ${day(w.order_date)}` : ''}</span>
+          ${w.handled ? '' : `<span class="adm__muted">Items due back by ${due}</span>`}
+        </div>
+        <div class="adm__orderside">
+          <label class="adm__check"><input type="checkbox" data-wd-handled="${w.id}" ${w.handled ? 'checked' : ''}> Sorted</label>
+        </div>
+      </li>`;
+    }).join('');
+  }
+  wdList.addEventListener('change', async (e) => {
+    const box = e.target.closest('[data-wd-handled]');
+    if (!box) return;
+    box.disabled = true;
+    const { error } = await sb.from('withdrawals').update({ handled: box.checked }).eq('id', Number(box.dataset.wdHandled));
+    if (error) alert(error.message);
+    loadWithdrawals();
+  });
+  $('[data-reload-wd]').addEventListener('click', loadWithdrawals);
 
   /* ---------- Admins (owners only) ---------- */
   const adminList = $('[data-admins]');
