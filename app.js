@@ -426,7 +426,7 @@ $('[data-subscribe]')?.addEventListener('submit', async (e) => {
       const data = await res.json().catch(() => ({}));
       if (!res.ok || data.success === false) throw new Error(data.message || res.status);
       form.reset();
-      msg.textContent = 'Almost there: check your inbox and tap the link to confirm.';
+      msg.textContent = 'Almost there: check your inbox and tap the link to confirm. Didn’t get it within a few minutes? Check your spam or promotions folder.';
     } catch (err) {
       if (err instanceof TypeError) {
         // Brevo could not be reached from the page: send the form the plain way, in a new tab
@@ -440,7 +440,7 @@ $('[data-subscribe]')?.addEventListener('submit', async (e) => {
         f.submit();
         f.remove();
         form.reset();
-        msg.textContent = 'Almost there: check your inbox and tap the link to confirm.';
+        msg.textContent = 'Almost there: check your inbox and tap the link to confirm. Didn’t get it within a few minutes? Check your spam or promotions folder.';
       } else {
         msg.textContent = 'That did not go through. Check the address and try again.';
       }
