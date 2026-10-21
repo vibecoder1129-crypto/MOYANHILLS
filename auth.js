@@ -127,7 +127,7 @@
     const emailForm = $('[data-email-form]', page);
     const setMode = (m) => {
       mode = m;
-      $('[data-name-field]', page).hidden = m !== 'up';
+      page.querySelectorAll('[data-name-field]').forEach((el) => { el.hidden = m !== 'up'; });
       emailForm.elements.password.autocomplete = m === 'up' ? 'new-password' : 'current-password';
       $('[data-email-submit]', page).textContent = m === 'up' ? 'Create account' : 'Sign in';
       $('[data-mode-text]', page).textContent = m === 'up' ? 'Already have an account?' : 'New here?';
@@ -191,6 +191,37 @@
     });
 
     $('[data-signout]', page).addEventListener('click', async () => { await sb.auth.signOut(); });
+
+    // Your data (GDPR): a copy of everything on the account, or delete it
+    $('[data-export]', page).addEventListener('click', async () => {
+      say('[data-data-msg]', 'Preparing your data…');
+      const { data, error } = await sb.rpc('export_my_data');
+      if (error) { say('[data-data-msg]', `Could not prepare your data. ${error.message}`, true); return; }
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+      a.download = `moyen-hills-my-data-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.append(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      say('[data-data-msg]', 'Downloaded.');
+    });
+    const delForm = $('[data-delete-form]', page);
+    $('[data-delete-account]', page).addEventListener('click', () => {
+      delForm.hidden = !delForm.hidden;
+      if (!delForm.hidden) delForm.elements.confirm.focus();
+    });
+    delForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (delForm.elements.confirm.value.trim() !== 'DELETE') { say('[data-data-msg]', 'Type DELETE in capitals to confirm.', true); return; }
+      say('[data-data-msg]', 'Deleting your account…');
+      const { error } = await sb.rpc('delete_my_account');
+      if (error) { say('[data-data-msg]', `Could not delete your account. ${error.message} Email us and we will do it for you.`, true); return; }
+      delForm.reset();
+      delForm.hidden = true;
+      await sb.auth.signOut();
+      say('[data-signin-msg]', 'Your account has been deleted.');
+    });
   }
 
   if (enabled) {

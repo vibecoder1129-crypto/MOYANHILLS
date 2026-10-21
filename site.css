@@ -347,6 +347,13 @@ html { scroll-padding-top: var(--head-h); }
 .acct__switch .acct__link { color: var(--ink); }
 .acct__msg { min-height: 1.4em; font-size: var(--t-sm); }
 .acct__msg.is-error { color: #b3261e; }
+.acct__hint, .acct__fine { font-size: var(--t-sm); color: var(--muted); margin: -4px 0 0; }
+.acct__fine { margin-top: 20px; }
+.acct__fine a, .acct__data a { text-decoration: underline; text-underline-offset: 3px; }
+.acct__data { margin-top: clamp(32px, 5vw, 56px); text-align: left; display: grid; gap: 14px; }
+.acct__data .label { display: block; padding-bottom: 12px; border-bottom: 1px solid var(--ink); }
+.acct__data p { font-size: var(--t-sm); color: var(--muted); }
+.acct__data-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .acct__cols { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(32px, 5vw, 72px); margin-top: 24px; text-align: left; align-items: start; }
 .acct__cols .label { display: block; padding-bottom: 12px; margin-bottom: 16px; border-bottom: 1px solid var(--ink); }
 .orders { display: grid; gap: 10px; }
@@ -402,6 +409,15 @@ mark.todo { background: #fff1a8; color: inherit; padding: 0 3px; border-radius: 
 .sub__consent { margin-top: 8px; font-size: var(--t-xs); color: var(--muted); }
 .sub__consent a, .checkout__legal a { color: inherit; }
 .checkout__legal { font-size: var(--t-xs); color: var(--muted); }
+.wd__form, .wd__check, .wd__done { margin-top: 10px; padding: 22px; border: 1px solid var(--line); border-radius: var(--radius); display: grid; gap: 14px; }
+.wd__opt { color: var(--muted); font-weight: 400; }
+.wd h2:focus { outline: none; }
+.legal__doc a { text-underline-offset: 3px; }
+.legal__doc h3 { margin-top: 12px; font-size: var(--t-sm); font-weight: 800; }
+.legal__doc [id] { scroll-margin-top: calc(var(--head-h) + 16px); }
+.legal__table { width: 100%; border-collapse: collapse; font-size: var(--t-sm); }
+.legal__table th, .legal__table td { text-align: left; vertical-align: top; padding: 8px 10px 8px 0; border-bottom: 1px solid var(--line); }
+.legal__form { padding: 18px 20px; border: 1px dashed var(--line); border-radius: var(--radius); font-size: var(--t-sm); white-space: pre-line; }
 @media (max-width: 720px) { .legal__seller { grid-template-columns: 1fr; gap: 2px; } .legal__seller dd { margin-bottom: 8px; } }
 
 /* ---------- Motion ---------- */

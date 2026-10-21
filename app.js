@@ -37,7 +37,7 @@ let current = null;
 /* Images: catalog photos may carry a srcset; uploaded ones are a plain src */
 function imgTag(im, { cls = '', sizes = '(max-width: 720px) 100vw, 50vw', lazy = true, alt } = {}) {
   if (!im) return '';
-  return `<img${cls ? ` class="${cls}"` : ''} src="${esc(im.src)}"${im.srcset ? ` srcset="${esc(im.srcset)}" sizes="${sizes}"` : ''}${im.width ? ` width="${im.width}" height="${im.height}"` : ''} alt="${esc(alt ?? im.alt ?? '')}"${lazy ? ' loading="lazy"' : ' fetchpriority="high"'}>`;
+  return `<img${cls ? ` class="${cls}"` : ''} src="${esc(im.src)}"${im.srcset ? ` srcset="${esc(im.srcset)}" sizes="${sizes}"` : ''}${im.width ? ` width="${Number(im.width) || ''}" height="${Number(im.height) || ''}"` : ''} alt="${esc(alt ?? im.alt ?? '')}"${lazy ? ' loading="lazy"' : ' fetchpriority="high"'}>`;
 }
 const smallSrc = (im) => (im?.srcset ? im.srcset.split(',')[0].trim().split(' ')[0] : im?.src || '');
 
@@ -146,7 +146,7 @@ function renderProductPage(p) {
   const gal = $('[data-gallery]', pdp);
   const n = p.images.length;
   $('[data-track]', gal).innerHTML = p.images.map((im, i) => `<li class="gallery__slide" aria-label="${i + 1} of ${n}">${imgTag(im, { lazy: i > 0 })}</li>`).join('');
-  $('.gallery__thumbs', gal).innerHTML = n > 1 ? p.images.map((im, i) => `<button type="button" class="gallery__thumb${i ? '' : ' is-on'}" data-go="${i}" aria-label="Show photo ${i + 1}"><img src="${esc(smallSrc(im))}"${im.width ? ` width="${im.width}" height="${im.height}"` : ''} alt="" loading="lazy"></button>`).join('') : '';
+  $('.gallery__thumbs', gal).innerHTML = n > 1 ? p.images.map((im, i) => `<button type="button" class="gallery__thumb${i ? '' : ' is-on'}" data-go="${i}" aria-label="Show photo ${i + 1}"><img src="${esc(smallSrc(im))}"${im.width ? ` width="${Number(im.width) || ''}" height="${Number(im.height) || ''}"` : ''} alt="" loading="lazy"></button>`).join('') : '';
   $('[data-count]', gal).innerHTML = `<span data-index>1</span> / ${n}`;
   $$('.gallery__arrow, [data-count]', gal).forEach((el) => { el.hidden = n < 2; });
   initGallery(gal);
