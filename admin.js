@@ -66,13 +66,14 @@
     id: p.id, name: p.name, colour: p.colour || null, price: p.price, was_price: p.wasPrice ?? null,
     active: p.active !== false, featured: !!p.featured, sold_out: !!p.soldOut, sort: p.sort ?? i * 10,
     label: p.label, blurb: p.blurb, description: p.description, details: p.details || [], fit: p.fit, note: p.note,
-    sizes: p.sizes || [], images: p.images || [],
+    sizes: p.sizes || [], images: p.images || [], lv: p.lv || {},
   });
   const fromRow = (r) => ({
     id: r.id, name: r.name, colour: r.colour || '', price: r.price, wasPrice: r.was_price ?? null,
     active: r.active, featured: r.featured, soldOut: r.sold_out, sort: r.sort,
     label: r.label || '', blurb: r.blurb || '', description: r.description || '', details: r.details,
     fit: r.fit || '', note: r.note || '', sizes: r.sizes, images: r.images,
+    ...(Object.keys(r.lv || {}).length ? { lv: r.lv } : {}),
   });
   const promoToRow = (c) => ({
     _key: c.code || c.hash, code: c.code || null, hash: c.hash, percent: c.percent ?? null, amount: c.amount ?? null,
@@ -398,6 +399,10 @@
     for (const k of ['name', 'id', 'price', 'was_price', 'colour', 'sort', 'label', 'blurb', 'description', 'fit', 'note']) pForm[k].value = v[k] ?? '';
     for (const k of ['active', 'featured', 'sold_out']) pForm[k].checked = !!v[k];
     pForm.details.value = (v.details || []).join('\n');
+    // Latvian text (products.lv in the database, `lv` in catalog.js)
+    const lv = v.lv || {};
+    for (const k of LV_TEXTS) pForm[`lv_${k}`].value = lv[k] || '';
+    pForm.lv_details.value = (lv.details || []).join('\n');
     pForm.id.readOnly = !!p;
     $('[data-slug-preview]').textContent = v.id || '…';
     sizesEl.replaceChildren(...(v.sizes || []).map(sizeRow));
@@ -406,6 +411,16 @@
     $('[data-delete-product]').hidden = !p;
     pDialog.showModal();
     pForm.name.focus();
+  }
+
+  // The Latvian boxes as one object; empty boxes are left out (the English shows there)
+  const LV_TEXTS = ['colour', 'label', 'blurb', 'description', 'fit', 'note'];
+  function lvText() {
+    const lv = {};
+    for (const k of LV_TEXTS) { const v = pForm[`lv_${k}`].value.trim(); if (v) lv[k] = v; }
+    const details = pForm.lv_details.value.split('\n').map((s) => s.trim()).filter(Boolean);
+    if (details.length) lv.details = details;
+    return lv;
   }
 
   pForm.addEventListener('submit', async (e) => {
@@ -440,6 +455,7 @@
       note: pForm.note.value.trim() || null,
       sizes,
       images: photos.map((ph) => ({ ...ph, alt: (ph.alt || '').trim() || pForm.name.value.trim() })),
+      lv: lvText(),
       updated_at: new Date().toISOString(),
     };
     say(pMsg, 'Saving…');

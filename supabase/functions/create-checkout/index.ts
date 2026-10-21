@@ -74,12 +74,14 @@ Deno.serve(async (req) => {
     }
     if (cents(order.total) < 50) return reply(422, { error: 'This order can’t be paid by card. Please email us.' });
 
+    // The payment page in the language the customer used on the site (orders.lang)
+    const lv = order.lang === 'lv';
     const lineItems = (order.items as Array<{ name: string; colour?: string; size: string; qty: number; price: number }>).map((i) => ({
       quantity: i.qty,
       price_data: {
         currency: 'eur',
         unit_amount: cents(i.price),
-        product_data: { name: `${i.name}${i.colour ? ` (${i.colour})` : ''}, size ${i.size}` },
+        product_data: { name: `${i.name}${i.colour ? ` (${i.colour})` : ''}, ${lv ? 'izmērs' : 'size'} ${i.size}` },
       },
     }));
     // The promo code discount, already worked out by the database, as a one-off Stripe coupon
@@ -91,7 +93,7 @@ Deno.serve(async (req) => {
         }, { idempotencyKey: `mh-coupon-${order.id}` })).id,
       }]
       : undefined;
-    let label = 'Delivery';
+    let label = lv ? 'Piegāde' : 'Delivery';
     const { data: rate } = await db.from('shipping_rates').select('label')
       .in('country', [String(order.country ?? '').trim().toLowerCase(), '*']).order('country', { ascending: false }).limit(1).maybeSingle();
     if (rate?.label) label = rate.label;
@@ -110,7 +112,7 @@ Deno.serve(async (req) => {
       metadata: { order_id: String(order.id) },
       payment_intent_data: { description: `MOYEN HILLS order #${order.id}`, metadata: { order_id: String(order.id) } },
       submit_type: 'pay',
-      locale: 'auto',
+      locale: lv ? 'lv' : 'auto',
       expires_at: (minute + 2 + PAGE_MINUTES) * 60, // 31–32 minutes from now
       success_url: `${base}${back}?payment=done&order=${order.id}`,
       cancel_url: `${base}${back}?payment=cancelled&token=${token}`,

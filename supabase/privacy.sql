@@ -116,7 +116,10 @@ revoke insert, delete, truncate on public.withdrawals from anon, authenticated;
 drop trigger if exists withdrawals_log on public.withdrawals;
 create trigger withdrawals_log after update or delete on public.withdrawals for each row execute function public.log_admin_change('id');
 
-create or replace function public.request_withdrawal(p_name text, p_email text, p_order text, p_order_date date, p_items text)
+alter table public.withdrawals add column if not exists lang text not null default 'en'; -- site language, for the emails
+-- p_lang was added later: drop the old version so there is only one
+drop function if exists public.request_withdrawal(text, text, text, date, text);
+create or replace function public.request_withdrawal(p_name text, p_email text, p_order text, p_order_date date, p_items text, p_lang text default 'en')
 returns jsonb language plpgsql volatile security definer set search_path = public as $$
 declare
   me text := public.client_hash();
@@ -129,15 +132,16 @@ begin
   if (select count(*) from public.withdrawals where client = me and created_at > now() - interval '10 minutes') >= 5 then
     raise exception 'Too many requests. Please wait a few minutes or email us.';
   end if;
-  insert into public.withdrawals (user_id, full_name, email, order_ref, order_date, items, client)
+  insert into public.withdrawals (user_id, full_name, email, order_ref, order_date, items, client, lang)
   values (auth.uid(), left(trim(p_name), 200), em, left(nullif(trim(p_order), ''), 40), p_order_date,
-          left(coalesce(nullif(trim(p_items), ''), 'The whole order'), 1000), me)
+          left(coalesce(nullif(trim(p_items), ''), 'The whole order'), 1000), me,
+          case when p_lang = 'lv' then 'lv' else 'en' end)
   returning id into new_id;
   return jsonb_build_object('ok', true, 'id', new_id, 'received_at', now());
 end;
 $$;
-revoke execute on function public.request_withdrawal(text, text, text, date, text) from public;
-grant execute on function public.request_withdrawal(text, text, text, date, text) to anon, authenticated;
+revoke execute on function public.request_withdrawal(text, text, text, date, text, text) from public;
+grant execute on function public.request_withdrawal(text, text, text, date, text, text) to anon, authenticated;
 
 -- ---------------------------------------------------------------------
 -- 4. Customers: download my data, delete my account

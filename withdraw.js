@@ -14,6 +14,8 @@
   const check = $('[data-wd-check]');
   const done = $('[data-wd-done]');
   const msg = $('[data-wd-msg]');
+  const t = window.mhT || ((en, v) => (v ? en.replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)) : en));
+  const LV = window.mhLang === 'lv';
   const say = (text, isError) => { msg.textContent = text; msg.classList.toggle('is-error', !!isError); };
   let notice = null;
 
@@ -36,13 +38,13 @@
       email: d.email.trim(),
       order: d.order.trim(),
       order_date: d.order_date || '',
-      items: d.items.trim() || 'The whole order',
+      items: d.items.trim(),
     };
-    const rows = [['Name', notice.name], ['Email', notice.email], ['Order number', notice.order || 'Not given'],
-      ['Ordered / received on', notice.order_date || 'Not given'], ['Items', notice.items]];
+    const rows = [['Name', notice.name], ['Email', notice.email], ['Order number', notice.order || t('Not given')],
+      ['Ordered / received on', notice.order_date || t('Not given')], ['Items', notice.items || t('The whole order')]];
     const dl = $('[data-wd-summary]');
     dl.replaceChildren(...rows.flatMap(([k, v]) => {
-      const dt = document.createElement('dt'); dt.textContent = k;
+      const dt = document.createElement('dt'); dt.textContent = t(k);
       const dd = document.createElement('dd'); dd.textContent = v;
       return [dt, dd];
     }));
@@ -57,15 +59,19 @@
     if (!notice) return;
     const btn = $('[data-wd-confirm]');
     btn.disabled = true;
-    say('Sending…');
+    say(t('Sending…'));
     const when = new Date();
-    const stamp = when.toLocaleString('en-GB', { dateStyle: 'long', timeStyle: 'short' });
-    const text = `I hereby give notice that I withdraw from my contract for the sale of the following goods: ${notice.items}. Order number: ${notice.order || 'not given'}. Ordered/received on: ${notice.order_date || 'not given'}. Name: ${notice.name}. Email: ${notice.email}. Sent on ${stamp}.`;
+    const stamp = when.toLocaleString(LV ? 'lv-LV' : 'en-GB', { dateStyle: 'long', timeStyle: 'short' });
+    const text = `I hereby give notice that I withdraw from my contract for the sale of the following goods: ${notice.items || 'The whole order'}. Order number: ${notice.order || 'not given'}. Ordered/received on: ${notice.order_date || 'not given'}. Name: ${notice.name}. Email: ${notice.email}. Sent on ${stamp}.`;
 
-    const stored = sb ? sb.rpc('request_withdrawal', {
+    const args = {
       p_name: notice.name, p_email: notice.email, p_order: notice.order || null,
-      p_order_date: notice.order_date || null, p_items: notice.items,
-    }).then(({ error }) => { if (error) throw error; return true; })
+      p_order_date: notice.order_date || null, p_items: notice.items, p_lang: LV ? 'lv' : 'en',
+    };
+    // A database without the language yet (privacy.sql not re-run) gets the call without it
+    const stored = sb ? sb.rpc('request_withdrawal', args)
+      .then((res) => (res.error?.code === 'PGRST202' ? sb.rpc('request_withdrawal', { ...args, p_lang: undefined }) : res))
+      .then(({ error }) => { if (error) throw error; return true; })
       .catch((err) => { console.warn('Withdrawal not stored:', err.message); return false; }) : Promise.resolve(false);
 
     const saved = await stored;
@@ -74,17 +80,17 @@
       const mail = `mailto:${settings.contactEmail}?subject=${encodeURIComponent('Withdrawal')}&body=${encodeURIComponent(text)}`;
       msg.textContent = '';
       msg.classList.add('is-error');
-      msg.append('This could not be sent. Please ');
+      msg.append(t('This could not be sent. Please '));
       const a = document.createElement('a');
       a.href = mail;
-      a.textContent = `email it to ${settings.contactEmail}`;
-      msg.append(a, ' — your notice is already written out.');
+      a.textContent = t('email it to {email}', { email: settings.contactEmail });
+      msg.append(a, t(' — your notice is already written out.'));
       return;
     }
     say('');
     check.hidden = true;
     done.hidden = false;
-    $('[data-wd-done-text]').textContent = `We received your withdrawal on ${stamp}. A confirmation is on its way to ${notice.email}. Keep this page or take a screenshot as your record too.`;
+    $('[data-wd-done-text]').textContent = t('We received your withdrawal on {stamp}. A confirmation is on its way to {email}. Keep this page or take a screenshot as your record too.', { stamp, email: notice.email });
     $('#wd-done-title').focus();
   });
 })();

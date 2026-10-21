@@ -29,9 +29,12 @@
   <header class="bar" data-bar>
     <p class="annc"><span>ART WILL TEE — OUT NOW</span><span class="annc__more">&nbsp;· Made in Latvia · Ships in 1–3 days</span></p>
     <div class="bar__row">
-    <button class="bar__icon bar__menu" type="button" data-open-menu aria-haspopup="dialog" aria-label="Open menu">
-      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M3.5 8h17M3.5 16h17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-    </button>
+    <div class="bar__left">
+      <button class="bar__icon bar__menu" type="button" data-open-menu aria-haspopup="dialog" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M3.5 8h17M3.5 16h17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <div class="langs" role="group" aria-label="Language"><a href="?lang=lv" lang="lv" hreflang="lv" aria-label="Latviešu" data-set-lang="lv">LV</a><a href="?lang=en" lang="en" hreflang="en" aria-label="English" data-set-lang="en">EN</a></div>
+    </div>
     <a class="bar__logo" href="index.html" aria-label="MOYEN HILLS, home">
       <img src="images/logo.png" width="2400" height="262" alt="MOYEN HILLS">
     </a>
@@ -48,7 +51,7 @@
   </header>
 
   <main id="top" class="legal">
-      <article class="legal__doc">
+      <article class="legal__doc" data-lang="en">
 
         <h1 class="legal__title">Terms of sale</h1>
         <p class="legal__date">Last updated: <mark class="todo">[date you publish]</mark></p>
@@ -61,9 +64,9 @@
         </dl>
 
         <h2 id="ordering">1. Ordering</h2>
-        <p>Add a piece to your cart, enter your details and press <b>Send order request</b>. This sends us an order request; it does not oblige you to pay yet. We reply by email within one working day to confirm the order, the final total including delivery, and how to pay. The contract is made when we confirm your order and you pay. Our confirmation email is your copy of the contract; these terms stay available on this page. Contracts are in English.</p>
+        <p>Add a piece to your cart, enter your details and press <b>Send order request</b>. This sends us an order request; it does not oblige you to pay yet. We reply by email within one working day to confirm the order, the final total including delivery, and how to pay. The contract is made when we confirm your order and you pay. Our confirmation email is your copy of the contract; these terms stay available on this page. Contracts are in English or Latvian, whichever language you use on the site.</p>
 
-        <p><mark class="todo">[Once card payments are switched on, use this paragraph in place of the one above:]</mark> Add a piece to your cart, enter your details and press <b>Continue to payment</b>. On the payment page you see the pieces, any discount, the delivery cost and the full total. Pressing <b>Pay</b> there is your order with an obligation to pay, and the contract is made when the payment goes through. We email you a confirmation, which is your copy of the contract; these terms stay available on this page. If you leave the payment page without paying, nothing is charged and the order cancels itself after about 30 minutes. Contracts are in English.</p>
+        <p><mark class="todo">[Once card payments are switched on, use this paragraph in place of the one above:]</mark> Add a piece to your cart, enter your details and press <b>Continue to payment</b>. On the payment page you see the pieces, any discount, the delivery cost and the full total. Pressing <b>Pay</b> there is your order with an obligation to pay, and the contract is made when the payment goes through. We email you a confirmation, which is your copy of the contract; these terms stay available on this page. If you leave the payment page without paying, nothing is charged and the order cancels itself after about 30 minutes. Contracts are in English or Latvian, whichever language you use on the site.</p>
 
         <h2 id="prices">2. Prices and payment</h2>
         <p>Prices are shown in euro. <mark class="todo">[“All prices include VAT.” — or — “We are not VAT-registered, so no VAT is charged.”]</mark> Delivery costs are not included in the shown price: they are added in our confirmation email, before you pay, and you can still decide not to go ahead. Payment is made using the details in that email.</p>
@@ -98,6 +101,58 @@ Date:
 
         <h2 id="law">7. Law</h2>
         <p>These terms are governed by the law of the Republic of Latvia. If you are a consumer living in another EU country, you also keep the protection of the mandatory consumer law of your country.</p>
+      </article>
+
+      <article class="legal__doc" data-lang="lv">
+
+        <h1 class="legal__title">Pārdošanas noteikumi</h1>
+        <p class="legal__date">Atjaunināti: <mark class="todo">[publicēšanas datums]</mark></p>
+        <dl class="legal__seller">
+          <dt>Pārdevējs</dt><dd><mark class="todo">[Tavs vārds, uzvārds vai uzņēmuma nosaukums]</mark>, zīmols MOYEN HILLS</dd>
+          <dt>Reģistrācijas nr.</dt><dd><mark class="todo">[Uzņēmuma vai saimnieciskās darbības veicēja reģistrācijas numurs, ja ir]</mark></dd>
+          <dt>PVN nr.</dt><dd><mark class="todo">[LV PVN numurs vai “Nav PVN maksātājs”]</mark></dd>
+          <dt>Adrese</dt><dd><mark class="todo">[Adrese Latvijā, kur ar tevi var sazināties]</mark></dd>
+          <dt>E-pasts</dt><dd><a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></dd>
+        </dl>
+
+        <h2 id="ordering">1. Pasūtīšana</h2>
+        <p>Pievieno preci grozam, ievadi savus datus un spied <b>Nosūtīt pasūtījumu</b>. Tā tu mums nosūti pasūtījuma pieprasījumu; tas tev vēl neuzliek pienākumu maksāt. Vienas darba dienas laikā mēs atbildēsim e-pastā, apstiprinot pasūtījumu, galīgo summu ar piegādi un apmaksas veidu. Līgums ir noslēgts, kad mēs apstiprinām pasūtījumu un tu to apmaksā. Mūsu apstiprinājuma e-pasts ir tava līguma kopija; šie noteikumi vienmēr ir pieejami šajā lapā. Līgumu slēdzam latviešu vai angļu valodā — tajā, kuru izvēlējies vietnē.</p>
+
+        <p><mark class="todo">[Kad ieslēgsi kartes maksājumus, šo rindkopu izmanto iepriekšējās vietā:]</mark> Pievieno preci grozam, ievadi savus datus un spied <b>Turpināt uz apmaksu</b>. Apmaksas lapā redzēsi preces, atlaidi (ja ir), piegādes cenu un kopsummu. Spiežot tur <b>Maksāt</b>, tu veic pasūtījumu ar pienākumu maksāt, un līgums ir noslēgts, kad maksājums ir veiksmīgs. Mēs tev nosūtīsim apstiprinājumu e-pastā, kas ir tava līguma kopija; šie noteikumi vienmēr ir pieejami šajā lapā. Ja apmaksas lapu pamet nesamaksājot, nauda netiek iekasēta un pasūtījums pēc apmēram 30 minūtēm atceļas pats. Līgumu slēdzam latviešu vai angļu valodā — tajā, kuru izvēlējies vietnē.</p>
+
+        <h2 id="prices">2. Cenas un apmaksa</h2>
+        <p>Cenas norādītas eiro. <mark class="todo">[“Visās cenās ir iekļauts PVN.” — vai — “Mēs neesam PVN maksātāji, tāpēc PVN netiek piemērots.”]</mark> Piegādes izmaksas nav iekļautas norādītajā cenā: tās pievienojam apstiprinājuma e-pastā, pirms tu maksā, un tu joprojām vari izlemt pasūtījumu neturpināt. Apmaksu veic pēc šajā e-pastā norādītajiem rekvizītiem.</p>
+        <p><mark class="todo">[Ar ieslēgtiem kartes maksājumiem:]</mark> Piegādes cena tiek pievienota apmaksas lapā, pirms tu maksā. Maksāt vari ar karti vai citā apmaksas lapā piedāvātā veidā; maksājumu droši apstrādā Stripe, un mēs tavas kartes datus neredzam. Naudas atmaksa notiek uz to pašu karti vai kontu.</p>
+        <p>Ja precei ir norādīta pārsvītrota iepriekšējā cena, tā ir zemākā cena, par kādu preci pārdevām 30 dienās pirms cenas samazināšanas.</p>
+
+        <h2 id="delivery">3. Piegāde</h2>
+        <p>Katra prece jau ir izgatavota. Pasūtījumu nosūtām 1–3 dienu laikā pēc apmaksas. <mark class="todo">[Izmantotie pārvadātāji, piem., Omniva vai DPD, valstis, uz kurām sūtāt, piegādes cenas un parastais piegādes laiks]</mark></p>
+
+        <h2 id="withdrawal">4. Tavas atteikuma tiesības (14 dienas)</h2>
+        <p>Tev ir tiesības 14 dienu laikā atteikties no šī līguma, nenorādot iemeslu. Atteikuma termiņš beidzas 14 dienas pēc dienas, kad tu vai tevis norādīta trešā persona (kas nav pārvadātājs) saņem preces. Ja viens pasūtījums tiek piegādāts vairākos sūtījumos, termiņš beidzas 14 dienas pēc pēdējā sūtījuma saņemšanas.</p>
+        <p><b>Kā atteikties:</b> izmanto lapu <a href="withdraw.html">Atcelt pasūtījumu</a> (ātrākais veids; apstiprinājumu e-pastā saņemsi uzreiz) vai paziņo mums e-pastā <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a> vai pa pastu uz iepriekš norādīto adresi, piemēram, izmantojot zemāk esošo veidlapu. Pietiek, ja paziņojumu nosūti pirms 14 dienu termiņa beigām.</p>
+        <p><b>Preču atpakaļnosūtīšana:</b> nosūti preces uz <mark class="todo">[atpakaļnosūtīšanas adrese]</mark> bez nepamatotas kavēšanās un ne vēlāk kā 14 dienas pēc tam, kad mums par atteikumu paziņoji. <mark class="todo">[“Preču atpakaļnosūtīšanas tiešās izmaksas sedz pircējs.” — vai — “Atpakaļnosūtīšanu apmaksājam mēs.”]</mark> Tu atbildi tikai par preču vērtības samazināšanos, ja ar precēm esi rīkojies vairāk, nekā nepieciešams, lai pārbaudītu to īpašības un darbību (kā veikalā), tāpēc, lūdzu, atdod tās nevalkātas un nemazgātas.</p>
+        <p><b>Naudas atmaksa:</b> mēs atmaksājam visus no tevis saņemtos maksājumus, arī standarta piegādes izmaksas (bet ne papildu izmaksas, ja izvēlējies dārgāku piegādes veidu), bez nepamatotas kavēšanās un ne vēlāk kā 14 dienu laikā pēc tava paziņojuma saņemšanas. Atmaksājam ar to pašu maksāšanas līdzekli, ko izmantoji tu, ja vien neesam vienojušies citādi; par atmaksu tev nekas nav jāmaksā. Atmaksu varam aizturēt, līdz esam saņēmuši preces atpakaļ vai tu esi iesniedzis pierādījumu, ka tās nosūtītas, atkarībā no tā, kas notiek agrāk.</p>
+
+        <h3 id="withdrawal-form">Atteikuma veidlapas paraugs</h3>
+        <p>(Aizpildi un nosūti šo veidlapu tikai tad, ja vēlies atteikties no līguma.)</p>
+        <div class="legal__form">Kam: <mark class="todo">[Tavs vārds, uzvārds vai uzņēmuma nosaukums]</mark>, MOYEN HILLS, <mark class="todo">[adrese]</mark>, moyenhills@gmail.com
+Es/mēs (*) ar šo informēju/informējam (*), ka atsakos/atsakāmies (*) no līguma par šādu preču pirkumu:
+Pasūtīšanas datums (*) / saņemšanas datums (*):
+Patērētāja vārds, uzvārds (patērētāju vārdi, uzvārdi):
+Patērētāja adrese (patērētāju adreses):
+Patērētāja paraksts (patērētāju paraksti) (tikai tad, ja veidlapa tiek iesniegta papīra formā):
+Datums:
+(*) Nevajadzīgo svītrot.</div>
+
+        <h2 id="faults">5. Preces ar defektiem</h2>
+        <p>Ja ar pasūtījumu kaut kas nav kārtībā, sazinies ar mums. Saskaņā ar Latvijas un ES patērētāju tiesībām tev ir likumīgās garantijas tiesības divus gadus no piegādes dienas, neatkarīgi no tā, kas teikts šajos noteikumos.</p>
+
+        <h2 id="complaints">6. Jautājumi un sūdzības</h2>
+        <p>Raksti uz <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a>, un mēs atbildēsim dažu dienu laikā. Ja kopā strīdu atrisināt neizdodas, vari vērsties Patērētāju tiesību aizsardzības centrā (PTAC, <a href="https://www.ptac.gov.lv" target="_blank" rel="noopener">ptac.gov.lv</a>), kas izskata arī patērētāju strīdus ārpustiesas kārtībā. Ja dzīvo citā ES valstī, palīdzēt var tavas valsts Eiropas Patērētāju informēšanas centrs (<a href="https://www.eccnet.eu" target="_blank" rel="noopener">eccnet.eu</a>).</p>
+
+        <h2 id="law">7. Piemērojamie tiesību akti</h2>
+        <p>Šiem noteikumiem piemēro Latvijas Republikas tiesību aktus. Ja esi patērētājs, kas dzīvo citā ES valstī, tev saglabājas arī tavas valsts obligāto patērētāju tiesību normu aizsardzība.</p>
       </article>
   </main>
 
@@ -158,6 +213,7 @@ Date:
       <a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">Instagram</a>
       <a href="https://www.tiktok.com/@moyenhills" target="_blank" rel="noopener">TikTok</a>
       <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a>
+      <div class="langs" role="group" aria-label="Language"><a href="?lang=lv" lang="lv" hreflang="lv" aria-label="Latviešu" data-set-lang="lv">LV</a><a href="?lang=en" lang="en" hreflang="en" aria-label="English" data-set-lang="en">EN</a></div>
     </div>
   </dialog>
 
@@ -248,18 +304,21 @@ Date:
         <label>Note (optional)<textarea name="note" rows="2"></textarea></label>
         <input type="text" name="_honey" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true">
         <p class="checkout__account" data-checkout-account hidden>Signed in — this order will be saved to your account.</p>
-        <p class="checkout__legal">Prices are in euro. Delivery cost is added in our confirmation email, before you pay. By sending this order you accept our <a href="terms.html">Terms of sale</a>. How we use your details: <a href="privacy.html">Privacy policy</a>.</p>
+        <p class="checkout__legal" data-lang="en">Prices are in euro. Delivery cost is added in our confirmation email, before you pay. By sending this order you accept our <a href="terms.html">Terms of sale</a>. How we use your details: <a href="privacy.html">Privacy policy</a>.</p>
+        <p class="checkout__legal" data-lang="lv">Cenas norādītas eiro. Piegādes cenu pievienojam apstiprinājuma e-pastā, pirms tu maksā. Nosūtot pasūtījumu, tu piekrīti mūsu <a href="terms.html">pārdošanas noteikumiem</a>. Kā izmantojam tavus datus: <a href="privacy.html">privātuma politika</a>.</p>
         <button class="btn btn--wide" type="submit">Send order request</button>
         <p class="checkout__msg" data-checkout-msg role="status" aria-live="polite"></p>
       </form>
     </div>
     <div class="cart__done" data-cart-done hidden>
       <p class="cart__done-title">Order received</p>
-      <p>Thank you. A copy of your order is on its way to your inbox, and we will email you within a day to confirm it and send the payment details. Changed your mind? You can <a href="withdraw.html">cancel</a> up to 14 days after it arrives.</p>
+      <p data-lang="en">Thank you. A copy of your order is on its way to your inbox, and we will email you within a day to confirm it and send the payment details. Changed your mind? You can <a href="withdraw.html">cancel</a> up to 14 days after it arrives.</p>
+      <p data-lang="lv">Paldies! Pasūtījuma kopija jau ir ceļā uz tavu e-pastu, un dienas laikā mēs to apstiprināsim un atsūtīsim apmaksas informāciju. Pārdomāji? Pasūtījumu vari <a href="withdraw.html">atcelt</a> 14 dienu laikā pēc saņemšanas.</p>
       <button type="button" class="btn" data-close-cart>Keep looking</button>
     </div>
   </dialog>
 
+  <script src="i18n.js"></script>
   <script src="config.js"></script>
   <script src="vendor/supabase.js" defer></script>
   <script src="catalog.js" defer></script>

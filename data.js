@@ -34,7 +34,18 @@
     note: r.note || '',
     sizes: r.sizes || [],
     images: r.images || [],
+    lv: r.lv || {},
   });
+
+  // Latvian visitors see a product's Latvian text (catalog.js `lv`, or the admin page) where it has one
+  const TEXTS = ['colour', 'label', 'blurb', 'description', 'fit', 'note'];
+  const inLanguage = (p) => {
+    if (document.documentElement.lang !== 'lv' || !p.lv) return p;
+    const out = { ...p };
+    TEXTS.forEach((k) => { if (p.lv[k]) out[k] = p.lv[k]; });
+    if (Array.isArray(p.lv.details) && p.lv.details.length) out.details = p.lv.details;
+    return out;
+  };
 
   async function loadProducts() {
     if (sb) {
@@ -42,12 +53,12 @@
         const { data, error } = await sb.from('products').select('*').eq('active', true)
           .order('sort', { ascending: true }).order('created_at', { ascending: true });
         if (error) throw error;
-        if (data.length) return { products: data.map(fromRow), source: 'database' };
+        if (data.length) return { products: data.map(fromRow).map(inLanguage), source: 'database' };
       } catch (err) {
         console.warn('Products not loaded from the database, using catalog.js:', err.message);
       }
     }
-    return { products: local.products.filter((p) => p.active !== false), source: 'catalog' };
+    return { products: local.products.filter((p) => p.active !== false).map(inLanguage), source: 'catalog' };
   }
 
   const normalise = (code) => String(code || '').trim().toUpperCase().replace(/\s+/g, '');

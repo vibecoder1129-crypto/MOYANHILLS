@@ -29,9 +29,12 @@
   <header class="bar" data-bar>
     <p class="annc"><span>ART WILL TEE — OUT NOW</span><span class="annc__more">&nbsp;· Made in Latvia · Ships in 1–3 days</span></p>
     <div class="bar__row">
-    <button class="bar__icon bar__menu" type="button" data-open-menu aria-haspopup="dialog" aria-label="Open menu">
-      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M3.5 8h17M3.5 16h17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-    </button>
+    <div class="bar__left">
+      <button class="bar__icon bar__menu" type="button" data-open-menu aria-haspopup="dialog" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M3.5 8h17M3.5 16h17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <div class="langs" role="group" aria-label="Language"><a href="?lang=lv" lang="lv" hreflang="lv" aria-label="Latviešu" data-set-lang="lv">LV</a><a href="?lang=en" lang="en" hreflang="en" aria-label="English" data-set-lang="en">EN</a></div>
+    </div>
     <a class="bar__logo" href="index.html" aria-label="MOYEN HILLS, home">
       <img src="images/logo.png" width="2400" height="262" alt="MOYEN HILLS">
     </a>
@@ -48,7 +51,7 @@
   </header>
 
   <main id="top" class="legal">
-      <article class="legal__doc">
+      <article class="legal__doc" data-lang="en">
 
         <h1 class="legal__title">Privacy policy</h1>
         <p class="legal__date">Last updated: <mark class="todo">[date you publish]</mark></p>
@@ -78,6 +81,7 @@
           <tbody>
             <tr><td>mh-cart</td><td>The items in your cart</td><td>Until you empty the cart or clear your browser</td></tr>
             <tr><td>mh-intro</td><td>Plays the opening animation only once per visit</td><td>Until you close the tab</td></tr>
+            <tr><td>mh-lang</td><td>Remembers the language you chose (LV / EN)</td><td>Until you clear your browser</td></tr>
             <tr><td>sb-…-auth-token</td><td>Keeps you signed in (only if you sign in)</td><td>Until you sign out</td></tr>
             <tr><td>mh-cookie-ok</td><td>Remembers that you closed this cookie notice</td><td>Until you clear your browser</td></tr>
           </tbody>
@@ -116,6 +120,77 @@
 
         <h2 id="changes">Changes</h2>
         <p>If we change this policy, we update the date at the top. If a change is significant, we tell account holders by email.</p>
+      </article>
+
+      <article class="legal__doc" data-lang="lv">
+
+        <h1 class="legal__title">Privātuma politika</h1>
+        <p class="legal__date">Atjaunināta: <mark class="todo">[publicēšanas datums]</mark></p>
+        <p>Šajā lapā skaidrots, kādus personas datus MOYEN HILLS vāc, kāpēc, cik ilgi tos glabājam un kādas ir tavas tiesības saskaņā ar ES Vispārīgo datu aizsardzības regulu (VDAR). Par taviem datiem atbildīgā persona (pārzinis) ir:</p>
+        <dl class="legal__seller">
+          <dt>Pārdevējs</dt><dd><mark class="todo">[Tavs vārds, uzvārds vai uzņēmuma nosaukums]</mark>, zīmols MOYEN HILLS</dd>
+          <dt>Reģistrācijas nr.</dt><dd><mark class="todo">[Uzņēmuma vai saimnieciskās darbības veicēja reģistrācijas numurs, ja ir]</mark></dd>
+          <dt>Adrese</dt><dd><mark class="todo">[Kontaktadrese Latvijā]</mark></dd>
+          <dt>E-pasts</dt><dd><a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></dd>
+        </dl>
+
+        <h2 id="what">Ko mēs vācam, kāpēc un uz kāda tiesiskā pamata</h2>
+        <ul>
+          <li><b>Pasūtījumi:</b> tavs vārds, e-pasts, tālrunis (nav obligāts), piegādes adrese, preces un piezīme, ja tāda ir. Tos izmantojam, lai apstiprinātu, piegādātu un apkalpotu tavu pasūtījumu (līguma izpilde), un pasūtījumu ierakstus glabājam, jo to prasa grāmatvedības un nodokļu likumi (juridisks pienākums).</li>
+          <li><b>Atteikumi:</b> ja izmanto lapu <a href="withdraw.html">Atcelt pasūtījumu</a>, tavs vārds, e-pasts, pasūtījuma numurs un preces, lai apstrādātu tavu atteikumu (juridisks pienākums).</li>
+          <li><b>Konti</b> (tikai tad, ja to izveido): tavs e-pasts, parole (mūsu pieslēgšanās pakalpojuma sniedzējs to glabā tikai kā drošu jaucējvērtību), vārds, tālrunis, adrese un pasūtījumi, lai tu redzētu savus pasūtījumus un varētu pasūtīt ātrāk (līgums).</li>
+          <li><b>“Pievienojies Hills ģimenei”:</b> tava e-pasta adrese, lai sūtītu tev jaunumus par kolekcijām (tava piekrišana). Vispirms mēs nosūtām saiti, lai apstiprinātu, ka tas tiešām esi tu (dubultā apstiprināšana). Piekrišanu vari atsaukt jebkurā brīdī, izmantojot atrakstīšanās saiti katrā e-pastā vai rakstot mums.</li>
+          <li><b>Aizsardzība pret ļaunprātīgu izmantošanu:</b> kad veic pasūtījumu vai izmēģini atlaides kodu, mūsu datubāze līdz 24 stundām glabā vienvirziena, “sālītu” tavas interneta adreses nospiedumu, lai ierobežotu viltus pasūtījumus un kodu minēšanu (mūsu leģitīmās intereses uzturēt veikalu drošu). Pašu adresi mēs neglabājam.</li>
+          <li><b>Vietnes mitināšana:</b> mūsu mitināšanas pakalpojuma sniedzējs apstrādā tehniskos datus, piemēram, tavu IP adresi un pārlūka veidu, lai nodrošinātu vietnes darbību un drošību (leģitīmās intereses).</li>
+        </ul>
+        <p>Mēs neizmantojam tavus datus automatizētu lēmumu pieņemšanai vai profilēšanai, un mēs tos nekad nepārdodam.</p>
+
+        <h2 id="device">Sīkdatnes un glabāšana tavā ierīcē</h2>
+        <p>Mēs neizmantojam reklāmas, analītikas vai izsekošanas sīkdatnes, tāpēc piekrišanu sīkdatnēm neprasām. Vietne tavā pārlūkā saglabā tikai to, kas vajadzīgs tās darbībai:</p>
+        <table class="legal__table">
+          <thead><tr><th scope="col">Nosaukums</th><th scope="col">Kam tas vajadzīgs</th><th scope="col">Cik ilgi</th></tr></thead>
+          <tbody>
+            <tr><td>mh-cart</td><td>Preces tavā grozā</td><td>Līdz iztukšo grozu vai notīri pārlūku</td></tr>
+            <tr><td>mh-intro</td><td>Ievada animāciju rāda tikai vienu reizi apmeklējuma laikā</td><td>Līdz aizver cilni</td></tr>
+            <tr><td>mh-lang</td><td>Atceras tevis izvēlēto valodu (LV / EN)</td><td>Līdz notīri pārlūku</td></tr>
+            <tr><td>sb-…-auth-token</td><td>Uztur tevi pieslēgtu (tikai tad, ja pieslēdzies)</td><td>Līdz izej no konta</td></tr>
+            <tr><td>mh-cookie-ok</td><td>Atceras, ka aizvēri šo paziņojumu par sīkdatnēm</td><td>Līdz notīri pārlūku</td></tr>
+          </tbody>
+        </table>
+        <p>Saites uz Instagram un TikTok tevi aizved uz šīm vietnēm, kurām ir savas privātuma politikas. Mūsu lapās no tām nekas netiek ielādēts.</p>
+
+        <h2 id="processors">Kas mums palīdz</h2>
+        <p>Šie pakalpojumu sniedzēji apstrādā datus mūsu vārdā saskaņā ar datu apstrādes noteikumiem un tikai iepriekš minētajiem nolūkiem:</p>
+        <ul>
+          <li><b>Supabase</b> glabā pasūtījumus, kontus un atteikumus. Datubāzes reģions: ES (Īrija).</li>
+          <li><b>Stripe</b> (Stripe Payments Europe, Īrija) apstrādā kartes maksājumus. Tas saņem tavu vārdu, e-pastu, pasūtījuma summu un maksājuma datus; tavas kartes numuru mēs neredzam. Daļu šo datu Stripe apstrādā arī kā patstāvīgs pārzinis — krāpšanas novēršanai un savu juridisko pienākumu izpildei: sk. <a href="https://stripe.com/privacy" rel="noopener">Stripe privātuma politiku</a>.</li>
+          <li><b>Google</b> (Gmail) mitina mūsu e-pasta kastīti.</li>
+          <li><b>Vercel</b> mitina šo vietni.</li>
+          <li><b>Google vai Apple</b> — tikai tad, ja izvēlies pieslēgties ar tiem.</li>
+          <li><b>Brevo</b> (Sendinblue SAS, Francija) sūta pasūtījumu un atteikumu e-pastus (mums un tavu kopiju) un, ja pievienojies, glabā tavu pieteikumu un sūta mūsu jaunumus.</li>
+          <li>Tavs piegādes pārvadātājs saņem tavu vārdu, adresi un tālruni, lai piegādātu sūtījumu. <mark class="todo">[Pārvadātāja(-u) nosaukums]</mark></li>
+        </ul>
+        <p>Daži no šiem uzņēmumiem atrodas Amerikas Savienotajās Valstīs vai izmanto tur esošus serverus. Datu nosūtīšana uz turieni balstās uz ES–ASV Datu privātuma regulējumu vai Eiropas Komisijas standarta līguma klauzulām.</p>
+
+        <h2 id="retention">Cik ilgi mēs tos glabājam</h2>
+        <ul>
+          <li>Pasūtījumi un atteikumi: tik ilgi, cik to prasa Latvijas grāmatvedības un nodokļu likumi, <mark class="todo">[skaits] gadus</mark> pēc pasūtījuma gada beigām, pēc tam tie tiek dzēsti.</li>
+          <li>Konts: līdz tu to izdzēs (to vari izdarīt pats lapā <a href="account.html">Konts</a>). Pēc tam tavi pasūtījumi saglabājas tikai kā pasūtījumu ieraksti, vairs nesaistīti ar kontu.</li>
+          <li>Jaunumi: līdz tu atrakstījies. Mēs glabājam ierakstu par to, kad pieteicies un kad atrakstījies, lai pierādītu, ka mums bija tava piekrišana.</li>
+          <li>Aizsardzības nospiedumi: 24 stundas.</li>
+        </ul>
+
+        <h2 id="rights">Tavas tiesības</h2>
+        <p>Tu vari lūgt piekļuvi saviem datiem, to labošanu vai dzēšanu, apstrādes ierobežošanu, iebilst pret apstrādi, saņemt datu kopiju pārnesamā formātā un jebkurā brīdī atsaukt piekrišanu. Ja tev ir konts, savus datus vari lejupielādēt un kontu izdzēst pats lapā <a href="account.html">Konts</a>. Citādi raksti uz <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a>; atbildēsim viena mēneša laikā. Tu vari arī iesniegt sūdzību Datu valsts inspekcijā (<a href="https://www.dvi.gov.lv" target="_blank" rel="noopener">dvi.gov.lv</a>) vai savas dzīvesvietas datu aizsardzības iestādē.</p>
+
+        <h2 id="security">Kā mēs tos aizsargājam</h2>
+        <p>Vietne darbojas tikai pa šifrētiem savienojumiem (HTTPS). Datubāzes noteikumi ļauj katram klientam redzēt tikai savus pasūtījumus un datus. Pasūtījumus var redzēt tikai konkrēti darbinieki, kas pieslēdzas ar paroli un otru kodu no autentifikācijas lietotnes, un katra administratora veiktā izmaiņa tiek reģistrēta.</p>
+
+        <h2 id="children">Bērni</h2>
+        <p>Mūsu veikals nav paredzēts bērniem, kas jaunāki par 16 gadiem. Ja tev vēl nav 16, lūdzu, palūdz vecākiem vai aizbildnim pasūtīt tavā vietā.</p>
+
+        <h2 id="changes">Izmaiņas</h2>
+        <p>Ja šo politiku mainīsim, atjaunināsim datumu lapas augšā. Ja izmaiņas būs būtiskas, konta īpašniekiem par tām paziņosim e-pastā.</p>
       </article>
   </main>
 
@@ -176,6 +251,7 @@
       <a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">Instagram</a>
       <a href="https://www.tiktok.com/@moyenhills" target="_blank" rel="noopener">TikTok</a>
       <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a>
+      <div class="langs" role="group" aria-label="Language"><a href="?lang=lv" lang="lv" hreflang="lv" aria-label="Latviešu" data-set-lang="lv">LV</a><a href="?lang=en" lang="en" hreflang="en" aria-label="English" data-set-lang="en">EN</a></div>
     </div>
   </dialog>
 
@@ -266,18 +342,21 @@
         <label>Note (optional)<textarea name="note" rows="2"></textarea></label>
         <input type="text" name="_honey" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true">
         <p class="checkout__account" data-checkout-account hidden>Signed in — this order will be saved to your account.</p>
-        <p class="checkout__legal">Prices are in euro. Delivery cost is added in our confirmation email, before you pay. By sending this order you accept our <a href="terms.html">Terms of sale</a>. How we use your details: <a href="privacy.html">Privacy policy</a>.</p>
+        <p class="checkout__legal" data-lang="en">Prices are in euro. Delivery cost is added in our confirmation email, before you pay. By sending this order you accept our <a href="terms.html">Terms of sale</a>. How we use your details: <a href="privacy.html">Privacy policy</a>.</p>
+        <p class="checkout__legal" data-lang="lv">Cenas norādītas eiro. Piegādes cenu pievienojam apstiprinājuma e-pastā, pirms tu maksā. Nosūtot pasūtījumu, tu piekrīti mūsu <a href="terms.html">pārdošanas noteikumiem</a>. Kā izmantojam tavus datus: <a href="privacy.html">privātuma politika</a>.</p>
         <button class="btn btn--wide" type="submit">Send order request</button>
         <p class="checkout__msg" data-checkout-msg role="status" aria-live="polite"></p>
       </form>
     </div>
     <div class="cart__done" data-cart-done hidden>
       <p class="cart__done-title">Order received</p>
-      <p>Thank you. A copy of your order is on its way to your inbox, and we will email you within a day to confirm it and send the payment details. Changed your mind? You can <a href="withdraw.html">cancel</a> up to 14 days after it arrives.</p>
+      <p data-lang="en">Thank you. A copy of your order is on its way to your inbox, and we will email you within a day to confirm it and send the payment details. Changed your mind? You can <a href="withdraw.html">cancel</a> up to 14 days after it arrives.</p>
+      <p data-lang="lv">Paldies! Pasūtījuma kopija jau ir ceļā uz tavu e-pastu, un dienas laikā mēs to apstiprināsim un atsūtīsim apmaksas informāciju. Pārdomāji? Pasūtījumu vari <a href="withdraw.html">atcelt</a> 14 dienu laikā pēc saņemšanas.</p>
       <button type="button" class="btn" data-close-cart>Keep looking</button>
     </div>
   </dialog>
 
+  <script src="i18n.js"></script>
   <script src="config.js"></script>
   <script src="vendor/supabase.js" defer></script>
   <script src="catalog.js" defer></script>

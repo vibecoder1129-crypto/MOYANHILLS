@@ -10,8 +10,11 @@
   try { if (localStorage.getItem(KEY)) return; } catch { /* storage blocked: show it each visit */ }
   const box = document.createElement('section');
   box.className = 'cookie';
-  box.setAttribute('aria-label', 'Cookie notice');
-  box.innerHTML = '<p class="cookie__text"><b>Cookies.</b> We only store what the shop needs to work: your cart and, if you sign in, your session. No tracking, no ads. <a href="privacy.html#device">Details</a></p>'
+  const lv = document.documentElement.lang === 'lv';
+  box.setAttribute('aria-label', lv ? 'Paziņojums par sīkdatnēm' : 'Cookie notice');
+  box.innerHTML = (lv
+    ? '<p class="cookie__text"><b>Sīkdatnes.</b> Mēs saglabājam tikai to, kas vajadzīgs veikala darbībai: tavu grozu un, ja pieslēdzies, tavu sesiju. Nekādas izsekošanas, nekādu reklāmu. <a href="privacy.html#device">Sīkāk</a></p>'
+    : '<p class="cookie__text"><b>Cookies.</b> We only store what the shop needs to work: your cart and, if you sign in, your session. No tracking, no ads. <a href="privacy.html#device">Details</a></p>')
     + '<button type="button" class="btn cookie__ok">OK</button>';
   box.querySelector('button').addEventListener('click', () => {
     try { localStorage.setItem(KEY, '1'); } catch { /* fine: it just shows again next visit */ }
