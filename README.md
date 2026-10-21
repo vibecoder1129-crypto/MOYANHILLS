@@ -20,6 +20,7 @@ Open `index.html` in a browser, or host the folder on GitHub Pages, Netlify or V
 - `auth.js` + `config.js`: customer accounts (Supabase); `vendor/supabase.js` is the Supabase library
 - `supabase/schema.sql`: the database: accounts, orders, products, promo codes, admins
 - `supabase/privacy.sql`: privacy and EU rules on top of it: delete/download my data, cancellations, 30-day price rule, retention. **Run it after `schema.sql`, every time.**
+- `supabase/payments.sql` + `supabase/functions/`: card payments with Stripe (delivery prices, payment page, webhook). **Run it after `privacy.sql`, every time.** See [Card payments](#card-payments-stripe)
 - `vercel.json` + `.vercelignore` (Vercel) or `netlify.toml` (Netlify): security headers, and files kept off the public site
 - `fonts/`: the Inter Tight font, self-hosted
 - `site.css`: the design
@@ -182,6 +183,61 @@ same way.
 
 Send newsletters from Brevo → Campaigns, to the list the form fills. Every Brevo email has an
 unsubscribe link; don't import email addresses from elsewhere without their confirmation.
+
+## Card payments (Stripe)
+
+Off until you switch it on (`cardPayments` in `config.js`). While it is off, orders work as
+described above and you send payment details by email.
+
+With it on, the cart button says **Continue to payment**:
+
+1. The order is saved in Supabase first. The database checks the prices, promo code and stock,
+   takes the pieces out of stock and adds the delivery cost from **shipping_rates**.
+2. The `create-checkout` Edge Function opens a Stripe payment page for exactly that order. The
+   buyer sees the pieces, discount, delivery and full total, and presses **Pay**.
+3. Stripe tells the `stripe-webhook` Edge Function, which marks the order **paid**. If the buyer
+   leaves without paying, the page closes after 30 minutes, the order is cancelled and the pieces
+   go back on sale. A buyer who comes back from the payment page gets a **Pay now** button.
+
+On the admin page each card order says **Card: paid**, **not paid yet**, **never paid** or
+**payment failed**. Only ship orders that say **Card: paid**. Refunds are made in Stripe
+(Payments → the payment → Refund); cancelling the order on the admin page only puts the stock back.
+No order email is sent through FormSubmit for card orders: turn on Stripe's emails instead (below).
+
+The Stripe secret key lives only in Supabase. Never put it in `config.js`, this repository or a chat.
+
+### Set it up (test mode first)
+1. **Stripe:** create an account at stripe.com (country Latvia, currency EUR). Stay in **Test mode**.
+2. **Supabase → SQL Editor:** run `supabase/payments.sql`. From now on the order is always
+   `schema.sql`, then `privacy.sql`, then `payments.sql`.
+3. **Supabase → Table Editor → shipping_rates:** set your delivery prices. `country` is the country
+   as buyers type it, in small letters (`latvia`, `lithuania`, …); `*` is everywhere else (delete it to
+   only ship to the listed countries). `label` is shown on the payment page. They start at €0.
+4. **Supabase → Edge Functions → Deploy a new function → Via Editor**, twice:
+   - name `create-checkout`, paste `supabase/functions/create-checkout/index.ts`, **Deploy**;
+   - name `stripe-webhook`, paste `supabase/functions/stripe-webhook/index.ts`, **Deploy**.
+   Then open each function's **Details** and turn **Verify JWT** off (guests have no sign-in, and
+   Stripe proves itself with a signature instead). With the Supabase CLI instead:
+   `npx supabase functions deploy create-checkout --no-verify-jwt --project-ref kvykvcjwqjzaepdiwydd`
+   (and the same for `stripe-webhook`).
+5. **Stripe → Developers → Webhooks → Add endpoint:**
+   URL `https://kvykvcjwqjzaepdiwydd.supabase.co/functions/v1/stripe-webhook`, events
+   `checkout.session.completed`, `checkout.session.async_payment_succeeded`,
+   `checkout.session.async_payment_failed`, `checkout.session.expired`. Copy its **Signing secret** (`whsec_…`).
+6. **Supabase → Edge Functions → Secrets**, add:
+   - `STRIPE_SECRET_KEY`: Stripe → Developers → API keys → Secret key (`sk_test_…`)
+   - `STRIPE_WEBHOOK_SECRET`: the `whsec_…` from step 5
+   - `SITE_URL`: the live site, e.g. `https://moyenhills.com`
+   - `ALLOWED_ORIGINS` (optional): other addresses you test from, comma separated, e.g. `http://localhost:8000`
+7. Set `cardPayments: true` in `config.js`, publish, and order with the test card
+   `4242 4242 4242 4242` (any future date, any CVC). The order should turn **paid** on the admin page.
+   Also try leaving the payment page: after about 30 minutes the order is cancelled and the stock is back.
+8. **Stripe → Settings:** turn on **Customer emails → Successful payments** (the buyer's receipt) and
+   your own **Email notifications → Successful payments**; fill in the business details, the
+   statement descriptor (`MOYEN HILLS`) and **Branding** (logo, black).
+9. **Going live:** finish Stripe's account activation, switch off Test mode, add the same webhook again
+   in live mode, and replace `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` with the live ones.
+   Then switch the order and payment paragraphs in `terms.html` to the card versions (marked in yellow).
 
 ## Customer accounts (Google, Apple, email)
 

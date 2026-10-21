@@ -89,6 +89,7 @@
         <ul>
           <li><b>Supabase</b> stores orders, accounts and cancellations. Database region: <mark class="todo">[region chosen for the Supabase project, e.g. EU (Frankfurt)]</mark>.</li>
           <li><b>FormSubmit</b> (formsubmit.co) forwards order and cancellation forms to our email inbox. <mark class="todo">[Check FormSubmit’s location and terms, or replace it with an EU email service]</mark></li>
+          <li><b>Stripe</b> (Stripe Payments Europe, Ireland) processes card payments. It gets your name, email, the order total and your payment details; we never see your card number. Stripe is also responsible for some of this data itself, for fraud prevention and its legal duties: see <a href="https://stripe.com/privacy" rel="noopener">Stripe’s privacy policy</a>.</li>
           <li><b>Google</b> (Gmail) hosts our email inbox.</li>
           <li><b>Vercel</b> hosts this website.</li>
           <li><b>Google or Apple</b>, only if you choose to sign in with them.</li>

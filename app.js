@@ -328,6 +328,98 @@ $('[data-promo-apply]')?.addEventListener('click', applyPromo);
 $('[data-promo-input]')?.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); applyPromo(); } });
 $('[data-promo-remove]')?.addEventListener('click', () => { promo = null; $('[data-promo-msg]').textContent = ''; renderPromo(); });
 
+/* ---------------- Card payments (Stripe), once config.js turns them on ----------------
+ * The order is saved first, so the database checks prices, promo code and stock, holds the
+ * pieces and adds delivery. Then the create-checkout function opens a Stripe payment page for
+ * exactly that order. Stripe tells the database when it is paid; an unpaid order cancels itself
+ * after about 30 minutes and its pieces go back on sale. */
+const cardPayments = () => !!(window.MH_CONFIG?.cardPayments && window.mhData.supabase && window.mhAccount?.enabled);
+let pending = null; // { token, key }: an order already saved whose payment page didn't open
+
+async function openPayment(token) {
+  const cfg = window.MH_CONFIG;
+  const res = await fetch(`${cfg.supabaseUrl}/functions/v1/create-checkout`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', apikey: cfg.supabaseAnonKey },
+    body: JSON.stringify({ token, page: location.pathname }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error || 'The payment page could not be opened. Please try again.');
+  return body; // { url } or { paid: true }
+}
+
+function showDone(title, html) {
+  $('[data-cart-view]').hidden = true;
+  const done = $('[data-cart-done]');
+  done.hidden = false;
+  done.querySelector('.cart__done-title').textContent = title;
+  done.querySelector('p:not(.cart__done-title)').innerHTML = html;
+  done.querySelector('[data-pay-again]')?.remove();
+}
+
+if (cardPayments()) {
+  const form = $('[data-checkout]');
+  if (form) {
+    form.querySelector('button[type=submit]').textContent = 'Continue to payment';
+    const legal = form.querySelector('.checkout__legal');
+    if (legal) legal.innerHTML = 'Prices are in euro. Delivery is added on the next page, where you see the full total before you pay. Card payments are handled by Stripe. By ordering you accept our <a href="terms.html">Terms of sale</a>. How we use your details: <a href="privacy.html">Privacy policy</a>.';
+  }
+  // Back from the Stripe payment page
+  const q = new URLSearchParams(location.search);
+  const back = q.get('payment');
+  if (back && dialog) {
+    history.replaceState(null, '', location.pathname + location.hash);
+    if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open', '');
+    if (back === 'done') {
+      cart = []; promo = null; save();
+      showDone('Thank you, it’s paid', `Order #${esc(q.get('order') || '')} is paid. Stripe emails you a receipt, and we email you when it ships. Changed your mind? You can <a href="withdraw.html">cancel</a> up to 14 days after it arrives.`);
+    } else if (back === 'cancelled' && /^[0-9a-f-]{36}$/i.test(q.get('token') || '')) {
+      const token = q.get('token');
+      showDone('Payment not finished', 'Your order is kept for about 30 minutes, then it cancels itself and nothing is charged. <span data-pay-msg role="status"></span>');
+      const again = document.createElement('button');
+      again.type = 'button';
+      again.className = 'btn';
+      again.dataset.payAgain = '';
+      again.textContent = 'Pay now';
+      again.onclick = async () => {
+        again.disabled = true;
+        try {
+          const r = await openPayment(token);
+          if (r.url) { location.assign(r.url); return; }
+          showDone('Thank you, it’s paid', 'This order is already paid. Stripe emailed you a receipt.');
+        } catch (err) {
+          $('[data-pay-msg]').textContent = err.message;
+          again.disabled = false;
+        }
+      };
+      $('[data-cart-done] [data-close-cart]').before(again);
+    }
+  }
+}
+
+async function payByCard(order, msg) {
+  const key = JSON.stringify(order);
+  if (pending?.key !== key) {
+    pending = null;
+    const token = crypto.randomUUID();
+    msg.textContent = 'Saving your order…';
+    const error = await window.mhAccount.saveOrder({ ...order, pay_token: token });
+    if (error) { msg.textContent = error; msg.classList.add('is-error'); return; }
+    pending = { token, key };
+  }
+  msg.textContent = 'Opening the payment page…';
+  try {
+    const r = await openPayment(pending.token);
+    cart = []; promo = null; save();
+    pending = null;
+    if (r.url) { location.assign(r.url); return; }
+    showDone('Thank you, it’s paid', 'This order is already paid. Stripe emailed you a receipt.');
+  } catch (err) {
+    msg.textContent = `${err.message} Your order is saved: press the button again to pay.`;
+    msg.classList.add('is-error');
+  }
+}
+
 /* ---------------- Checkout: the order is emailed to the shop owner ---------------- */
 $('[data-checkout]')?.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -354,6 +446,11 @@ $('[data-checkout]')?.addEventListener('submit', async (e) => {
     full_name: data.name, email: data.email, phone: data.phone || null,
     address: data.address, city: data.city, postcode: data.postcode, country: data.country, note: data.note || null,
   };
+  if (cardPayments()) {
+    msg.classList.remove('is-error');
+    try { await payByCard(order, msg); } finally { button.disabled = false; }
+    return;
+  }
   const subject = `New order: ${totalQty()} item${totalQty() === 1 ? '' : 's'}, ${money(grandTotal())}`;
   const address = `${data.address}, ${data.postcode} ${data.city}, ${data.country}`;
   const promoText = promo ? `${promo.code} (−${money(discount())})` : '—';

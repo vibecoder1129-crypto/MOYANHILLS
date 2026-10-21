@@ -562,6 +562,8 @@
   /* ---------- Orders ---------- */
   const orderList = $('[data-orders]');
   const STATUSES = ['received', 'paid', 'shipped', 'cancelled'];
+  // Card orders (Stripe). Only ship ones that say "Card: paid".
+  const PAYMENT = { unpaid: 'Card: not paid yet', pending: 'Card: bank payment on its way', paid: 'Card: paid', failed: 'Card: payment failed', expired: 'Card: never paid' };
 
   async function loadOrders() {
     orderList.innerHTML = '<li class="adm__empty">Loading…</li>';
@@ -583,6 +585,8 @@
         <div class="adm__orderside">
           <span class="adm__price">${eur(o.total ?? o.subtotal)}</span>
           ${o.promo_code ? `<span class="adm__muted">${esc(o.promo_code)} −${eur(o.discount)}</span>` : ''}
+          ${Number(o.shipping) > 0 ? `<span class="adm__muted">incl. delivery ${eur(o.shipping)}</span>` : ''}
+          ${o.payment ? `<span class="adm__muted${o.payment === 'paid' ? '' : ' is-bad'}">${PAYMENT[o.payment] || esc(o.payment)}</span>` : ''}
           <select data-status="${o.id}" aria-label="Status of order ${o.id}" ${o.status === 'cancelled' && sb ? 'disabled title="Cancelled orders stay cancelled"' : ''}>${STATUSES.map((s) => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${s[0].toUpperCase() + s.slice(1)}</option>`).join('')}</select>
         </div>
       </li>`;
