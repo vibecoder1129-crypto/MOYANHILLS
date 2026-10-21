@@ -20,7 +20,7 @@ Open `index.html` in a browser, or host the folder on GitHub Pages, Netlify or V
 - `auth.js` + `config.js`: customer accounts (Supabase); `vendor/supabase.js` is the Supabase library
 - `supabase/schema.sql`: the database: accounts, orders, products, promo codes, admins
 - `supabase/privacy.sql`: privacy and EU rules on top of it: delete/download my data, cancellations, 30-day price rule, retention. **Run it after `schema.sql`, every time.**
-- `vercel.json` + `.vercelignore`: security headers, and files kept off the public site
+- `vercel.json` + `.vercelignore` (Vercel) or `netlify.toml` (Netlify): security headers, and files kept off the public site
 - `fonts/`: the Inter Tight font, self-hosted
 - `site.css`: the design
 - `images/`: logo and product photos

@@ -14,6 +14,7 @@
 --      price of the last 30 days
 --   6. purge_old_records(): deletes order records once accounting law no longer
 --      requires them
+--   7. Trigger-only functions locked out of the website API
 
 -- ---------------------------------------------------------------------
 -- 1. Visitor fingerprint with a secret salt
@@ -264,3 +265,14 @@ begin
 end;
 $$;
 revoke execute on function public.purge_old_records(integer) from public, anon, authenticated;
+
+-- ---------------------------------------------------------------------
+-- 7. Trigger-only functions can't be called from the website API.
+--    (Triggers still run them; this just closes the /rpc/ door Supabase's
+--    security advisor warns about.)
+-- ---------------------------------------------------------------------
+revoke execute on function
+  public.check_new_order(), public.check_was_price(), public.check_profile(), public.record_price(),
+  public.guard_admins(), public.handle_new_user(), public.log_admin_change(),
+  public.prepare_order(), public.restock_cancelled()
+from public, anon, authenticated;
