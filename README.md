@@ -26,6 +26,7 @@ Open `index.html` in a browser, or host the folder on GitHub Pages, Netlify or V
 - `vercel.json` + `.vercelignore` (Vercel) or `netlify.toml` (Netlify): security headers, and files kept off the public site
 - `fonts/`: the Inter Tight font, self-hosted
 - `site.css`: the design
+- `motion.js`: the moving parts that need a script (words rising out of a mask, photos opening up, buttons that lean toward the mouse). The loading screen, page transitions and hovers are CSS in `site.css` under **Motion**. Everything stays still for visitors who turn on reduced motion.
 - `images/`: logo and product photos
 
 ## Latvian and English
