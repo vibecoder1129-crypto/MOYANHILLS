@@ -415,6 +415,14 @@ mark.todo { background: #fff1a8; color: inherit; padding: 0 3px; border-radius: 
 .legal__doc a { text-underline-offset: 3px; }
 .legal__doc h3 { margin-top: 12px; font-size: var(--t-sm); font-weight: 800; }
 .legal__doc [id] { scroll-margin-top: calc(var(--head-h) + 16px); }
+/* Cookie notice */
+.cookie { position: fixed; z-index: 20; left: 16px; bottom: 16px; width: min(420px, calc(100% - 32px)); display: flex; align-items: center; gap: 16px; padding: 14px 14px 14px 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg); color: var(--ink); box-shadow: 0 10px 40px rgba(0,0,0,.14); opacity: 0; transform: translateY(16px); transition: opacity .4s, transform .4s cubic-bezier(.16, 1, .3, 1); }
+.cookie.is-on { opacity: 1; transform: none; }
+.cookie__text { font-size: var(--t-xs); line-height: 1.5; color: var(--muted); }
+.cookie__text b { color: var(--ink); }
+.cookie__text a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.cookie__ok { flex: none; padding-inline: 22px; }
+@media (prefers-reduced-motion: reduce) { .cookie { transition: none; } }
 .legal__table { width: 100%; border-collapse: collapse; font-size: var(--t-sm); }
 .legal__table th, .legal__table td { text-align: left; vertical-align: top; padding: 8px 10px 8px 0; border-bottom: 1px solid var(--line); }
 .legal__form { padding: 18px 20px; border: 1px dashed var(--line); border-radius: var(--radius); font-size: var(--t-sm); white-space: pre-line; }
