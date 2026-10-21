@@ -177,8 +177,7 @@ customers alike. The database then emails it, through Brevo (`supabase/notify.sq
 Cancellations from `withdraw.html` work the same way: saved, then emailed to the shop with a dated
 confirmation to the buyer.
 
-The emails used to be sent from the browser through FormSubmit, but some Latvian internet providers
-block formsubmit.co, so they silently never left. Sending from the database works on every network.
+The emails are sent by the database, not the browser, so ad blockers and network filters can't stop them.
 
 The buyer only sees "Order received" once the order is saved. If it can't be saved (or Supabase is
 not set up yet), the cart is kept and the buyer gets a link that opens their email app with the whole

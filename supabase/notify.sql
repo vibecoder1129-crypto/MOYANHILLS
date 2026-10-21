@@ -3,10 +3,8 @@
 --   Dashboard → SQL Editor → New query → paste → Run.
 -- Safe to run again.
 --
--- Why here and not in the browser: the browser used to email orders through
--- FormSubmit, which some Latvian internet providers block (their DNS filter), so
--- those emails silently never left. Now the browser only saves the order, and the
--- database emails it, so it works on every network.
+-- Why here and not in the browser: the browser only saves the order and the
+-- database emails it, so ad blockers and network filters can't stop the email.
 --
 -- What it sends (from the Brevo sender below, which must be verified in Brevo):
 --   new order        → the shop (order details, reply goes to the customer)
