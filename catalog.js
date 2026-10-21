@@ -56,10 +56,10 @@ window.MH_CATALOG = {
       },
       // Pieces left per size, in the order they are shown. 0 = that size is sold out.
       sizes: [
-        { size: 'S', stock: 10 },
-        { size: 'M', stock: 10 },
-        { size: 'L', stock: 10 },
-        { size: 'XL', stock: 10 },
+        { size: 'S', stock: 2 },
+        { size: 'M', stock: 6 },
+        { size: 'L', stock: 2 },
+        { size: 'XL', stock: 0 },
       ],
       // The first photo is the main one; the second shows on hover in the shop.
       images: [
