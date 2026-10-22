@@ -111,3 +111,12 @@ create trigger orders_mail_shipped after update of status, tracking_number on pu
     (new.tracking_number is not null and new.tracking_number is distinct from old.tracking_number)
     or (new.tracking_number is null and new.status = 'shipped' and old.status in ('received', 'paid'))))
   execute function private.mail_shipped();
+
+-- Security advisor tidy-up (safe to re-run): trigger functions are never called directly,
+-- and the small private helpers get a fixed search_path.
+revoke execute on function public.check_new_order(), public.check_was_price(), public.guard_admins(),
+  public.handle_new_user(), public.prepare_order(), public.record_price() from public, anon, authenticated;
+alter function private.h(text) set search_path = '';
+alter function private.eur(numeric) set search_path = '';
+alter function private.track_url(text, text) set search_path = '';
+alter function private.carrier_name(text) set search_path = '';
