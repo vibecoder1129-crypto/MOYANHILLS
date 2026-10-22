@@ -1,8 +1,10 @@
 <!doctype html>
+<!-- Designed & built by Archit Gajjar -->
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="designer" content="Archit Gajjar">
   <meta name="theme-color" content="#ffffff">
   <title>ART WILL TEE — MOYEN HILLS</title>
   <meta name="description" content="MOYEN HILLS. ART WILL TEE: boxy cut-off t-shirt, 100% cotton, screen printed front, back and neck label. Made in Latvia.">
@@ -11,7 +13,7 @@
   <link rel="icon" href="images/favicon.png">
   <link rel="preload" href="fonts/inter-tight-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="site.css">
-  <script>document.documentElement.classList.add('js');try{if(sessionStorage.getItem('mh-intro'))document.documentElement.classList.add('seen-intro');else sessionStorage.setItem('mh-intro','1')}catch(e){}</script>
+  <script src="boot.js"></script>
 </head>
 <body>
   <div class="loader" aria-hidden="true">
@@ -27,9 +29,12 @@
   <header class="bar" data-bar>
     <p class="annc"><span>ART WILL TEE — OUT NOW</span><span class="annc__more">&nbsp;· Made in Latvia · Ships in 1–3 days</span></p>
     <div class="bar__row">
-    <button class="bar__icon bar__menu" type="button" data-open-menu aria-haspopup="dialog" aria-label="Open menu">
-      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M3.5 8h17M3.5 16h17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-    </button>
+    <div class="bar__left">
+      <button class="bar__icon bar__menu" type="button" data-open-menu aria-haspopup="dialog" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M3.5 8h17M3.5 16h17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <div class="langs" role="group" aria-label="Language"><svg class="langs__globe" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><a href="?lang=lv" lang="lv" hreflang="lv" aria-label="Latviešu" data-set-lang="lv">LV</a><span class="langs__sep" aria-hidden="true">/</span><a href="?lang=en" lang="en" hreflang="en" aria-label="English" data-set-lang="en">EN</a></div>
+    </div>
     <a class="bar__logo" href="index.html" aria-label="MOYEN HILLS, home">
       <img src="images/logo.png" width="2400" height="262" alt="MOYEN HILLS">
     </a>
@@ -45,7 +50,7 @@
     </div>
   </header>
 
-  <main class="pdp" id="top">
+  <main class="pdp" id="top" data-pdp>
     <section class="gallery" aria-label="Product photos" data-gallery data-product-media data-reveal>
       <div class="gallery__frame">
         <ul class="gallery__track" data-track tabindex="0">
@@ -58,7 +63,7 @@
         </ul>
         <button type="button" class="gallery__arrow gallery__arrow--prev" data-prev aria-label="Previous photo">&#8592;</button>
         <button type="button" class="gallery__arrow gallery__arrow--next" data-next aria-label="Next photo">&#8594;</button>
-        <p class="gallery__count" aria-live="polite"><span data-index>1</span> / 6</p>
+        <p class="gallery__count" aria-live="polite" data-count><span data-index>1</span> / 6</p>
       </div>
       <div class="gallery__thumbs">
         <button type="button" class="gallery__thumb is-on" data-go="0" aria-label="Show photo 1"><img src="images/flat-front-480.jpg" width="1002" height="1201" alt="" loading="lazy"></button>
@@ -72,7 +77,7 @@
 
     <section class="pdp__info" aria-labelledby="product-name" data-reveal>
       <h1 class="pdp__name" id="product-name" data-product-name>ART WILL TEE</h1>
-      <p class="pdp__price" data-price>€35</p>
+      <p class="pdp__price" data-price>€37</p>
       <p class="scarcity" data-stock-left hidden><span class="scarcity__dot" aria-hidden="true"></span><span data-stock-text></span></p>
       <p class="soldout" data-soldout-note hidden>SOLD OUT, DONT BE LATE</p>
       <form class="buy" data-buy>
@@ -84,25 +89,25 @@
         <button class="btn btn--wide" type="submit" data-add>Add to cart</button>
         <p class="buy__msg" data-buy-msg role="status" aria-live="polite"></p>
       </form>
-      <p class="pdp__note">Pre-made. Please allow 1–3 days for order fulfilling.</p>
+      <p class="pdp__note" data-note>Pre-made. Please allow 1–3 days for order fulfilling.</p>
 
       <div class="acc">
         <details open>
           <summary>Details</summary>
-          <p>Short-sleeve t-shirt with a boxy fit, including front, back &amp; neck label custom screen printed graphics.</p>
-          <ul class="ticks"><li>100% cotton</li><li>Cut-off style bottom</li><li>MADE IN LATVIA</li></ul>
+          <p data-desc>Short-sleeve t-shirt with a boxy fit, including front, back &amp; neck label custom screen printed graphics.</p>
+          <ul class="ticks" data-details><li>100% cotton</li><li>Cut-off style bottom</li><li>MADE IN LATVIA</li></ul>
         </details>
         <details>
           <summary>Fit</summary>
-          <p>Boxy, with short sleeves and a cut-off style bottom, so it sits wide and a little short. For exact measurements, email <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a> before you order.</p>
+          <p><span data-fit>Boxy, with short sleeves and a cut-off style bottom, so it sits wide and a little short.</span> For exact measurements, email <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a> before you order.</p>
         </details>
         <details>
           <summary>Shipping</summary>
-          <p>Pre-made. Please allow 1–3 days for order fulfilling. You get an email when your order is on its way.</p>
+          <p>Free delivery in Latvia. We send your order within 1–3 days and email you the tracking number when it is on its way.</p>
         </details>
         <details>
           <summary>Payment</summary>
-          <p>Place your order from the cart. We confirm it by email with the payment details and the total including delivery.</p>
+          <p>Pay by card in the cart, on Stripe’s secure payment page. The price already includes delivery.</p>
         </details>
       </div>
     </section>
@@ -116,7 +121,7 @@
 
   <!-- Phone: buy bar that follows the scroll -->
   <div class="stickybuy" data-sticky aria-hidden="true">
-    <div><p class="stickybuy__name">ART WILL TEE</p><p class="stickybuy__price" data-price>€35</p></div>
+    <div><p class="stickybuy__name" data-sticky-name>ART WILL TEE</p><p class="stickybuy__price" data-price>€37</p></div>
     <button type="button" class="btn" data-sticky-add tabindex="-1">Add to cart</button>
   </div>
 
@@ -131,21 +136,24 @@
         <button class="btn" type="submit">JOIN</button>
       </div>
       <p class="sub__msg" data-sub-msg role="status" aria-live="polite"></p>
-      <p class="sub__consent">By joining you agree to get emails from MOYEN HILLS. Unsubscribe any time. <a href="privacy.html">Privacy policy</a></p>
+      <p class="sub__consent">By joining you agree to get emails about MOYEN HILLS drops and news. Unsubscribe any time from any email. <a href="privacy.html">Privacy policy</a></p>
     </form>
     <ul class="foot__links" data-reveal>
       <li><a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">instagram</a></li>
       <li><a href="https://www.tiktok.com/@moyenhills" target="_blank" rel="noopener">tiktok</a></li>
     </ul>
     <nav class="foot__nav" aria-label="Site">
-      <a href="product.html">Shop</a>
+      <a href="shop.html">Shop</a>
       <a href="lookbook.html">Lookbook</a>
       <a href="account.html">Account</a>
       <a href="mailto:moyenhills@gmail.com">Contact</a>
       <a href="terms.html">Terms</a>
       <a href="privacy.html">Privacy</a>
+      <a href="privacy.html#device">Cookies</a>
+      <a href="withdraw.html">Cancel an order</a>
     </nav>
     <p class="foot__legal">© <span data-year>2026</span> MOYEN HILLS · <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></p>
+    <p class="foot__credit">Designed &amp; built by Archit Gajjar</p>
   </footer>
 
 
@@ -161,19 +169,20 @@
     <div class="menu__body">
       <nav class="menu__links" aria-label="Site">
         <a href="index.html">Home</a>
-        <a href="product.html">Shop</a>
+        <a href="shop.html">Shop</a>
         <a href="lookbook.html">Lookbook</a>
         <a href="account.html">Account</a>
       </nav>
       <a class="menu__tee" href="product.html">
         <img src="images/flat-front-480.jpg" width="480" height="575" alt="" loading="lazy">
-        <span><b>ART WILL TEE</b><span data-price>€35</span></span>
+        <span><b>ART WILL TEE</b><span data-price>€37</span></span>
       </a>
     </div>
     <div class="menu__foot">
       <a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">Instagram</a>
       <a href="https://www.tiktok.com/@moyenhills" target="_blank" rel="noopener">TikTok</a>
       <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a>
+      <div class="langs" role="group" aria-label="Language"><svg class="langs__globe" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><a href="?lang=lv" lang="lv" hreflang="lv" aria-label="Latviešu" data-set-lang="lv">LV</a><span class="langs__sep" aria-hidden="true">/</span><a href="?lang=en" lang="en" hreflang="en" aria-label="English" data-set-lang="en">EN</a></div>
     </div>
   </dialog>
 
@@ -185,8 +194,16 @@
     </div>
     <div data-cart-view>
       <ul class="cart__items" data-cart-items></ul>
-      <div class="cart__empty" data-cart-empty><p>Your cart is empty.</p><a class="btn" href="product.html">Shop the ART WILL TEE</a></div>
+      <div class="cart__empty" data-cart-empty><p>Your cart is empty.</p><a class="btn" href="shop.html">Visit the shop</a></div>
       <div class="cart__total" data-cart-total-row hidden><span>Subtotal</span><span data-cart-total>€0</span></div>
+      <div class="promo" data-promo hidden>
+        <label class="sr" for="promo-code">Promo code</label>
+        <input class="promo__input" id="promo-code" data-promo-input placeholder="Promo code" autocomplete="off" autocapitalize="characters" spellcheck="false">
+        <button type="button" class="btn btn--line" data-promo-apply>Apply</button>
+      </div>
+      <p class="promo__msg" data-promo-msg role="status" aria-live="polite"></p>
+      <div class="cart__line" data-discount-row hidden><span>Promo <b data-promo-code></b> <button type="button" class="link-u" data-promo-remove>Remove</button></span><span data-discount></span></div>
+      <div class="cart__total cart__total--grand" data-discount-row hidden><span>Total</span><span data-grand-total>€0</span></div>
       <p class="cart__hint" data-cart-total-row hidden>Delivery is added when we confirm your order by email.</p>
       <form class="checkout" data-checkout hidden>
         <h3 class="checkout__title">Your details</h3>
@@ -194,7 +211,7 @@
         <label>Email<input name="email" type="email" autocomplete="email" required></label>
         <div class="phone">
           <label>Country code<input name="phone_code" list="dial-codes" value="+371" inputmode="tel" autocomplete="tel-country-code" pattern="\+?[0-9]{1,4}" title="Country code, for example +371" placeholder="+371"></label>
-          <label>Phone<input name="phone" type="tel" autocomplete="tel-national" placeholder="20 000 000"></label>
+          <label>Phone<input name="phone" type="tel" autocomplete="tel-national" placeholder="20 000 000" pattern="[0-9 \(\)\.\/\-]{4,30}" title="Numbers only, for example 20 000 000"></label>
         </div>
         <p class="phone__hint">Choose your country code or type it yourself.</p>
         <datalist id="dial-codes">
@@ -254,23 +271,30 @@
         </div>
         <label>Country<input name="country" autocomplete="country-name" value="Latvia" required></label>
         <label>Note (optional)<textarea name="note" rows="2"></textarea></label>
-        <input type="text" name="_honey" class="sr" tabindex="-1" autocomplete="off">
+        <input type="text" name="_honey" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true">
         <p class="checkout__account" data-checkout-account hidden>Signed in — this order will be saved to your account.</p>
-        <p class="checkout__legal">By placing an order you agree to our <a href="terms.html">Terms of sale</a> and <a href="privacy.html">Privacy policy</a>.</p>
-        <button class="btn btn--wide" type="submit">Place order</button>
+        <p class="checkout__legal" data-lang="en">Prices are in euro. Delivery cost is added in our confirmation email, before you pay. By sending this order you accept our <a href="terms.html">Terms of sale</a>. How we use your details: <a href="privacy.html">Privacy policy</a>.</p>
+        <p class="checkout__legal" data-lang="lv">Cenas norādītas eiro. Piegādes cenu pievienojam apstiprinājuma e-pastā, pirms tu maksā. Nosūtot pasūtījumu, tu piekrīti mūsu <a href="terms.html">pārdošanas noteikumiem</a>. Kā izmantojam tavus datus: <a href="privacy.html">privātuma politika</a>.</p>
+        <button class="btn btn--wide" type="submit">Send order request</button>
         <p class="checkout__msg" data-checkout-msg role="status" aria-live="polite"></p>
       </form>
     </div>
     <div class="cart__done" data-cart-done hidden>
       <p class="cart__done-title">Order received</p>
-      <p>Thank you. We will email you within a day to confirm your order and send the payment details.</p>
+      <p data-lang="en">Thank you. A copy of your order is on its way to your inbox, and we will email you within a day to confirm it and send the payment details. Changed your mind? You can <a href="withdraw.html">cancel</a> up to 14 days after it arrives.</p>
+      <p data-lang="lv">Paldies! Pasūtījuma kopija jau ir ceļā uz tavu e-pastu, un dienas laikā mēs to apstiprināsim un atsūtīsim apmaksas informāciju. Pārdomāji? Pasūtījumu vari <a href="withdraw.html">atcelt</a> 14 dienu laikā pēc saņemšanas.</p>
       <button type="button" class="btn" data-close-cart>Keep looking</button>
     </div>
   </dialog>
 
+  <script src="i18n.js"></script>
   <script src="config.js"></script>
   <script src="vendor/supabase.js" defer></script>
+  <script src="catalog.js" defer></script>
+  <script src="data.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="motion.js" defer></script>
   <script src="auth.js" defer></script>
+  <script src="cookie.js" defer></script>
 </body>
 </html>

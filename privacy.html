@@ -1,8 +1,10 @@
 <!doctype html>
+<!-- Designed & built by Archit Gajjar -->
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="designer" content="Archit Gajjar">
   <meta name="theme-color" content="#ffffff">
   <title>Privacy policy — MOYEN HILLS</title>
   <meta name="description" content="Privacy policy for MOYEN HILLS.">
@@ -11,7 +13,7 @@
   <link rel="icon" href="images/favicon.png">
   <link rel="preload" href="fonts/inter-tight-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="site.css">
-  <script>document.documentElement.classList.add('js');try{if(sessionStorage.getItem('mh-intro'))document.documentElement.classList.add('seen-intro');else sessionStorage.setItem('mh-intro','1')}catch(e){}</script>
+  <script src="boot.js"></script>
 </head>
 <body>
   <div class="loader" aria-hidden="true">
@@ -27,9 +29,12 @@
   <header class="bar" data-bar>
     <p class="annc"><span>ART WILL TEE — OUT NOW</span><span class="annc__more">&nbsp;· Made in Latvia · Ships in 1–3 days</span></p>
     <div class="bar__row">
-    <button class="bar__icon bar__menu" type="button" data-open-menu aria-haspopup="dialog" aria-label="Open menu">
-      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M3.5 8h17M3.5 16h17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-    </button>
+    <div class="bar__left">
+      <button class="bar__icon bar__menu" type="button" data-open-menu aria-haspopup="dialog" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M3.5 8h17M3.5 16h17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <div class="langs" role="group" aria-label="Language"><svg class="langs__globe" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><a href="?lang=lv" lang="lv" hreflang="lv" aria-label="Latviešu" data-set-lang="lv">LV</a><span class="langs__sep" aria-hidden="true">/</span><a href="?lang=en" lang="en" hreflang="en" aria-label="English" data-set-lang="en">EN</a></div>
+    </div>
     <a class="bar__logo" href="index.html" aria-label="MOYEN HILLS, home">
       <img src="images/logo.png" width="2400" height="262" alt="MOYEN HILLS">
     </a>
@@ -46,41 +51,146 @@
   </header>
 
   <main id="top" class="legal">
-      <article class="legal__doc">
+      <article class="legal__doc" data-lang="en">
 
         <h1 class="legal__title">Privacy policy</h1>
-        <p class="legal__date">Last updated: <mark class="todo">[date you publish]</mark></p>
-        <p>This page explains what personal data MOYEN HILLS collects, why, and your rights. The person responsible for your data (the controller) is:</p>
+        <p class="legal__date">Last updated: 24 October 2026</p>
+        <p>This page explains what personal data MOYEN HILLS collects, why, how long we keep it, and your rights under the EU General Data Protection Regulation (GDPR). The person responsible for your data (the controller) is:</p>
         <dl class="legal__seller">
-          <dt>Seller</dt><dd><mark class="todo">[Your full name or company name]</mark>, trading as MOYEN HILLS</dd>
-          <dt>Registration no.</dt><dd><mark class="todo">[Company or self-employed registration number, if you have one]</mark></dd>
-          <dt>Address</dt><dd><mark class="todo">[Contact address in Latvia]</mark></dd>
+          <dt>Seller</dt><dd>Markuss Veidemanis-Sūna (self-employed), trading as MOYEN HILLS</dd>
+          <dt>Address</dt><dd>Grēdu iela 2, Rīga, Latvia</dd>
+          <dt>Phone</dt><dd><a href="tel:+37127885356">+371 27885356</a></dd>
           <dt>Email</dt><dd><a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></dd>
         </dl>
 
-        <h2>What we collect and why</h2>
+        <h2 id="what">What we collect, why, and on what legal basis</h2>
         <ul>
-          <li><b>Orders:</b> your name, email, phone, delivery address and any note, to process, deliver and support your order (to perform our contract with you) and to keep records required by accounting law.</li>
-          <li><b>“Join the Hills family”:</b> your email address, to send you news about drops and updates (with your consent). Every email has a way to unsubscribe, or write to us and we remove you.</li>
-          <li><b>Accounts</b> (if you create one): your email, name, phone, address and your past orders, so you can see your orders and check out faster.</li>
-          <li><b>On your device:</b> the site stores your cart and whether you have seen the intro in your browser’s storage. This stays on your device and is not sent to us. We do not use advertising or tracking cookies.</li>
+          <li><b>Orders:</b> your name, email, phone (optional), delivery address, the items and any note. We use them to confirm, deliver and support your order (to perform our contract with you) and keep order records because accounting and tax law require it (legal obligation).</li>
+          <li><b>Cancellations:</b> if you use <a href="withdraw.html">Cancel an order</a>, your name, email, order number and the items, to handle your withdrawal (legal obligation).</li>
+          <li><b>Accounts</b> (only if you create one): your email, password (stored only as a secure hash by our sign-in provider), name, phone, address and your orders, so you can see your orders and check out faster (contract).</li>
+          <li><b>“Join the Hills family”:</b> your email address, to send you news about drops (your consent). We first email you a link to confirm it is really you (double opt-in). You can withdraw consent any time with the unsubscribe link in every email, or by writing to us.</li>
+          <li><b>Abuse protection:</b> when you place an order or try a promo code, our database keeps a one-way, salted fingerprint of your internet address for up to 24 hours, to limit fake orders and code guessing (our legitimate interest in keeping the shop safe). The address itself is not stored by us.</li>
+          <li><b>Website hosting:</b> our host processes technical data such as your IP address and browser type to deliver the site and keep it secure (legitimate interest).</li>
         </ul>
+        <p>We do not use your data for automated decisions or profiling, and we never sell it.</p>
 
-        <h2>Who helps us</h2>
+        <h2 id="device">Cookies and storage on your device</h2>
+        <p>We do not use advertising, analytics or tracking cookies, so we do not ask for cookie consent. The site only stores what it needs to work, in your browser:</p>
+        <table class="legal__table">
+          <thead><tr><th scope="col">Name</th><th scope="col">What it is for</th><th scope="col">How long</th></tr></thead>
+          <tbody>
+            <tr><td>mh-cart</td><td>The items in your cart</td><td>Until you empty the cart or clear your browser</td></tr>
+            <tr><td>mh-intro</td><td>Plays the opening animation only once per visit</td><td>Until you close the tab</td></tr>
+            <tr><td>mh-lang</td><td>Remembers the language you chose (LV / EN)</td><td>Until you clear your browser</td></tr>
+            <tr><td>sb-…-auth-token</td><td>Keeps you signed in (only if you sign in)</td><td>Until you sign out</td></tr>
+            <tr><td>mh-cookie-ok</td><td>Remembers that you closed this cookie notice</td><td>Until you clear your browser</td></tr>
+          </tbody>
+        </table>
+        <p>Links to Instagram and TikTok take you to those sites, which have their own privacy policies. Nothing from them loads on our pages.</p>
+
+        <h2 id="processors">Who helps us</h2>
+        <p>These service providers process data for us under data processing terms, and only for the purposes above:</p>
         <ul>
-          <li><b>FormSubmit</b> (formsubmit.co) forwards order and sign-up forms to our email.</li>
+          <li><b>Supabase</b> stores orders, accounts and cancellations. Database region: EU (Ireland).</li>
+          <li><b>Stripe</b> (Stripe Payments Europe, Ireland) processes card payments. It gets your name, email, the order total and your payment details; we never see your card number. Stripe is also responsible for some of this data itself, for fraud prevention and its legal duties: see <a href="https://stripe.com/privacy" rel="noopener">Stripe’s privacy policy</a>.</li>
           <li><b>Google</b> (Gmail) hosts our email inbox.</li>
-          <li><b>Supabase</b> stores customer accounts and orders, if you create an account; Google or Apple only if you choose to sign in with them.</li>
-          <li><b><mark class="todo">[Your website host, e.g. Netlify or Vercel]</mark></b> hosts this website.</li>
-          <li><mark class="todo">[Your newsletter tool, e.g. Brevo or MailerLite, if you use one]</mark></li>
+          <li><b>Vercel</b> hosts this website.</li>
+          <li><b>Google or Apple</b>, only if you choose to sign in with them.</li>
+          <li><b>Brevo</b> (Sendinblue SAS, France) sends the order and cancellation emails (to us, and your copy) and, if you join, stores your sign-up and sends our newsletter.</li>
+          <li>Your delivery carrier receives your name, address and phone to deliver the parcel. DPD, Omniva, Latvijas Pasts, Venipak or DHL (whichever we ship your order with)</li>
         </ul>
-        <p>Some of these companies may process data outside the EU under the safeguards required by the GDPR. We never sell your data.</p>
+        <p>Some of these companies are based in, or use servers in, the United States. Transfers there rely on the EU–US Data Privacy Framework or the European Commission’s standard contractual clauses.</p>
 
-        <h2>How long we keep it</h2>
-        <p>Order records: as long as accounting law requires. Newsletter email: until you unsubscribe. Account: until you ask us to delete it.</p>
+        <h2 id="retention">How long we keep it</h2>
+        <ul>
+          <li>Orders and cancellations: for the period Latvian accounting and tax law requires, 5 years after the end of the year of the order, then deleted.</li>
+          <li>Account: until you delete it (you can do this yourself on the <a href="account.html">Account</a> page). Your orders then stay only as order records, no longer linked to an account.</li>
+          <li>Newsletter: until you unsubscribe. We keep a record of when you signed up and unsubscribed, to show we had your consent.</li>
+          <li>Abuse-protection fingerprints: 24 hours.</li>
+        </ul>
 
-        <h2>Your rights</h2>
-        <p>You can ask to see, correct or delete your data, to restrict or object to its use, to receive a copy, and to withdraw consent at any time. Email <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a>. You can also complain to the Data State Inspectorate of Latvia (<a href="https://www.dvi.gov.lv" target="_blank" rel="noopener">dvi.gov.lv</a>).</p>
+        <h2 id="rights">Your rights</h2>
+        <p>You can ask to see, correct or delete your data, to restrict or object to its use, to receive a copy in a portable format, and to withdraw consent at any time. If you have an account, you can download your data and delete your account yourself on the <a href="account.html">Account</a> page. Otherwise email <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a>; we reply within one month. You can also complain to the Data State Inspectorate of Latvia (<a href="https://www.dvi.gov.lv" target="_blank" rel="noopener">dvi.gov.lv</a>) or the data protection authority where you live.</p>
+
+        <h2 id="security">How we protect it</h2>
+        <p>The site runs only over encrypted connections (HTTPS). Database rules let each customer see only their own orders and details. Only named staff, signing in with a password and a second code from an authenticator app, can see orders, and every admin change is logged.</p>
+
+        <h2 id="children">Children</h2>
+        <p>Our shop is not aimed at children under 16. If you are under 16, please ask a parent or guardian to order for you.</p>
+
+        <h2 id="changes">Changes</h2>
+        <p>If we change this policy, we update the date at the top. If a change is significant, we tell account holders by email.</p>
+      </article>
+
+      <article class="legal__doc" data-lang="lv">
+
+        <h1 class="legal__title">Privātuma politika</h1>
+        <p class="legal__date">Atjaunināta: 2026. gada 24. oktobris</p>
+        <p>Šajā lapā skaidrots, kādus personas datus MOYEN HILLS vāc, kāpēc, cik ilgi tos glabājam un kādas ir tavas tiesības saskaņā ar ES Vispārīgo datu aizsardzības regulu (VDAR). Par taviem datiem atbildīgā persona (pārzinis) ir:</p>
+        <dl class="legal__seller">
+          <dt>Pārdevējs</dt><dd>Markuss Veidemanis-Sūna (saimnieciskās darbības veicējs), zīmols MOYEN HILLS</dd>
+          <dt>Adrese</dt><dd>Grēdu iela 2, Rīga, Latvija</dd>
+          <dt>Tālrunis</dt><dd><a href="tel:+37127885356">+371 27885356</a></dd>
+          <dt>E-pasts</dt><dd><a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></dd>
+        </dl>
+
+        <h2 id="what">Ko mēs vācam, kāpēc un uz kāda tiesiskā pamata</h2>
+        <ul>
+          <li><b>Pasūtījumi:</b> tavs vārds, e-pasts, tālrunis (nav obligāts), piegādes adrese, preces un piezīme, ja tāda ir. Tos izmantojam, lai apstiprinātu, piegādātu un apkalpotu tavu pasūtījumu (līguma izpilde), un pasūtījumu ierakstus glabājam, jo to prasa grāmatvedības un nodokļu likumi (juridisks pienākums).</li>
+          <li><b>Atteikumi:</b> ja izmanto lapu <a href="withdraw.html">Atcelt pasūtījumu</a>, tavs vārds, e-pasts, pasūtījuma numurs un preces, lai apstrādātu tavu atteikumu (juridisks pienākums).</li>
+          <li><b>Konti</b> (tikai tad, ja to izveido): tavs e-pasts, parole (mūsu pieslēgšanās pakalpojuma sniedzējs to glabā tikai kā drošu jaucējvērtību), vārds, tālrunis, adrese un pasūtījumi, lai tu redzētu savus pasūtījumus un varētu pasūtīt ātrāk (līgums).</li>
+          <li><b>“Pievienojies Hills ģimenei”:</b> tava e-pasta adrese, lai sūtītu tev jaunumus par kolekcijām (tava piekrišana). Vispirms mēs nosūtām saiti, lai apstiprinātu, ka tas tiešām esi tu (dubultā apstiprināšana). Piekrišanu vari atsaukt jebkurā brīdī, izmantojot atrakstīšanās saiti katrā e-pastā vai rakstot mums.</li>
+          <li><b>Aizsardzība pret ļaunprātīgu izmantošanu:</b> kad veic pasūtījumu vai izmēģini atlaides kodu, mūsu datubāze līdz 24 stundām glabā vienvirziena, “sālītu” tavas interneta adreses nospiedumu, lai ierobežotu viltus pasūtījumus un kodu minēšanu (mūsu leģitīmās intereses uzturēt veikalu drošu). Pašu adresi mēs neglabājam.</li>
+          <li><b>Vietnes mitināšana:</b> mūsu mitināšanas pakalpojuma sniedzējs apstrādā tehniskos datus, piemēram, tavu IP adresi un pārlūka veidu, lai nodrošinātu vietnes darbību un drošību (leģitīmās intereses).</li>
+        </ul>
+        <p>Mēs neizmantojam tavus datus automatizētu lēmumu pieņemšanai vai profilēšanai, un mēs tos nekad nepārdodam.</p>
+
+        <h2 id="device">Sīkdatnes un glabāšana tavā ierīcē</h2>
+        <p>Mēs neizmantojam reklāmas, analītikas vai izsekošanas sīkdatnes, tāpēc piekrišanu sīkdatnēm neprasām. Vietne tavā pārlūkā saglabā tikai to, kas vajadzīgs tās darbībai:</p>
+        <table class="legal__table">
+          <thead><tr><th scope="col">Nosaukums</th><th scope="col">Kam tas vajadzīgs</th><th scope="col">Cik ilgi</th></tr></thead>
+          <tbody>
+            <tr><td>mh-cart</td><td>Preces tavā grozā</td><td>Līdz iztukšo grozu vai notīri pārlūku</td></tr>
+            <tr><td>mh-intro</td><td>Ievada animāciju rāda tikai vienu reizi apmeklējuma laikā</td><td>Līdz aizver cilni</td></tr>
+            <tr><td>mh-lang</td><td>Atceras tevis izvēlēto valodu (LV / EN)</td><td>Līdz notīri pārlūku</td></tr>
+            <tr><td>sb-…-auth-token</td><td>Uztur tevi pieslēgtu (tikai tad, ja pieslēdzies)</td><td>Līdz izej no konta</td></tr>
+            <tr><td>mh-cookie-ok</td><td>Atceras, ka aizvēri šo paziņojumu par sīkdatnēm</td><td>Līdz notīri pārlūku</td></tr>
+          </tbody>
+        </table>
+        <p>Saites uz Instagram un TikTok tevi aizved uz šīm vietnēm, kurām ir savas privātuma politikas. Mūsu lapās no tām nekas netiek ielādēts.</p>
+
+        <h2 id="processors">Kas mums palīdz</h2>
+        <p>Šie pakalpojumu sniedzēji apstrādā datus mūsu vārdā saskaņā ar datu apstrādes noteikumiem un tikai iepriekš minētajiem nolūkiem:</p>
+        <ul>
+          <li><b>Supabase</b> glabā pasūtījumus, kontus un atteikumus. Datubāzes reģions: ES (Īrija).</li>
+          <li><b>Stripe</b> (Stripe Payments Europe, Īrija) apstrādā kartes maksājumus. Tas saņem tavu vārdu, e-pastu, pasūtījuma summu un maksājuma datus; tavas kartes numuru mēs neredzam. Daļu šo datu Stripe apstrādā arī kā patstāvīgs pārzinis — krāpšanas novēršanai un savu juridisko pienākumu izpildei: sk. <a href="https://stripe.com/privacy" rel="noopener">Stripe privātuma politiku</a>.</li>
+          <li><b>Google</b> (Gmail) mitina mūsu e-pasta kastīti.</li>
+          <li><b>Vercel</b> mitina šo vietni.</li>
+          <li><b>Google vai Apple</b> — tikai tad, ja izvēlies pieslēgties ar tiem.</li>
+          <li><b>Brevo</b> (Sendinblue SAS, Francija) sūta pasūtījumu un atteikumu e-pastus (mums un tavu kopiju) un, ja pievienojies, glabā tavu pieteikumu un sūta mūsu jaunumus.</li>
+          <li>Tavs piegādes pārvadātājs saņem tavu vārdu, adresi un tālruni, lai piegādātu sūtījumu. DPD, Omniva, Latvijas Pasts, Venipak vai DHL (ar kuru sūtām tavu pasūtījumu)</li>
+        </ul>
+        <p>Daži no šiem uzņēmumiem atrodas Amerikas Savienotajās Valstīs vai izmanto tur esošus serverus. Datu nosūtīšana uz turieni balstās uz ES–ASV Datu privātuma regulējumu vai Eiropas Komisijas standarta līguma klauzulām.</p>
+
+        <h2 id="retention">Cik ilgi mēs tos glabājam</h2>
+        <ul>
+          <li>Pasūtījumi un atteikumi: tik ilgi, cik to prasa Latvijas grāmatvedības un nodokļu likumi, 5 gadus pēc pasūtījuma gada beigām, pēc tam tie tiek dzēsti.</li>
+          <li>Konts: līdz tu to izdzēs (to vari izdarīt pats lapā <a href="account.html">Konts</a>). Pēc tam tavi pasūtījumi saglabājas tikai kā pasūtījumu ieraksti, vairs nesaistīti ar kontu.</li>
+          <li>Jaunumi: līdz tu atrakstījies. Mēs glabājam ierakstu par to, kad pieteicies un kad atrakstījies, lai pierādītu, ka mums bija tava piekrišana.</li>
+          <li>Aizsardzības nospiedumi: 24 stundas.</li>
+        </ul>
+
+        <h2 id="rights">Tavas tiesības</h2>
+        <p>Tu vari lūgt piekļuvi saviem datiem, to labošanu vai dzēšanu, apstrādes ierobežošanu, iebilst pret apstrādi, saņemt datu kopiju pārnesamā formātā un jebkurā brīdī atsaukt piekrišanu. Ja tev ir konts, savus datus vari lejupielādēt un kontu izdzēst pats lapā <a href="account.html">Konts</a>. Citādi raksti uz <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a>; atbildēsim viena mēneša laikā. Tu vari arī iesniegt sūdzību Datu valsts inspekcijā (<a href="https://www.dvi.gov.lv" target="_blank" rel="noopener">dvi.gov.lv</a>) vai savas dzīvesvietas datu aizsardzības iestādē.</p>
+
+        <h2 id="security">Kā mēs tos aizsargājam</h2>
+        <p>Vietne darbojas tikai pa šifrētiem savienojumiem (HTTPS). Datubāzes noteikumi ļauj katram klientam redzēt tikai savus pasūtījumus un datus. Pasūtījumus var redzēt tikai konkrēti darbinieki, kas pieslēdzas ar paroli un otru kodu no autentifikācijas lietotnes, un katra administratora veiktā izmaiņa tiek reģistrēta.</p>
+
+        <h2 id="children">Bērni</h2>
+        <p>Mūsu veikals nav paredzēts bērniem, kas jaunāki par 16 gadiem. Ja tev vēl nav 16, lūdzu, palūdz vecākiem vai aizbildnim pasūtīt tavā vietā.</p>
+
+        <h2 id="changes">Izmaiņas</h2>
+        <p>Ja šo politiku mainīsim, atjaunināsim datumu lapas augšā. Ja izmaiņas būs būtiskas, konta īpašniekiem par tām paziņosim e-pastā.</p>
       </article>
   </main>
 
@@ -95,21 +205,24 @@
         <button class="btn" type="submit">JOIN</button>
       </div>
       <p class="sub__msg" data-sub-msg role="status" aria-live="polite"></p>
-      <p class="sub__consent">By joining you agree to get emails from MOYEN HILLS. Unsubscribe any time. <a href="privacy.html">Privacy policy</a></p>
+      <p class="sub__consent">By joining you agree to get emails about MOYEN HILLS drops and news. Unsubscribe any time from any email. <a href="privacy.html">Privacy policy</a></p>
     </form>
     <ul class="foot__links" data-reveal>
       <li><a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">instagram</a></li>
       <li><a href="https://www.tiktok.com/@moyenhills" target="_blank" rel="noopener">tiktok</a></li>
     </ul>
     <nav class="foot__nav" aria-label="Site">
-      <a href="product.html">Shop</a>
+      <a href="shop.html">Shop</a>
       <a href="lookbook.html">Lookbook</a>
       <a href="account.html">Account</a>
       <a href="mailto:moyenhills@gmail.com">Contact</a>
       <a href="terms.html">Terms</a>
       <a href="privacy.html">Privacy</a>
+      <a href="privacy.html#device">Cookies</a>
+      <a href="withdraw.html">Cancel an order</a>
     </nav>
     <p class="foot__legal">© <span data-year>2026</span> MOYEN HILLS · <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a></p>
+    <p class="foot__credit">Designed &amp; built by Archit Gajjar</p>
   </footer>
 
 
@@ -125,19 +238,20 @@
     <div class="menu__body">
       <nav class="menu__links" aria-label="Site">
         <a href="index.html">Home</a>
-        <a href="product.html">Shop</a>
+        <a href="shop.html">Shop</a>
         <a href="lookbook.html">Lookbook</a>
         <a href="account.html">Account</a>
       </nav>
       <a class="menu__tee" href="product.html">
         <img src="images/flat-front-480.jpg" width="480" height="575" alt="" loading="lazy">
-        <span><b>ART WILL TEE</b><span data-price>€35</span></span>
+        <span><b>ART WILL TEE</b><span data-price>€37</span></span>
       </a>
     </div>
     <div class="menu__foot">
       <a href="https://www.instagram.com/moyenhills/" target="_blank" rel="noopener">Instagram</a>
       <a href="https://www.tiktok.com/@moyenhills" target="_blank" rel="noopener">TikTok</a>
       <a href="mailto:moyenhills@gmail.com">moyenhills@gmail.com</a>
+      <div class="langs" role="group" aria-label="Language"><svg class="langs__globe" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><a href="?lang=lv" lang="lv" hreflang="lv" aria-label="Latviešu" data-set-lang="lv">LV</a><span class="langs__sep" aria-hidden="true">/</span><a href="?lang=en" lang="en" hreflang="en" aria-label="English" data-set-lang="en">EN</a></div>
     </div>
   </dialog>
 
@@ -149,8 +263,16 @@
     </div>
     <div data-cart-view>
       <ul class="cart__items" data-cart-items></ul>
-      <div class="cart__empty" data-cart-empty><p>Your cart is empty.</p><a class="btn" href="product.html">Shop the ART WILL TEE</a></div>
+      <div class="cart__empty" data-cart-empty><p>Your cart is empty.</p><a class="btn" href="shop.html">Visit the shop</a></div>
       <div class="cart__total" data-cart-total-row hidden><span>Subtotal</span><span data-cart-total>€0</span></div>
+      <div class="promo" data-promo hidden>
+        <label class="sr" for="promo-code">Promo code</label>
+        <input class="promo__input" id="promo-code" data-promo-input placeholder="Promo code" autocomplete="off" autocapitalize="characters" spellcheck="false">
+        <button type="button" class="btn btn--line" data-promo-apply>Apply</button>
+      </div>
+      <p class="promo__msg" data-promo-msg role="status" aria-live="polite"></p>
+      <div class="cart__line" data-discount-row hidden><span>Promo <b data-promo-code></b> <button type="button" class="link-u" data-promo-remove>Remove</button></span><span data-discount></span></div>
+      <div class="cart__total cart__total--grand" data-discount-row hidden><span>Total</span><span data-grand-total>€0</span></div>
       <p class="cart__hint" data-cart-total-row hidden>Delivery is added when we confirm your order by email.</p>
       <form class="checkout" data-checkout hidden>
         <h3 class="checkout__title">Your details</h3>
@@ -158,7 +280,7 @@
         <label>Email<input name="email" type="email" autocomplete="email" required></label>
         <div class="phone">
           <label>Country code<input name="phone_code" list="dial-codes" value="+371" inputmode="tel" autocomplete="tel-country-code" pattern="\+?[0-9]{1,4}" title="Country code, for example +371" placeholder="+371"></label>
-          <label>Phone<input name="phone" type="tel" autocomplete="tel-national" placeholder="20 000 000"></label>
+          <label>Phone<input name="phone" type="tel" autocomplete="tel-national" placeholder="20 000 000" pattern="[0-9 \(\)\.\/\-]{4,30}" title="Numbers only, for example 20 000 000"></label>
         </div>
         <p class="phone__hint">Choose your country code or type it yourself.</p>
         <datalist id="dial-codes">
@@ -218,23 +340,30 @@
         </div>
         <label>Country<input name="country" autocomplete="country-name" value="Latvia" required></label>
         <label>Note (optional)<textarea name="note" rows="2"></textarea></label>
-        <input type="text" name="_honey" class="sr" tabindex="-1" autocomplete="off">
+        <input type="text" name="_honey" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true">
         <p class="checkout__account" data-checkout-account hidden>Signed in — this order will be saved to your account.</p>
-        <p class="checkout__legal">By placing an order you agree to our <a href="terms.html">Terms of sale</a> and <a href="privacy.html">Privacy policy</a>.</p>
-        <button class="btn btn--wide" type="submit">Place order</button>
+        <p class="checkout__legal" data-lang="en">Prices are in euro. Delivery cost is added in our confirmation email, before you pay. By sending this order you accept our <a href="terms.html">Terms of sale</a>. How we use your details: <a href="privacy.html">Privacy policy</a>.</p>
+        <p class="checkout__legal" data-lang="lv">Cenas norādītas eiro. Piegādes cenu pievienojam apstiprinājuma e-pastā, pirms tu maksā. Nosūtot pasūtījumu, tu piekrīti mūsu <a href="terms.html">pārdošanas noteikumiem</a>. Kā izmantojam tavus datus: <a href="privacy.html">privātuma politika</a>.</p>
+        <button class="btn btn--wide" type="submit">Send order request</button>
         <p class="checkout__msg" data-checkout-msg role="status" aria-live="polite"></p>
       </form>
     </div>
     <div class="cart__done" data-cart-done hidden>
       <p class="cart__done-title">Order received</p>
-      <p>Thank you. We will email you within a day to confirm your order and send the payment details.</p>
+      <p data-lang="en">Thank you. A copy of your order is on its way to your inbox, and we will email you within a day to confirm it and send the payment details. Changed your mind? You can <a href="withdraw.html">cancel</a> up to 14 days after it arrives.</p>
+      <p data-lang="lv">Paldies! Pasūtījuma kopija jau ir ceļā uz tavu e-pastu, un dienas laikā mēs to apstiprināsim un atsūtīsim apmaksas informāciju. Pārdomāji? Pasūtījumu vari <a href="withdraw.html">atcelt</a> 14 dienu laikā pēc saņemšanas.</p>
       <button type="button" class="btn" data-close-cart>Keep looking</button>
     </div>
   </dialog>
 
+  <script src="i18n.js"></script>
   <script src="config.js"></script>
   <script src="vendor/supabase.js" defer></script>
+  <script src="catalog.js" defer></script>
+  <script src="data.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="motion.js" defer></script>
   <script src="auth.js" defer></script>
+  <script src="cookie.js" defer></script>
 </body>
 </html>
