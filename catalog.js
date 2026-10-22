@@ -32,7 +32,7 @@ window.MH_CATALOG = {
       id: 'art-will-tee',              // used in the link: product.html?id=art-will-tee
       name: 'ART WILL TEE',
       colour: 'White',
-      price: 35,
+      price: 37,
       wasPrice: null,                  // old price, shown crossed out (e.g. 45 for a sale)
       active: true,                    // false = hidden from the shop
       featured: true,                  // the one shown on the home page

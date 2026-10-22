@@ -127,11 +127,11 @@
     'For exact measurements, email': 'Precīzus izmērus jautā, rakstot uz',
     'before you order.': 'pirms pasūtīšanas.',
     'Shipping': 'Piegāde',
-    'We confirm your order by email, then send it out. You get an email when your order is on its way.':
-      'Mēs apstiprinām pasūtījumu e-pastā un tad to nosūtām. Kad pasūtījums būs ceļā, saņemsi e-pastu.',
+    'Free delivery in Latvia. We send your order within 1–3 days and email you the tracking number when it is on its way.':
+      'Bezmaksas piegāde Latvijā. Pasūtījumu nosūtām 1–3 dienu laikā, un, kad tas būs ceļā, e-pastā atsūtīsim sūtījuma numuru.',
     'Payment': 'Apmaksa',
-    'Place your order from the cart. We confirm it by email with the payment details and the total including delivery.':
-      'Noformē pasūtījumu grozā. Mēs to apstiprināsim e-pastā, norādot apmaksas informāciju un kopsummu ar piegādi.',
+    'Pay by card in the cart, on Stripe’s secure payment page. The price already includes delivery.':
+      'Maksā ar karti grozā, Stripe drošajā maksājumu lapā. Cenā jau ir iekļauta piegāde.',
     'Almost gone — only {n} left': 'Gandrīz izpārdots — atlikumā tikai {n} gab.',
     'Limited stock — only {n} left': 'Ierobežots daudzums — atlikumā tikai {n} gab.',
     'Only {n} left in {size}': 'Izmērā {size} atlikumā tikai {n} gab.',
@@ -209,8 +209,8 @@
       'Pasūtījumu neizdevās nosūtīt. Lūdzu, mēģini vēlreiz vai <a href="{mail}">nosūti pasūtījumu uz {email}</a>.',
     // Card payments (config.js cardPayments)
     'Continue to payment': 'Turpināt uz apmaksu',
-    'Prices are in euro. Delivery is added on the next page, where you see the full total before you pay. Card payments are handled by Stripe. By ordering you accept our <a href="terms.html">Terms of sale</a>. How we use your details: <a href="privacy.html">Privacy policy</a>.':
-      'Cenas norādītas eiro. Piegādi pievienojam nākamajā lapā, kur pirms maksāšanas redzēsi visu kopsummu. Kartes maksājumus apstrādā Stripe. Pasūtot tu piekrīti mūsu <a href="terms.html">pārdošanas noteikumiem</a>. Kā izmantojam tavus datus: <a href="privacy.html">privātuma politika</a>.',
+    'Prices are in euro and include delivery in Latvia. You see the full total on the next page before you pay. Card payments are handled by Stripe. By ordering you accept our <a href="terms.html">Terms of sale</a>. How we use your details: <a href="privacy.html">Privacy policy</a>.':
+      'Cenas norādītas eiro, un piegāde Latvijā ir iekļauta. Visu kopsummu redzēsi nākamajā lapā, pirms maksā. Kartes maksājumus apstrādā Stripe. Pasūtot tu piekrīti mūsu <a href="terms.html">pārdošanas noteikumiem</a>. Kā izmantojam tavus datus: <a href="privacy.html">privātuma politika</a>.',
     'Thank you, it’s paid': 'Paldies, apmaksāts',
     'Order #{id} is paid. Stripe emails you a receipt, and we email you when it ships. Changed your mind? You can <a href="withdraw.html">cancel</a> up to 14 days after it arrives.':
       'Pasūtījums #{id} ir apmaksāts. Stripe tev atsūtīs čeku, un mēs tev rakstīsim, kad pasūtījums būs nosūtīts. Pārdomāji? Pasūtījumu vari <a href="withdraw.html">atcelt</a> 14 dienu laikā pēc saņemšanas.',

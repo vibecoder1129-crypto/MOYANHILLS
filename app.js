@@ -372,7 +372,7 @@ if (cardPayments()) {
     const [legal, ...others] = form.querySelectorAll('.checkout__legal');
     others.forEach((p) => p.remove());
     legal?.removeAttribute('data-lang');
-    if (legal) legal.innerHTML = t('Prices are in euro. Delivery is added on the next page, where you see the full total before you pay. Card payments are handled by Stripe. By ordering you accept our <a href="terms.html">Terms of sale</a>. How we use your details: <a href="privacy.html">Privacy policy</a>.');
+    if (legal) legal.innerHTML = t('Prices are in euro and include delivery in Latvia. You see the full total on the next page before you pay. Card payments are handled by Stripe. By ordering you accept our <a href="terms.html">Terms of sale</a>. How we use your details: <a href="privacy.html">Privacy policy</a>.');
   }
   // Back from the Stripe payment page
   const q = new URLSearchParams(location.search);
