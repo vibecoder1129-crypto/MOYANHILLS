@@ -15,5 +15,5 @@ window.MH_CONFIG = {
   // Card payments with Stripe. Turn on (true) once the two Edge Functions are deployed and the
   // Stripe keys are in Supabase (see "Card payments" in the README). While false, orders are
   // emailed and you send payment details yourself, as before.
-  cardPayments: false,
+  cardPayments: true,
 };
