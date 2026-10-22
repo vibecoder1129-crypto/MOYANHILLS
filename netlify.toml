@@ -2,7 +2,7 @@
 # No real build: the website files are copied into dist/ so notes, the database
 # setup (supabase/) and .claude/ are never published.
 [build]
-  command = "rm -rf dist && mkdir dist && cp -r *.html *.js *.css images fonts vendor dist/"
+  command = "rm -rf dist && mkdir dist && cp -r *.html *.js *.css robots.txt sitemap.xml images fonts vendor dist/"
   publish = "dist"
 
 [[headers]]
