@@ -132,7 +132,7 @@ begin
   if lv then
     perform private.send_mail(new.email, new.full_name,
       format('MOYEN HILLS: %s #%s', case when paid then 'paldies par pasūtījumu' else 'esam saņēmuši tavu pasūtījumu' end, new.id),
-      format('<p>Sveiki, %s!</p><p>Paldies! %s</p><table cellpadding="6" style="border-collapse:collapse">%s%s</table><h3>Piegādes adrese</h3>%s<p>Pārdomāji? Pasūtījumu vari atcelt 14 dienu laikā pēc tā saņemšanas: <a href="https://moyenhills.com/withdraw.html?order=%s&amp;lang=lv">moyenhills.com/withdraw.html</a>.</p><p>MOYEN HILLS</p>',
+      format('<p>Sveiki, %s!</p><p>Paldies! %s</p><table cellpadding="6" style="border-collapse:collapse">%s%s</table><h3>Piegādes adrese</h3>%s<p>Pārdomāji? Pasūtījumu vari atcelt 14 dienu laikā pēc tā saņemšanas: <a href="https://moyenhillsofficial.com/withdraw.html?order=%s&amp;lang=lv">moyenhillsofficial.com/withdraw.html</a>.</p><p>MOYEN HILLS</p>',
         hi,
         case when paid
           then format('Tavs pasūtījums <b>#%s</b> ir apmaksāts un apstiprināts. Šis e-pasts ir tavs apstiprinājums; maksājuma čeku Stripe atsūtīs atsevišķi. Kad pasūtījums būs nosūtīts, tev atkal uzrakstīsim.', new.id)
@@ -141,7 +141,7 @@ begin
   else
     perform private.send_mail(new.email, new.full_name,
       format('MOYEN HILLS: %s #%s', case when paid then 'thank you for your order' else 'we received your order' end, new.id),
-      format('<p>Hi %s,</p><p>Thank you! %s</p><table cellpadding="6" style="border-collapse:collapse">%s%s</table><h3>Delivery to</h3>%s<p>Changed your mind? You can cancel within 14 days of receiving your order: <a href="https://moyenhills.com/withdraw.html?order=%s&amp;lang=en">moyenhills.com/withdraw.html</a>.</p><p>MOYEN HILLS</p>',
+      format('<p>Hi %s,</p><p>Thank you! %s</p><table cellpadding="6" style="border-collapse:collapse">%s%s</table><h3>Delivery to</h3>%s<p>Changed your mind? You can cancel within 14 days of receiving your order: <a href="https://moyenhillsofficial.com/withdraw.html?order=%s&amp;lang=en">moyenhillsofficial.com/withdraw.html</a>.</p><p>MOYEN HILLS</p>',
         hi,
         case when paid
           then format('Your order <b>#%s</b> is paid and confirmed. This email is your confirmation; Stripe sends the payment receipt separately. We’ll email you again when it ships.', new.id)

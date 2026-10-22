@@ -34,7 +34,7 @@ Open `index.html` in a browser, or host the folder on GitHub Pages, Netlify or V
 
 The whole shop works in Latvian and English, with a small **LV / EN** switch in the header (and in the menu).
 
-- **Which language a visitor gets:** their own choice on the switch (remembered in that browser), otherwise the language of their phone or computer: Latvian devices get Latvian, everything else English. A link can force one: `moyenhills.com/?lang=lv` or `?lang=en`.
+- **Which language a visitor gets:** their own choice on the switch (remembered in that browser), otherwise the language of their phone or computer: Latvian devices get Latvian, everything else English. A link can force one: `moyenhillsofficial.com/?lang=lv` or `?lang=en`.
 - **Change a translation:** open `i18n.js`, find the English on the left and edit the Latvian on the right. Text with no line there just stays in English.
 - **Longer paragraphs and the legal pages** (`terms.html`, `privacy.html`, a few paragraphs with links) are written out in both languages in the page itself, marked `data-lang="en"` and `data-lang="lv"`. When you change one, change the other too.
 - **Products:** each product has Latvian text: `lv: { … }` in `catalog.js`, or the **Latvian text** box on the admin page. An empty box shows the English.
@@ -44,7 +44,7 @@ The whole shop works in Latvian and English, with a small **LV / EN** switch in 
 
 ## Add, change or remove products
 
-Use the **admin page**: open `admin.html` (on the live site: `moyenhills.com/admin.html`).
+Use the **admin page**: open `admin.html` (on the live site: `moyenhillsofficial.com/admin.html`).
 Nothing on the site links to it, and search engines are told to skip it.
 
 - **New product:** name, price, colour, sizes with how many pieces are left of each, photos, texts.
@@ -260,7 +260,7 @@ The Stripe secret key lives only in Supabase. Never put it in `config.js`, this 
 6. **Supabase → Edge Functions → Secrets**, add:
    - `STRIPE_SECRET_KEY`: Stripe → Developers → API keys → Secret key (`sk_test_…`)
    - `STRIPE_WEBHOOK_SECRET`: the `whsec_…` from step 5
-   - `SITE_URL`: the live site, e.g. `https://moyenhills.com`
+   - `SITE_URL`: the live site, e.g. `https://moyenhillsofficial.com`
    - `ALLOWED_ORIGINS` (optional): other addresses you test from, comma separated, e.g. `http://localhost:8000`
 7. Set `cardPayments: true` in `config.js`, publish, and order with the test card
    `4242 4242 4242 4242` (any future date, any CVC). The order should turn **paid** on the admin page.
@@ -283,8 +283,8 @@ the account page says "coming soon" and everyone orders as a guest, exactly as b
    same with `supabase/privacy.sql`, then `supabase/notify.sql`.
 3. **Project Settings → API**: copy the **Project URL** and the **anon public** key into `config.js`.
 4. **Authentication → URL Configuration**:
-   - **Site URL**: your live site, e.g. `https://moyenhills.com`
-   - **Redirect URLs**: add `https://moyenhills.com/account.html` (and any preview address you use).
+   - **Site URL**: your live site, e.g. `https://moyenhillsofficial.com`
+   - **Redirect URLs**: add `https://moyenhillsofficial.com/account.html` (and any preview address you use).
 
 ### 2. Email sign-up
 On by default (**Authentication → Providers → Email**). Customers confirm their email with a link.

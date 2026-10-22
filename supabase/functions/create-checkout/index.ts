@@ -5,7 +5,7 @@
 // never from the browser.
 //
 // Secrets (Supabase → Edge Functions → Secrets): STRIPE_SECRET_KEY, SITE_URL
-// (e.g. https://moyenhills.com), and optionally ALLOWED_ORIGINS (more site addresses, comma
+// (e.g. https://moyenhillsofficial.com), and optionally ALLOWED_ORIGINS (more site addresses, comma
 // separated, e.g. a Netlify preview). SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are built in.
 // Deploy with "Verify JWT" OFF: guests pay too, and the pay_token is what proves the order is theirs.
 import Stripe from 'npm:stripe@17.7.0';

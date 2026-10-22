@@ -93,12 +93,12 @@ begin
   if lv then
     perform private.send_mail(new.email, new.full_name,
       format('MOYEN HILLS: tavs pasūtījums #%s ir ceļā', new.id),
-      format('<p>Sveiki, %s!</p><p>Tavs pasūtījums <b>#%s</b> ir nosūtīts%s.</p>%s<p>Sūtījuma statusu vienmēr vari redzēt arī savā kontā: <a href="https://moyenhills.com/account.html?lang=lv">moyenhills.com/account.html</a>.</p><p>MOYEN HILLS</p>',
+      format('<p>Sveiki, %s!</p><p>Tavs pasūtījums <b>#%s</b> ir nosūtīts%s.</p>%s<p>Sūtījuma statusu vienmēr vari redzēt arī savā kontā: <a href="https://moyenhillsofficial.com/account.html?lang=lv">moyenhillsofficial.com/account.html</a>.</p><p>MOYEN HILLS</p>',
         hi, new.id, coalesce(' ar ' || carrier, ''), coalesce(track, '')));
   else
     perform private.send_mail(new.email, new.full_name,
       format('MOYEN HILLS: your order #%s is on its way', new.id),
-      format('<p>Hi %s,</p><p>Your order <b>#%s</b> has shipped%s.</p>%s<p>You can also follow it from your account: <a href="https://moyenhills.com/account.html?lang=en">moyenhills.com/account.html</a>.</p><p>MOYEN HILLS</p>',
+      format('<p>Hi %s,</p><p>Your order <b>#%s</b> has shipped%s.</p>%s<p>You can also follow it from your account: <a href="https://moyenhillsofficial.com/account.html?lang=en">moyenhillsofficial.com/account.html</a>.</p><p>MOYEN HILLS</p>',
         hi, new.id, coalesce(' with ' || carrier, ''), coalesce(track, '')));
   end if;
   return new;
