@@ -176,7 +176,10 @@
           const full_name = emailForm.elements.full_name.value.trim();
           const { data, error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: back, data: { full_name } } });
           if (error) throw error;
-          if (!data.session) say('[data-signin-msg]', t('Check your inbox and tap the link to confirm your email, then sign in.'));
+          if (!data.session) {
+            say('[data-signin-msg]', t('Check your inbox and tap the link to confirm your email. This page signs you in by itself once you have confirmed, even if you open the link on your phone.'));
+            waitForConfirm(email, password);
+          }
         } else {
           const { error } = await sb.auth.signInWithPassword({ email, password });
           if (error) throw error;
@@ -187,6 +190,28 @@
         btn.disabled = false;
       }
     });
+
+    // After sign-up the confirmation link may be opened on another device (a phone),
+    // which leaves this tab signed out. Retry the sign-in with the password still in
+    // memory (never stored) until the email is confirmed, for up to 15 minutes.
+    let confirmTimer = 0;
+    function waitForConfirm(email, password) {
+      clearInterval(confirmTimer);
+      const until = Date.now() + 15 * 60 * 1000;
+      let busy = false;
+      const stop = () => { clearInterval(confirmTimer); document.removeEventListener('visibilitychange', tryNow); password = ''; };
+      async function tryNow() {
+        if (busy || document.hidden || state.user) { if (state.user) stop(); return; }
+        if (Date.now() > until) { stop(); return; }
+        busy = true;
+        const { error } = await sb.auth.signInWithPassword({ email, password });
+        busy = false;
+        if (!error) stop();
+        else if (!/not confirmed/i.test(error.message)) stop();
+      }
+      confirmTimer = setInterval(tryNow, 15000);
+      document.addEventListener('visibilitychange', tryNow);
+    }
 
     $('[data-forgot]', page).addEventListener('click', async () => {
       const email = emailForm.elements.email.value.trim();

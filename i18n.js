@@ -288,7 +288,7 @@
     'Redirecting…': 'Pārvirzām…',
     'Creating your account…': 'Veidojam kontu…',
     'Signing in…': 'Pieslēdzamies…',
-    'Check your inbox and tap the link to confirm your email, then sign in.': 'Atver savu e-pastu, apstiprini adresi, uzspiežot saiti, un tad pieslēdzies.',
+    'Check your inbox and tap the link to confirm your email. This page signs you in by itself once you have confirmed, even if you open the link on your phone.': 'Atver savu e-pastu un apstiprini adresi, uzspiežot saiti. Šī lapa tevi pieslēgs pati, tiklīdz būsi apstiprinājis, pat ja saiti atver telefonā.',
     'Type your email above first, then tap “Forgot password”.': 'Vispirms augstāk ieraksti savu e-pastu, tad spied “Aizmirsi paroli?”.',
     'We sent you a link to choose a new password.': 'Nosūtījām tev saiti jaunas paroles izvēlei.',
     'Saving…': 'Saglabājam…',
