@@ -626,3 +626,22 @@ html[lang="lv"] [data-lang="en"], html:not([lang="lv"]) [data-lang="lv"] { displ
 .menu__foot .langs { margin-left: auto; font-size: var(--t-sm); color: var(--ink); }
 .menu__foot .langs a { height: auto; }
 .bar__left .bar__menu { margin-left: 0; }
+
+/* Phones: the header fits, links are easy to tap, form fields don't zoom, the cookie note stays small */
+@media (pointer: coarse) {
+  input, select, textarea { font-size: max(16px, 1em); }
+}
+@media (max-width: 480px) {
+  .annc { font-size: 12px; letter-spacing: .12em; }
+  .bar .langs { margin-left: 0; padding: 0 9px; }
+  .bar .langs__globe { display: none; }
+  .bar .langs a { min-width: 28px; }
+  .bar__logo { padding: 12px 0; box-sizing: content-box; }
+  .foot { gap: 24px; }
+  .foot__links a { display: inline-block; padding: 10px 4px; }
+  .foot__nav { gap: 0 20px; }
+  .foot__nav a { display: inline-block; padding: 13px 0; background-origin: content-box; background-clip: content-box; }
+  .foot__legal a, .acct__link { display: inline-block; padding: 10px 0; margin: -10px 0; }
+  .cookie { left: 8px; right: 8px; bottom: 8px; width: auto; gap: 12px; padding: 10px 10px 10px 14px; }
+  .cookie__more { display: none; }
+}

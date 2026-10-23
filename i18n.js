@@ -174,6 +174,7 @@
     'One less': 'Par vienu mazāk',
     'One more': 'Par vienu vairāk',
     'Delivery is added when we confirm your order by email.': 'Piegādes cenu pievienosim, kad apstiprināsim pasūtījumu e-pastā.',
+    'Free delivery in Latvia.': 'Bezmaksas piegāde Latvijā.',
     'Your details': 'Tava informācija',
     'Full name': 'Vārds, uzvārds',
     'Email': 'E-pasts',

@@ -150,3 +150,8 @@
 .stats__table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 .stats__table th, .stats__table td { padding: 8px 4px; border-bottom: 1px solid var(--line); text-align: left; }
 .stats__table th { font-size: var(--t-xs); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+/* Phones: form fields at 16px so iOS does not zoom in when one is tapped */
+@media (pointer: coarse) {
+  input, select, textarea { font-size: max(16px, 1em); }
+}
