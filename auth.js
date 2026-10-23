@@ -176,6 +176,13 @@
           const full_name = emailForm.elements.full_name.value.trim();
           const { data, error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: back, data: { full_name } } });
           if (error) throw error;
+          // Supabase answers a sign-up for an email that already has an account with a
+          // user that has no identities (and sends no email): send them to sign in.
+          if (!data.session && data.user && !data.user.identities?.length) {
+            setMode('in');
+            say('[data-signin-msg]', t('This email already has an account. Sign in with your password, or tap “Forgot password”.'), true);
+            return;
+          }
           if (!data.session) {
             say('[data-signin-msg]', t('Check your inbox and tap the link to confirm your email. This page signs you in by itself once you have confirmed, even if you open the link on your phone.'));
             waitForConfirm(email, password);

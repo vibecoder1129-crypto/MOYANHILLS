@@ -304,6 +304,7 @@
     'Please sign in first.': 'Lūdzu, vispirms pieslēdzies.',
     // Sign-in messages from Supabase
     'Invalid login credentials': 'Nepareizs e-pasts vai parole.',
+    'This email already has an account. Sign in with your password, or tap “Forgot password”.': 'Šim e-pastam jau ir konts. Pieslēdzies ar savu paroli vai spied “Aizmirsi paroli?”.',
     'Email not confirmed': 'E-pasts vēl nav apstiprināts. Atver saiti, ko tev nosūtījām.',
     'User already registered': 'Šis e-pasts jau ir reģistrēts. Pieslēdzies vai atjauno paroli.',
     'Password should be at least 12 characters.': 'Parolei jābūt vismaz 12 rakstzīmes garai.',
