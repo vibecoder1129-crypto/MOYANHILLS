@@ -38,7 +38,7 @@ window.MH_CATALOG = {
       featured: true,                  // the one shown on the home page
       soldOut: false,
       label: 'Limited first drop',     // small line above the name on the home page
-      blurb: 'The Hills family signed up early for this one. Pre-made in small numbers, screen printed on three sides, made in Latvia. When it’s gone, it’s gone.',
+      blurb: 'Out now.',
       description: 'Short-sleeve t-shirt with a boxy fit, including front, back & neck label custom screen printed graphics.',
       details: ['100% cotton', 'Cut-off style bottom', 'MADE IN LATVIA'],
       fit: 'Boxy, with short sleeves and a cut-off style bottom, so it sits wide and a little short.',
@@ -48,7 +48,7 @@ window.MH_CATALOG = {
       lv: {
         colour: 'Balta',
         label: 'Ierobežota pirmā kolekcija',
-        blurb: 'Hills ģimene uz šo pieteicās jau laikus. Iepriekš izgatavots nelielā skaitā, sietspiede no trim pusēm, ražots Latvijā. Kad beigsies, tad beigsies.',
+        blurb: 'Jau pieejams.',
         description: 'Plata piegriezuma t-krekls ar īsām piedurknēm un sietspiedes grafiku priekšpusē, aizmugurē un uz kakla etiķetes.',
         details: ['100% kokvilna', 'Nogriezta apakšmala', 'RAŽOTS LATVIJĀ'],
         fit: 'Plats, ar īsām piedurknēm un nogrieztu apakšmalu, tāpēc sēž brīvi un ir mazliet īsāks.',
