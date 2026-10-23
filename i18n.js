@@ -182,6 +182,8 @@
     'Country code, for example +371': 'Valsts kods, piemēram, +371',
     'Phone': 'Tālrunis',
     'Numbers only, for example 20 000 000': 'Tikai cipari, piemēram, 20 000 000',
+    'Phone numbers for {code} have {n} digits.': 'Tālruņa numuriem ar kodu {code} ir {n} cipari.',
+    'Phone numbers for {code} have {min}–{max} digits.': 'Tālruņa numuriem ar kodu {code} ir {min}–{max} cipari.',
     'Choose your country code or type it yourself.': 'Izvēlies valsts kodu vai ieraksti to pats.',
     'Address': 'Adrese',
     'City': 'Pilsēta',
