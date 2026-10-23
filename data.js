@@ -32,13 +32,14 @@
     details: r.details || [],
     fit: r.fit || '',
     note: r.note || '',
+    badge: r.badge || '',
     sizes: r.sizes || [],
     images: r.images || [],
     lv: r.lv || {},
   });
 
   // Latvian visitors see a product's Latvian text (catalog.js `lv`, or the admin page) where it has one
-  const TEXTS = ['colour', 'label', 'blurb', 'description', 'fit', 'note'];
+  const TEXTS = ['colour', 'label', 'blurb', 'description', 'fit', 'note', 'badge'];
   const inLanguage = (p) => {
     if (document.documentElement.lang !== 'lv' || !p.lv) return p;
     const out = { ...p };
