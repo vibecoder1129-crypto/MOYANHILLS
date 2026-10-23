@@ -92,8 +92,7 @@
 
     // The ART WILL TEE in catalog.js (photo descriptions; product text is in catalog.js `lv`)
     'Limited first drop': 'Ierobežota pirmā kolekcija',
-    'The Hills family signed up early for this one. Pre-made in small numbers, screen printed on three sides, made in Latvia. When it’s gone, it’s gone.':
-      'Hills ģimene uz šo pieteicās jau laikus. Iepriekš izgatavots nelielā skaitā, sietspiede no trim pusēm, ražots Latvijā. Kad beigsies, tad beigsies.',
+    'Out now.': 'Jau pieejams.',
     'ART WILL TEE, front, laid flat': 'ART WILL TEE, priekšpuse',
     'ART WILL TEE, back, laid flat': 'ART WILL TEE, aizmugure',
     'Worn by a model on concrete stairs': 'Modelis uz betona kāpnēm',
