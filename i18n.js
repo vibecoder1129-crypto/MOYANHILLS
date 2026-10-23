@@ -209,11 +209,11 @@
       'Pasūtījumu neizdevās nosūtīt. Lūdzu, mēģini vēlreiz vai <a href="{mail}">nosūti pasūtījumu uz {email}</a>.',
     // Card payments (config.js cardPayments)
     'Continue to payment': 'Turpināt uz apmaksu',
-    'Prices are in euro and include delivery in Latvia. You see the full total on the next page before you pay. Card payments are handled by Stripe. By ordering you accept our <a href="terms.html">Terms of sale</a>. How we use your details: <a href="privacy.html">Privacy policy</a>.':
-      'Cenas norādītas eiro, un piegāde Latvijā ir iekļauta. Visu kopsummu redzēsi nākamajā lapā, pirms maksā. Kartes maksājumus apstrādā Stripe. Pasūtot tu piekrīti mūsu <a href="terms.html">pārdošanas noteikumiem</a>. Kā izmantojam tavus datus: <a href="privacy.html">privātuma politika</a>.',
+    'Prices are in euro and include delivery in Latvia. You see the full total on the next page before you pay. Card payments are handled by Stripe. By ordering you accept our <a href="/terms">Terms of sale</a>. How we use your details: <a href="/privacy">Privacy policy</a>.':
+      'Cenas norādītas eiro, un piegāde Latvijā ir iekļauta. Visu kopsummu redzēsi nākamajā lapā, pirms maksā. Kartes maksājumus apstrādā Stripe. Pasūtot tu piekrīti mūsu <a href="/terms">pārdošanas noteikumiem</a>. Kā izmantojam tavus datus: <a href="/privacy">privātuma politika</a>.',
     'Thank you, it’s paid': 'Paldies, apmaksāts',
-    'Order #{id} is paid. Stripe emails you a receipt, and we email you when it ships. Changed your mind? You can <a href="withdraw.html">cancel</a> up to 14 days after it arrives.':
-      'Pasūtījums #{id} ir apmaksāts. Stripe tev atsūtīs čeku, un mēs tev rakstīsim, kad pasūtījums būs nosūtīts. Pārdomāji? Pasūtījumu vari <a href="withdraw.html">atcelt</a> 14 dienu laikā pēc saņemšanas.',
+    'Order #{id} is paid. Stripe emails you a receipt, and we email you when it ships. Changed your mind? You can <a href="/withdraw">cancel</a> up to 14 days after it arrives.':
+      'Pasūtījums #{id} ir apmaksāts. Stripe tev atsūtīs čeku, un mēs tev rakstīsim, kad pasūtījums būs nosūtīts. Pārdomāji? Pasūtījumu vari <a href="/withdraw">atcelt</a> 14 dienu laikā pēc saņemšanas.',
     'Payment not finished': 'Apmaksa nav pabeigta',
     'Your order is kept for about 30 minutes, then it cancels itself and nothing is charged.': 'Tavu pasūtījumu paturēsim apmēram 30 minūtes, tad tas atcelsies pats un nauda netiks iekasēta.',
     'Pay now': 'Maksāt tagad',

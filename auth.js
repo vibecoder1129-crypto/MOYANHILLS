@@ -117,7 +117,7 @@
     list.innerHTML = `<li class="orders__empty">${esc(t('Loading your orders…'))}</li>`;
     const { data, error } = await sb.from('orders').select('*').eq('user_id', state.user.id).order('created_at', { ascending: false });
     if (error) { list.innerHTML = `<li class="orders__empty">${esc(t('Could not load your orders.'))} ${esc(error.message)}</li>`; return; }
-    if (!data.length) { list.innerHTML = `<li class="orders__empty">${esc(t('No orders yet.'))} <a href="shop.html">${esc(t('Visit the shop'))}</a></li>`; return; }
+    if (!data.length) { list.innerHTML = `<li class="orders__empty">${esc(t('No orders yet.'))} <a href="/shop">${esc(t('Visit the shop'))}</a></li>`; return; }
     list.innerHTML = data.map((o) => {
       const items = (o.items || []).map((i) => `${esc(i.qty)} × ${esc(i.name)}, ${esc(t('size {size}', { size: i.size }))}`).join('<br>');
       const date = new Date(o.created_at).toLocaleDateString(LV ? 'lv-LV' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
