@@ -11,7 +11,7 @@ window.MH_CONFIG = {
   supabaseAnonKey: 'sb_publishable_3r7gOR4-BLAnIlMnbQ-mvg_wy07p1tp',
   // Sign-in buttons to show. Turn Google/Apple on once they are set up in
   // Supabase → Authentication → Sign In / Providers (see the README).
-  providers: { google: false, apple: false, email: true },
+  providers: { google: true, apple: false, email: true },
   // Card payments with Stripe. Turn on (true) once the two Edge Functions are deployed and the
   // Stripe keys are in Supabase (see "Card payments" in the README). While false, orders are
   // emailed and you send payment details yourself, as before.
