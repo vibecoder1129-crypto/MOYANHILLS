@@ -13,8 +13,8 @@
   const lv = document.documentElement.lang === 'lv';
   box.setAttribute('aria-label', lv ? 'Paziņojums par sīkdatnēm' : 'Cookie notice');
   box.innerHTML = (lv
-    ? '<p class="cookie__text"><b>Sīkdatnes.</b> Mēs saglabājam tikai to, kas vajadzīgs veikala darbībai: tavu grozu, valodu un, ja pieslēdzies, tavu sesiju. Nekādas izsekošanas, nekādu reklāmu. Apmaksa notiek Stripe drošajā lapā, kas izmanto savas sīkdatnes krāpšanas novēršanai. <a href="/privacy#device">Sīkāk</a></p>'
-    : '<p class="cookie__text"><b>Cookies.</b> We only store what the shop needs to work: your cart, your language and, if you sign in, your session. No tracking, no ads. Payment happens on Stripe’s secure page, which uses its own cookies to prevent fraud. <a href="/privacy#device">Details</a></p>')
+    ? '<p class="cookie__text"><b>Sīkdatnes.</b> Mēs saglabājam tikai to, kas vajadzīgs veikala darbībai: tavu grozu, valodu un, ja pieslēdzies, tavu sesiju. Nekādas izsekošanas, nekādu reklāmu. <span class="cookie__more">Apmaksa notiek Stripe drošajā lapā, kas izmanto savas sīkdatnes krāpšanas novēršanai. </span><a href="/privacy#device">Sīkāk</a></p>'
+    : '<p class="cookie__text"><b>Cookies.</b> We only store what the shop needs to work: your cart, your language and, if you sign in, your session. No tracking, no ads. <span class="cookie__more">Payment happens on Stripe’s secure page, which uses its own cookies to prevent fraud. </span><a href="/privacy#device">Details</a></p>')
     + '<button type="button" class="btn cookie__ok">OK</button>';
   box.querySelector('button').addEventListener('click', () => {
     try { localStorage.setItem(KEY, '1'); } catch { /* fine: it just shows again next visit */ }
