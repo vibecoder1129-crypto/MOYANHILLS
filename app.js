@@ -433,17 +433,68 @@ async function payByCard(order, msg) {
 /* ---------------- Checkout: the order is saved, and the database emails it ---------------- */
 // In Latvian the country box starts as "Latvija" (the database reads it as Latvia)
 if (LV) $$('[data-checkout] input[name=country]').forEach((i) => { if (i.defaultValue === 'Latvia') i.defaultValue = 'Latvija'; });
+/* Phone: digits only, and as many as the chosen country code uses (national number,
+ * without a leading 0). Codes not listed accept 6–15 digits. */
+const PHONE_DIGITS = {
+  '+371': [8, 8], '+370': [8, 8], '+372': [7, 8], '+44': [10, 10], '+1': [10, 10], '+91': [10, 10],
+  '+355': [8, 9], '+376': [6, 9], '+43': [7, 13], '+375': [9, 9], '+32': [8, 9], '+387': [8, 9],
+  '+359': [8, 9], '+385': [8, 9], '+357': [8, 8], '+420': [9, 9], '+45': [8, 8], '+358': [6, 11],
+  '+33': [9, 9], '+49': [7, 12], '+30': [10, 10], '+36': [8, 9], '+354': [7, 7], '+353': [7, 9],
+  '+39': [6, 11], '+383': [8, 9], '+423': [7, 9], '+352': [6, 11], '+356': [8, 8], '+373': [8, 8],
+  '+377': [8, 9], '+382': [8, 9], '+31': [9, 9], '+389': [8, 8], '+47': [8, 8], '+48': [9, 9],
+  '+351': [9, 9], '+40': [9, 9], '+7': [10, 10], '+378': [6, 10], '+381': [8, 10], '+421': [9, 9],
+  '+386': [8, 8], '+34': [9, 9], '+46': [7, 10], '+41': [9, 9], '+90': [10, 10], '+380': [9, 9],
+};
+const cleanCode = (v) => { const d = String(v || '').replace(/\D/g, '').slice(0, 4); return d ? `+${d}` : ''; };
+// The digits that count: a leading 0 (trunk prefix) is dropped, except in Italy where it belongs to the number
+const nationalDigits = (v, code) => { const d = String(v || '').replace(/\D/g, ''); return code === '+39' ? d : d.replace(/^0/, ''); };
+$$('[data-checkout]').forEach((form) => {
+  const codeIn = form.elements.phone_code;
+  const phoneIn = form.elements.phone;
+  if (!codeIn || !phoneIn) return;
+  phoneIn.setAttribute('inputmode', 'numeric');
+  phoneIn.removeAttribute('pattern');
+  codeIn.removeAttribute('pattern');
+  const check = () => {
+    const code = cleanCode(codeIn.value);
+    const [min, max] = PHONE_DIGITS[code] || [6, 15];
+    // Only digits and spaces, and no more digits than the country allows
+    let kept = 0;
+    const limit = max + (code !== '+39' && /^\s*0/.test(phoneIn.value) ? 1 : 0);
+    const value = phoneIn.value.replace(/[^\d ]/g, '').replace(/\d/g, (d) => (++kept <= limit ? d : ''));
+    if (value !== phoneIn.value) phoneIn.value = value;
+    const n = nationalDigits(value, code).length;
+    phoneIn.setCustomValidity(!value.trim() || (n >= min && n <= max) ? ''
+      : min === max ? t('Phone numbers for {code} have {n} digits.', { code: code || '+…', n: min })
+        : t('Phone numbers for {code} have {min}–{max} digits.', { code: code || '+…', min, max }));
+  };
+  codeIn.addEventListener('input', () => {
+    const v = codeIn.value.replace(/[^\d+]/g, '').replace(/(?!^)\+/g, '').slice(0, 5);
+    if (v !== codeIn.value) codeIn.value = v;
+    check();
+  });
+  phoneIn.addEventListener('input', check);
+  check();
+});
+// Saved phone on the account page: "+", digits and spaces only
+$$('[data-profile] input[name=phone]').forEach((i) => i.addEventListener('input', () => {
+  const v = i.value.replace(/[^\d+ ]/g, '').replace(/(?!^)\+/g, '').slice(0, 22);
+  if (v !== i.value) i.value = v;
+}));
+
 $('[data-checkout]')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const form = e.target;
   const msg = $('[data-checkout-msg]');
   const lines = cart.map((i) => ({ item: i, p: byId(i.id) })).filter((l) => l.p);
+  form.elements.phone?.dispatchEvent(new Event('input')); // re-check a phone filled in from the account
   if (!form.reportValidity() || !lines.length) return;
   const data = Object.fromEntries(new FormData(form));
   if (data._honey) return;
   // Join country code and number: "+371 20 000 000"
-  const code = (data.phone_code || '').replace(/[^\d+]/g, '').replace(/^(?!\+)/, '+');
-  data.phone = data.phone ? `${code.length > 1 ? code + ' ' : ''}${data.phone.trim()}` : '';
+  const code = cleanCode(data.phone_code);
+  const number = nationalDigits(data.phone, code);
+  data.phone = number ? `${code ? code + ' ' : ''}${number}` : '';
   const text = lines.map(({ item, p }) => `${item.qty} × ${p.name}${p.colour ? ` (${p.colour})` : ''}, size ${item.size}, ${money(item.qty * p.price)}`).join('\n');
   const button = form.querySelector('button[type=submit]');
   button.disabled = true;
