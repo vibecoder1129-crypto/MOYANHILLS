@@ -613,6 +613,7 @@
             <button type="submit" class="btn btn--line">${o.tracking_number ? 'Update' : 'Save & mark shipped'}</button>
           </form>`}
           ${o.tracking_number ? `<span class="adm__muted">${esc(CARRIERS[o.carrier] || 'Parcel')} <a href="${esc(trackUrl(o.carrier, o.tracking_number))}" target="_blank" rel="noopener">${esc(o.tracking_number)} ↗</a>${o.shipped_at ? ` · shipped ${shortDay(o.shipped_at)}` : ''}${o.delivered_at ? ` · delivered ${shortDay(o.delivered_at)}` : ''}</span>` : ''}
+          ${o.track_status && !o.delivered_at ? `<span class="adm__muted">Live: <b>${esc(o.track_status.replace(/([a-z])([A-Z])/g, '$1 $2'))}</b>${o.track_event?.text ? ` · ${esc([o.track_event.time ? shortDay(o.track_event.time) : '', o.track_event.place, o.track_event.text].filter(Boolean).join(' · '))}` : ''}</span>` : ''}
         </div>
         <div class="adm__orderside">
           <span class="adm__price">${eur(o.total ?? o.subtotal)}</span>
