@@ -13,7 +13,7 @@
 </head>
 <body class="adm">
   <header class="adm__bar">
-    <a class="adm__logo" href="index.html" aria-label="MOYEN HILLS, back to the shop"><img src="images/logo.png" width="2400" height="262" alt="MOYEN HILLS"></a>
+    <a class="adm__logo" href="/" aria-label="MOYEN HILLS, back to the shop"><img src="images/logo.png" width="2400" height="262" alt="MOYEN HILLS"></a>
     <span class="adm__tag">Admin</span>
     <span class="adm__who" data-who></span>
     <button type="button" class="link-u" data-signout hidden>Sign out</button>
@@ -54,7 +54,7 @@
       </form>
       <button type="button" class="btn btn--line btn--wide" data-google>Continue with Google</button>
       <p class="adm__msg" data-signin-msg role="status" aria-live="polite"></p>
-      <p class="adm__muted">No password yet? Create an account on the <a href="account.html">account page</a> with the same email, confirm it, then come back.</p>
+      <p class="adm__muted">No password yet? Create an account on the <a href="/account">account page</a> with the same email, confirm it, then come back.</p>
     </section>
 
     <!-- Two-step code (required for every admin) -->
@@ -171,7 +171,7 @@
       <fieldset>
         <legend>Basics</legend>
         <label>Name<input name="name" required placeholder="ART WILL TEE"></label>
-        <label>Link name <span class="adm__hint">Used in the address: product.html?id=<b data-slug-preview>…</b>. Can’t be changed later.</span><input name="id" required pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="art-will-tee"></label>
+        <label>Link name <span class="adm__hint">Used in the address: product?id=<b data-slug-preview>…</b>. Can’t be changed later.</span><input name="id" required pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="art-will-tee"></label>
         <div class="adm__two">
           <label>Price (€)<input name="price" type="number" min="0" step="0.01" required></label>
           <label>Colour<input name="colour" placeholder="White"></label>

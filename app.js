@@ -21,7 +21,7 @@ const tMsg = window.mhTMessage || ((m) => m);
 const LV = window.mhLang === 'lv';
 const money = (n) => new Intl.NumberFormat(LV ? 'lv-LV' : 'en-IE', { style: 'currency', currency: SETTINGS.currency, maximumFractionDigits: n % 1 ? 2 : 0 }).format(n);
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-const productUrl = (p) => `product.html?id=${encodeURIComponent(p.id)}`;
+const productUrl = (p) => `/product?id=${encodeURIComponent(p.id)}`;
 // Price, with the old price crossed out when there is one
 const priceHtml = (p) => (p.wasPrice > p.price
   ? `<s class="was" aria-label="${esc(t('Was {price}', { price: money(p.wasPrice) }))}">${money(p.wasPrice)}</s> ${money(p.price)}`
@@ -140,7 +140,7 @@ function renderProductPage(p) {
   const pdp = $('[data-pdp]');
   if (!pdp) return;
   if (!p) {
-    pdp.innerHTML = `<section class="pdp__missing"><h1 class="pdp__name">${esc(t('This piece is gone'))}</h1><p>${esc(t('It may have sold out or been taken down.'))}</p><a class="btn" href="shop.html">${esc(t('Back to the shop'))}</a></section>`;
+    pdp.innerHTML = `<section class="pdp__missing"><h1 class="pdp__name">${esc(t('This piece is gone'))}</h1><p>${esc(t('It may have sold out or been taken down.'))}</p><a class="btn" href="/shop">${esc(t('Back to the shop'))}</a></section>`;
     return;
   }
   document.title = `${p.name} — MOYEN HILLS`;
@@ -372,7 +372,7 @@ if (cardPayments()) {
     const [legal, ...others] = form.querySelectorAll('.checkout__legal');
     others.forEach((p) => p.remove());
     legal?.removeAttribute('data-lang');
-    if (legal) legal.innerHTML = t('Prices are in euro and include delivery in Latvia. You see the full total on the next page before you pay. Card payments are handled by Stripe. By ordering you accept our <a href="terms.html">Terms of sale</a>. How we use your details: <a href="privacy.html">Privacy policy</a>.');
+    if (legal) legal.innerHTML = t('Prices are in euro and include delivery in Latvia. You see the full total on the next page before you pay. Card payments are handled by Stripe. By ordering you accept our <a href="/terms">Terms of sale</a>. How we use your details: <a href="/privacy">Privacy policy</a>.');
   }
   // Back from the Stripe payment page
   const q = new URLSearchParams(location.search);
@@ -382,7 +382,7 @@ if (cardPayments()) {
     if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open', '');
     if (back === 'done') {
       cart = []; promo = null; save();
-      showDone('Thank you, it’s paid', t('Order #{id} is paid. Stripe emails you a receipt, and we email you when it ships. Changed your mind? You can <a href="withdraw.html">cancel</a> up to 14 days after it arrives.', { id: esc(q.get('order') || '') }));
+      showDone('Thank you, it’s paid', t('Order #{id} is paid. Stripe emails you a receipt, and we email you when it ships. Changed your mind? You can <a href="/withdraw">cancel</a> up to 14 days after it arrives.', { id: esc(q.get('order') || '') }));
     } else if (back === 'cancelled' && /^[0-9a-f-]{36}$/i.test(q.get('token') || '')) {
       const token = q.get('token');
       showDone('Payment not finished', `${esc(t('Your order is kept for about 30 minutes, then it cancels itself and nothing is charged.'))} <span data-pay-msg role="status"></span>`);
