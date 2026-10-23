@@ -97,13 +97,21 @@
   const trackUrl = (c, n) => (c === 'dpd' ? `https://tracking.dpd.de/status/en_US/parcel/${encodeURIComponent(n)}`
     : c === 'dhl' ? `https://www.dhl.com/lv-en/home/tracking.html?tracking-id=${encodeURIComponent(n)}`
     : `https://t.17track.net/en#nums=${encodeURIComponent(n)}`);
+  const TRACK_STATUS = {
+    InfoReceived: 'Label created', InTransit: 'On its way', OutForDelivery: 'Out for delivery',
+    AvailableForPickup: 'Ready to pick up', DeliveryFailure: 'Delivery attempt failed', Exception: 'Delivery problem',
+  };
   function tracking(o) {
     if (!o.tracking_number && !o.shipped_at) return '';
     const day = (d) => new Date(d).toLocaleDateString(LV ? 'lv-LV' : 'en-GB', { day: 'numeric', month: 'short' });
     const when = o.delivered_at ? t('Delivered {date}', { date: day(o.delivered_at) }) : o.shipped_at ? t('Shipped {date}', { date: day(o.shipped_at) }) : '';
     const parcel = o.tracking_number ? `${esc(CARRIERS[o.carrier] || t('Parcel'))} ${esc(o.tracking_number)}` : '';
     const link = o.tracking_number && !o.delivered_at ? `<a href="${esc(trackUrl(o.carrier, o.tracking_number))}" target="_blank" rel="noopener">${esc(t('Track your parcel'))} ↗</a>` : '';
-    return `<p class="order__track"><span>${[esc(when), parcel].filter(Boolean).join(' · ')}</span>${link}</p>`;
+    // Live status from 17TRACK (supabase/functions/track-parcels), while the parcel is on its way
+    const live = !o.delivered_at && TRACK_STATUS[o.track_status] ? t(TRACK_STATUS[o.track_status]) : '';
+    const ev = o.track_event || {};
+    const scan = live && ev.text ? `<span class="order__scan">${esc([ev.time ? day(ev.time) : '', ev.place, ev.text].filter(Boolean).join(' · '))}</span>` : '';
+    return `<p class="order__track"><span>${[esc(when), parcel].filter(Boolean).join(' · ')}</span>${live ? `<b class="order__live">${esc(live)}</b>` : ''}${scan}${link}</p>`;
   }
 
   async function renderAccount() {
