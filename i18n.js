@@ -81,12 +81,12 @@
     'SOLD OUT, DONT BE LATE': 'IZPĀRDOTS, NENOKAVĒ',
     'View the piece': 'Apskatīt',
     'About MOYEN HILLS': 'Par MOYEN HILLS',
-    'MOYEN HILLS is about rising above your everyday struggles, getting past whatever holds you back, and living free of the worries that weigh you down.':
-      'MOYEN HILLS ir par to, kā pacelties pāri ikdienas grūtībām, tikt pāri tam, kas tevi bremzē, un dzīvot brīvi no raizēm, kas tevi nomāc.',
-    'Through our art, we encourage you never to give up on what you truly want from life. Keep climbing. The view from the top is worth it.':
-      'Ar savu mākslu mēs tevi mudinām nekad nepadoties ceļā uz to, ko patiesi vēlies no dzīves. Turpini kāpt. Skats no virsotnes ir tā vērts.',
-    'The Hills family is everyone who is part of MOYEN HILLS: a community that lifts each other up. Our goal is to bring the Hills family together at events around the world, to meet, share and support one another.':
-      'Hills ģimene ir visi, kas ir daļa no MOYEN HILLS: kopiena, kurā cits citu ceļ augšā. Mūsu mērķis ir pulcēt Hills ģimeni pasākumos visā pasaulē, lai satiktos, dalītos un atbalstītu cits citu.',
+    'MOYEN HILLS is about conquering your everyday struggles and problems, to get over what’s holding you back on the daily and to be free from your everyday worries.':
+      'MOYEN HILLS ir par to, kā pārvarēt ikdienas grūtības un problēmas, tikt pāri tam, kas tevi ik dienu bremzē, un būt brīvam no ikdienas raizēm.',
+    'Through our art we encourage you to not give up on your true desires in life.':
+      'Ar savu mākslu mēs tevi iedrošinām nepadoties un neatteikties no savām patiesajām vēlmēm dzīvē.',
+    'However HILLS FAMILY is everyone who is a part of MOYEN HILLS, it should feel like a community. Our goal is to create organised events around the world for HILLS FAMILY to meet each other and support each other through us.':
+      'Savukārt HILLS FAMILY ir ikviens, kurš ir daļa no MOYEN HILLS, un tai jājūtas kā kopienai. Mūsu mērķis ir rīkot pasākumus visā pasaulē, kur HILLS FAMILY var satikties un atbalstīt cits citu caur mums.',
     'Open the lookbook': 'Atvērt lookbook',
     'Model on concrete stairs wearing the ART WILL TEE': 'Modelis ART WILL TEE kreklā uz betona kāpnēm',
 
