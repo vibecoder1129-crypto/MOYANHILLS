@@ -81,7 +81,7 @@
     'SOLD OUT, DONT BE LATE': 'IZPĀRDOTS, NENOKAVĒ',
     'View the piece': 'Apskatīt',
     'About MOYEN HILLS': 'Par MOYEN HILLS',
-    'MOYEN HILLS is about conquering your everyday struggles and problems, to get over what’s holding you back on the daily and to be free from your everyday worries.':
+    'MOYEN HILLS is about conquering your everyday struggles and problems, to get over whats holding you back on the daily and to be free from your everyday worries.':
       'MOYEN HILLS ir par to, kā pārvarēt ikdienas grūtības un problēmas, tikt pāri tam, kas tevi ik dienu bremzē, un būt brīvam no ikdienas raizēm.',
     'Through our art we encourage you to not give up on your true desires in life.':
       'Ar savu mākslu mēs tevi iedrošinām nepadoties un neatteikties no savām patiesajām vēlmēm dzīvē.',
