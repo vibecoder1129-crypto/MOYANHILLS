@@ -1,4 +1,4 @@
-# MOYEN HILLS on Netlify. (vercel.json does the same for Vercel; keep the two in step.)
+# MOYEN HILLS on Netlify. (vercel.json does the same for Vercel, _headers for Cloudflare Pages; keep them in step.)
 # No real build: the website files are copied into dist/ so notes, the database
 # setup (supabase/) and .claude/ are never published.
 [build]
