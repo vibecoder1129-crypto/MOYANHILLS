@@ -78,11 +78,11 @@ function renderCommon(p) {
   if ($('[data-feature], [data-pdp]')) document.body.classList.toggle('is-soldout', !!p && soldOut);
   $$('[data-soldout-note]').forEach((el) => { el.hidden = !p || !soldOut; });
 
-  // Honest scarcity: counts what is really left
+  // Badge under the price: only when set on the admin page ({n} = pieces left)
   const left = sizesOf(p).reduce((n, s) => n + Math.max(0, s.stock), 0);
   $$('[data-stock-left]').forEach((el) => {
-    el.hidden = !p || soldOut;
-    $('[data-stock-text]', el).textContent = t(left <= 10 ? 'Almost gone — only {n} left' : 'Limited stock — only {n} left', { n: left });
+    el.hidden = !p || soldOut || !p.badge;
+    $('[data-stock-text]', el).textContent = p?.badge ? p.badge.replace(/\{n\}/g, left) : '';
   });
 
   // Small product card in the full-screen menu

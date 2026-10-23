@@ -196,6 +196,7 @@ create policy "products: admin deletes"   on public.products for delete using (p
 
 -- Promo codes. Private: the website can only ask "is this code valid?" through check_promo().
 alter table public.products add column if not exists was_price numeric(10, 2) check (was_price >= 0); -- old price, shown crossed out
+alter table public.products add column if not exists badge text check (char_length(badge) <= 60); -- badge under the price, empty = none; {n} = pieces left
 
 create table if not exists public.promo_codes (
   code text primary key check (code = upper(code) and code ~ '^[A-Z0-9_-]+$'),

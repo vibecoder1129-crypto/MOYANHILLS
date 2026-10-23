@@ -66,14 +66,14 @@
   const toRow = (p, i) => ({
     id: p.id, name: p.name, colour: p.colour || null, price: p.price, was_price: p.wasPrice ?? null,
     active: p.active !== false, featured: !!p.featured, sold_out: !!p.soldOut, sort: p.sort ?? i * 10,
-    label: p.label, blurb: p.blurb, description: p.description, details: p.details || [], fit: p.fit, note: p.note,
+    label: p.label, blurb: p.blurb, description: p.description, details: p.details || [], fit: p.fit, note: p.note, badge: p.badge || null,
     sizes: p.sizes || [], images: p.images || [], lv: p.lv || {},
   });
   const fromRow = (r) => ({
     id: r.id, name: r.name, colour: r.colour || '', price: r.price, wasPrice: r.was_price ?? null,
     active: r.active, featured: r.featured, soldOut: r.sold_out, sort: r.sort,
     label: r.label || '', blurb: r.blurb || '', description: r.description || '', details: r.details,
-    fit: r.fit || '', note: r.note || '', sizes: r.sizes, images: r.images,
+    fit: r.fit || '', note: r.note || '', badge: r.badge || '', sizes: r.sizes, images: r.images,
     ...(Object.keys(r.lv || {}).length ? { lv: r.lv } : {}),
   });
   const promoToRow = (c) => ({
@@ -132,7 +132,7 @@
       $('[data-preview]').hidden = false;
       $('[data-tab="log"]').hidden = true;
       $('[data-tab="admins"]').hidden = true;
-      loadProducts(); loadPromos(); loadOrders(); loadWithdrawals();
+      loadStats(); loadProducts(); loadPromos(); loadOrders(); loadWithdrawals();
       return;
     }
     shownFor = '';
@@ -150,7 +150,7 @@
     $$('[data-editor-only]').forEach((el) => { el.hidden = role === 'owner'; });
     show('app');
     shownFor = myEmail;
-    loadProducts(); loadPromos(); loadOrders(); loadWithdrawals(); loadLog(); loadAdmins();
+    loadStats(); loadProducts(); loadPromos(); loadOrders(); loadWithdrawals(); loadLog(); loadAdmins();
   }
 
   /* ---------- Two-step code (authenticator app) ---------- */
@@ -398,7 +398,7 @@
       label: '', blurb: '', description: '', details: [], fit: '', note: 'Pre-made. Please allow 1–3 days for order fulfilling.',
       sizes: ['S', 'M', 'L', 'XL'].map((size) => ({ size, stock: 0 })), images: [],
     };
-    for (const k of ['name', 'id', 'price', 'was_price', 'colour', 'sort', 'label', 'blurb', 'description', 'fit', 'note']) pForm[k].value = v[k] ?? '';
+    for (const k of ['name', 'id', 'price', 'was_price', 'colour', 'sort', 'label', 'blurb', 'description', 'fit', 'note', 'badge']) pForm[k].value = v[k] ?? '';
     for (const k of ['active', 'featured', 'sold_out']) pForm[k].checked = !!v[k];
     pForm.details.value = (v.details || []).join('\n');
     // Latvian text (products.lv in the database, `lv` in catalog.js)
@@ -416,7 +416,7 @@
   }
 
   // The Latvian boxes as one object; empty boxes are left out (the English shows there)
-  const LV_TEXTS = ['colour', 'label', 'blurb', 'description', 'fit', 'note'];
+  const LV_TEXTS = ['colour', 'label', 'blurb', 'description', 'fit', 'note', 'badge'];
   function lvText() {
     const lv = {};
     for (const k of LV_TEXTS) { const v = pForm[`lv_${k}`].value.trim(); if (v) lv[k] = v; }
@@ -455,6 +455,7 @@
       details: pForm.details.value.split('\n').map((s) => s.trim()).filter(Boolean),
       fit: pForm.fit.value.trim() || null,
       note: pForm.note.value.trim() || null,
+      badge: pForm.badge.value.trim() || null,
       sizes,
       images: photos.map((ph) => ({ ...ph, alt: (ph.alt || '').trim() || pForm.name.value.trim() })),
       lv: lvText(),
@@ -651,6 +652,71 @@
     loadOrders();
   });
   $('[data-reload-orders]').addEventListener('click', loadOrders);
+
+  /* ---------- Overview: sales and stock ---------- */
+  const statsEl = $('[data-stats]');
+  // A sale = an order that was paid and not cancelled (card orders say payment "paid";
+  // older orders without card payment count once marked paid, shipped or delivered).
+  const isSale = (o) => o.status !== 'cancelled'
+    && (o.payment ? o.payment === 'paid' : ['paid', 'shipped', 'delivered'].includes(o.status));
+  const pieces = (o) => (o.items || []).reduce((n, i) => n + (Number(i.qty) || 0), 0);
+  const dayKey = (d) => { const x = new Date(d); return `${x.getFullYear()}-${x.getMonth()}-${x.getDate()}`; };
+
+  async function loadStats() {
+    statsEl.innerHTML = '<p class="adm__empty">Loading…</p>';
+    const [{ data: orders, error }, { data: prods }] = await Promise.all([api.orders(), api.products()]);
+    if (error) { statsEl.innerHTML = `<p class="adm__empty is-bad">${esc(error.message)}</p>`; return; }
+    if (!sb) { statsEl.innerHTML = '<p class="adm__empty">Sales show here once the database is connected.</p>'; return; }
+    const sales = (orders || []).filter(isSale);
+    const sum = (list) => list.reduce((n, o) => n + Number(o.total ?? o.subtotal ?? 0), 0);
+    const now = Date.now();
+    const since = (days) => sales.filter((o) => now - new Date(o.paid_at || o.created_at) < days * 864e5);
+    const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0);
+    const thisMonth = sales.filter((o) => new Date(o.paid_at || o.created_at) >= monthStart);
+    const sold = sales.reduce((n, o) => n + pieces(o), 0);
+    const toShip = sales.filter((o) => !['shipped', 'delivered'].includes(o.status)).length;
+
+    // Pieces sold per size, and what is left per size (all products together)
+    const soldBy = {};
+    sales.forEach((o) => (o.items || []).forEach((i) => { soldBy[i.size] = (soldBy[i.size] || 0) + (Number(i.qty) || 0); }));
+    const leftBy = {};
+    (prods || []).filter((p) => p.active !== false).forEach((p) => (p.sizes || []).forEach((s) => { leftBy[s.size] = (leftBy[s.size] || 0) + Math.max(0, Number(s.stock) || 0); }));
+    const sizes = [...new Set([...Object.keys(leftBy), ...Object.keys(soldBy)])];
+    const left = Object.values(leftBy).reduce((a, b) => a + b, 0);
+
+    // Sales per day, last 14 days
+    const days = [...Array(14)].map((_, i) => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - 13 + i); return d; });
+    const perDay = days.map((d) => sum(sales.filter((o) => dayKey(o.paid_at || o.created_at) === dayKey(d))));
+    const top = Math.max(...perDay, 1);
+
+    const tile = (label, value, sub = '') => `<div class="stat"><span class="stat__label">${label}</span><b class="stat__value">${value}</b>${sub ? `<span class="adm__muted">${sub}</span>` : ''}</div>`;
+    statsEl.innerHTML = `
+      <div class="stats">
+        ${tile('Total sales', eur(sum(sales)), `${sales.length} paid order${sales.length === 1 ? '' : 's'}`)}
+        ${tile('This month', eur(sum(thisMonth)), `${thisMonth.length} order${thisMonth.length === 1 ? '' : 's'}`)}
+        ${tile('Last 7 days', eur(sum(since(7))), `${since(7).length} order${since(7).length === 1 ? '' : 's'}`)}
+        ${tile('Pieces sold', sold, sales.length ? `avg. order ${eur(sum(sales) / sales.length)}` : '')}
+        ${tile('To ship', toShip, toShip ? 'paid, not shipped yet' : 'all sent')}
+        ${tile('Pieces left', left, 'in stock, all sizes')}
+      </div>
+      <section class="adm__card stats__box">
+        <h2 class="stats__h">Sales, last 14 days</h2>
+        <div class="bars" role="img" aria-label="Sales per day for the last 14 days">
+          ${days.map((d, i) => `<div class="bars__col" title="${shortDay(d)}: ${eur(perDay[i])}"><span class="bars__bar" data-h="${Math.round((perDay[i] / top) * 100)}"></span><span class="bars__day">${d.getDate()}</span></div>`).join('')}
+        </div>
+      </section>
+      <section class="adm__card stats__box">
+        <h2 class="stats__h">By size</h2>
+        <table class="stats__table">
+          <thead><tr><th>Size</th><th>Sold</th><th>Left</th></tr></thead>
+          <tbody>${sizes.map((s) => `<tr><td>${esc(s)}</td><td>${soldBy[s] || 0}</td><td class="${(leftBy[s] || 0) === 0 ? 'is-bad' : ''}">${leftBy[s] || 0}</td></tr>`).join('')}</tbody>
+        </table>
+      </section>
+      <p class="adm__muted">Counts paid orders only; cancelled and unpaid ones are left out. Refunds made in Stripe are not subtracted.</p>`;
+    // Bar heights set from script: the page's CSP blocks inline style attributes
+    $$('.bars__bar', statsEl).forEach((b) => b.style.setProperty('--h', `${b.dataset.h}%`));
+  }
+  $('[data-reload-stats]').addEventListener('click', loadStats);
 
   /* ---------- Cancellations (sent on withdraw.html) ---------- */
   const wdList = $('[data-withdrawals]');
