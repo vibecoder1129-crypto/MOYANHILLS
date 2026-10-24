@@ -24,6 +24,8 @@ Open `index.html` in a browser, or host the folder on GitHub Pages, Netlify or V
 - `supabase/notify.sql`: order and cancellation emails, sent by the database through Brevo. Run it third (see "Where orders go").
 - `supabase/payments.sql` + `supabase/functions/`: card payments with Stripe (delivery prices, payment page, webhook). **Run it after `notify.sql`, every time.** See [Card payments](#card-payments-stripe)
 - `supabase/tracking.sql`: parcel tracking numbers and the "your order is on its way" email. **Run it last** (after `payments.sql`, or after `notify.sql` without card payments). See [Shipping and tracking](#shipping-and-tracking)
+- `supabase/low-stock.sql`: emails the shop when a size drops to 2 or fewer. Run it after `notify.sql`.
+- `supabase/features.sql`: gift message at checkout, "Notify me when it's back" for sold-out sizes, and customer reviews with photos (approved on the admin page, Reviews tab). Run it after `low-stock.sql`, every time you re-run the files above.
 - `vercel.json` + `.vercelignore` (Vercel) or `netlify.toml` (Netlify): security headers, and files kept off the public site
 - `fonts/`: the Inter Tight font, self-hosted
 - `site.css`: the design

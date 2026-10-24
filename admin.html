@@ -93,6 +93,7 @@
         <button type="button" role="tab" class="adm__tab" data-tab="promos" aria-selected="false">Promo codes</button>
         <button type="button" role="tab" class="adm__tab" data-tab="orders" aria-selected="false">Orders</button>
         <button type="button" role="tab" class="adm__tab" data-tab="withdrawals" aria-selected="false">Cancellations <span class="adm__count" data-wd-count hidden></span></button>
+        <button type="button" role="tab" class="adm__tab" data-tab="reviews" aria-selected="false">Reviews <span class="adm__count" data-rv-count hidden></span></button>
         <button type="button" role="tab" class="adm__tab" data-tab="admins" aria-selected="false">Team</button>
         <button type="button" role="tab" class="adm__tab" data-tab="log" aria-selected="false">Change log</button>
       </nav>
@@ -104,6 +105,7 @@
           <button type="button" class="btn btn--line" data-reload-stats>Refresh</button>
         </div>
         <div data-stats><p class="adm__empty">Loading…</p></div>
+        <section class="adm__card stats__box" data-alerts hidden></section>
       </div>
 
       <!-- Products -->
@@ -154,6 +156,16 @@
         </div>
         <p class="adm__muted">Customers who used “Cancel an order”. They have 14 days to send the items back; refund within 14 days of getting them. Tick “Sorted” once it’s done.</p>
         <ul class="adm__list" data-withdrawals></ul>
+      </div>
+
+      <!-- Reviews and photos from customers (supabase/features.sql) -->
+      <div class="adm__panel" data-panel="reviews" hidden>
+        <div class="adm__head">
+          <h1 class="adm__title">Reviews</h1>
+          <button type="button" class="btn btn--line" data-reload-rv>Refresh</button>
+        </div>
+        <p class="adm__muted">Customers can review a piece from their account once their order has been sent. Nothing shows on the site until you approve it. “Hide” takes it off the site; “Delete” removes it and its photo for good.</p>
+        <ul class="adm__list" data-reviews></ul>
       </div>
 
       <!-- Team: owners manage it; editors only see the other editors -->
@@ -284,6 +296,9 @@
       </div>
     </form>
   </dialog>
+
+  <!-- What "Print note" prints: only the gift message -->
+  <div class="adm__notesheet" data-note-sheet aria-hidden="true"><p></p><span>MOYEN HILLS</span></div>
 
   <script src="config.js"></script>
   <script src="vendor/supabase.js" defer></script>

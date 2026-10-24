@@ -68,9 +68,11 @@
 
         <h2 id="what">What we collect, why, and on what legal basis</h2>
         <ul>
-          <li><b>Orders:</b> your name, email, phone (optional), delivery address, the items and any note. We use them to confirm, deliver and support your order (to perform our contract with you) and keep order records because accounting and tax law require it (legal obligation).</li>
+          <li><b>Orders:</b> your name, email, phone (optional), delivery address, the items, any note and any gift message (which we print and put in the parcel). We use them to confirm, deliver and support your order (to perform our contract with you) and keep order records because accounting and tax law require it (legal obligation).</li>
           <li><b>Cancellations:</b> if you use <a href="/withdraw">Cancel an order</a>, your name, email, order number and the items, to handle your withdrawal (legal obligation).</li>
           <li><b>Accounts</b> (only if you create one): your email, password (stored only as a secure hash by our sign-in provider), name, phone, address and your orders, so you can see your orders and check out faster (contract).</li>
+          <li id="alerts"><b>“Notify me when it’s back”:</b> if you ask to hear when a sold-out size returns, your email, the product and size, and your language, to send you that one email (your request; legitimate interest). We send nothing else to that address.</li>
+          <li><b>Reviews and photos</b> (only if you write one from your account): your rating, review text, the name you give and your photo, plus a link to your account and the order. We check each review first; once approved, the rating, text, name and photo are public on the product page (your consent, which you can withdraw any time). We redraw photos before upload, which removes hidden details such as where they were taken.</li>
           <li><b>“Join the Hills family”:</b> your email address, to send you news about drops (your consent). We first email you a link to confirm it is really you (double opt-in). You can withdraw consent any time with the unsubscribe link in every email, or by writing to us.</li>
           <li><b>Abuse protection:</b> when you place an order or try a promo code, our database keeps a one-way, salted fingerprint of your internet address for up to 24 hours, to limit fake orders and code guessing (our legitimate interest in keeping the shop safe). The address itself is not stored by us.</li>
           <li><b>Website hosting:</b> our host processes technical data such as your IP address and browser type to deliver the site and keep it secure (legitimate interest).</li>
@@ -95,12 +97,12 @@
         <h2 id="processors">Who helps us</h2>
         <p>These service providers process data for us under data processing terms, and only for the purposes above:</p>
         <ul>
-          <li><b>Supabase</b> stores orders, accounts and cancellations. Database region: EU (Ireland).</li>
+          <li><b>Supabase</b> stores orders, accounts, cancellations, “Notify me” requests, reviews and review photos. Database region: EU (Ireland).</li>
           <li><b>Stripe</b> (Stripe Payments Europe, Ireland) processes card payments. It gets your name, email, the order total and your payment details; we never see your card number. Stripe is also responsible for some of this data itself, for fraud prevention and its legal duties: see <a href="https://stripe.com/privacy" rel="noopener">Stripe’s privacy policy</a>.</li>
           <li><b>Google</b> (Gmail) hosts our email inbox.</li>
-          <li><b>Vercel</b> hosts this website.</li>
+          <li><b>Netlify</b> hosts this website.</li>
           <li><b>Google or Apple</b>, only if you choose to sign in with them.</li>
-          <li><b>Brevo</b> (Sendinblue SAS, France) sends the order and cancellation emails (to us, and your copy) and, if you join, stores your sign-up and sends our newsletter.</li>
+          <li><b>Brevo</b> (Sendinblue SAS, France) sends the order, cancellation and “Notify me” emails (to us, and your copy) and, if you join, stores your sign-up and sends our newsletter.</li>
           <li>Your delivery carrier receives your name, address and phone to deliver the parcel. DPD, Omniva, Latvijas Pasts, Venipak or DHL (whichever we ship your order with)</li>
         </ul>
         <p>Some of these companies are based in, or use servers in, the United States. Transfers there rely on the EU–US Data Privacy Framework or the European Commission’s standard contractual clauses.</p>
@@ -110,6 +112,8 @@
           <li>Orders and cancellations: for the period Latvian accounting and tax law requires, 5 years after the end of the year of the order, then deleted.</li>
           <li>Account: until you delete it (you can do this yourself on the <a href="/account">Account</a> page). Your orders then stay only as order records, no longer linked to an account.</li>
           <li>Newsletter: until you unsubscribe. We keep a record of when you signed up and unsubscribed, to show we had your consent.</li>
+          <li>“Notify me” requests: until we send the email, then deleted 30 days later. Write to us to remove one sooner.</li>
+          <li>Reviews and photos: until you or we delete them. Deleting your account deletes them, and they are included in “Download my data”.</li>
           <li>Abuse-protection fingerprints: 24 hours.</li>
         </ul>
 
@@ -140,9 +144,11 @@
 
         <h2 id="what">Ko mēs vācam, kāpēc un uz kāda tiesiskā pamata</h2>
         <ul>
-          <li><b>Pasūtījumi:</b> tavs vārds, e-pasts, tālrunis (nav obligāts), piegādes adrese, preces un piezīme, ja tāda ir. Tos izmantojam, lai apstiprinātu, piegādātu un apkalpotu tavu pasūtījumu (līguma izpilde), un pasūtījumu ierakstus glabājam, jo to prasa grāmatvedības un nodokļu likumi (juridisks pienākums).</li>
+          <li><b>Pasūtījumi:</b> tavs vārds, e-pasts, tālrunis (nav obligāts), piegādes adrese, preces, piezīme un dāvanas ziņa (ko mēs izdrukājam un ieliekam sūtījumā), ja tādas ir. Tos izmantojam, lai apstiprinātu, piegādātu un apkalpotu tavu pasūtījumu (līguma izpilde), un pasūtījumu ierakstus glabājam, jo to prasa grāmatvedības un nodokļu likumi (juridisks pienākums).</li>
           <li><b>Atteikumi:</b> ja izmanto lapu <a href="/withdraw">Atcelt pasūtījumu</a>, tavs vārds, e-pasts, pasūtījuma numurs un preces, lai apstrādātu tavu atteikumu (juridisks pienākums).</li>
           <li><b>Konti</b> (tikai tad, ja to izveido): tavs e-pasts, parole (mūsu pieslēgšanās pakalpojuma sniedzējs to glabā tikai kā drošu jaucējvērtību), vārds, tālrunis, adrese un pasūtījumi, lai tu redzētu savus pasūtījumus un varētu pasūtīt ātrāk (līgums).</li>
+          <li id="alerts"><b>“Paziņot man, kad atgriezīsies”:</b> ja lūdz paziņot, kad izpārdots izmērs atkal ir pieejams, tavs e-pasts, prece un izmērs, kā arī valoda, lai nosūtītu tev šo vienu e-pastu (tavs pieprasījums; leģitīmās intereses). Uz šo adresi neko citu nesūtām.</li>
+          <li><b>Atsauksmes un foto</b> (tikai tad, ja to uzraksti savā kontā): tavs vērtējums, atsauksmes teksts, norādītais vārds un foto, kā arī saite uz tavu kontu un pasūtījumu. Katru atsauksmi vispirms pārbaudām; pēc apstiprināšanas vērtējums, teksts, vārds un foto ir publiski redzami produkta lapā (tava piekrišana, ko vari atsaukt jebkurā brīdī). Pirms augšupielādes foto tiek pārzīmēts, kas noņem slēpto informāciju, piemēram, uzņemšanas vietu.</li>
           <li><b>“Pievienojies Hills ģimenei”:</b> tava e-pasta adrese, lai sūtītu tev jaunumus par kolekcijām (tava piekrišana). Vispirms mēs nosūtām saiti, lai apstiprinātu, ka tas tiešām esi tu (dubultā apstiprināšana). Piekrišanu vari atsaukt jebkurā brīdī, izmantojot atrakstīšanās saiti katrā e-pastā vai rakstot mums.</li>
           <li><b>Aizsardzība pret ļaunprātīgu izmantošanu:</b> kad veic pasūtījumu vai izmēģini atlaides kodu, mūsu datubāze līdz 24 stundām glabā vienvirziena, “sālītu” tavas interneta adreses nospiedumu, lai ierobežotu viltus pasūtījumus un kodu minēšanu (mūsu leģitīmās intereses uzturēt veikalu drošu). Pašu adresi mēs neglabājam.</li>
           <li><b>Vietnes mitināšana:</b> mūsu mitināšanas pakalpojuma sniedzējs apstrādā tehniskos datus, piemēram, tavu IP adresi un pārlūka veidu, lai nodrošinātu vietnes darbību un drošību (leģitīmās intereses).</li>
@@ -167,12 +173,12 @@
         <h2 id="processors">Kas mums palīdz</h2>
         <p>Šie pakalpojumu sniedzēji apstrādā datus mūsu vārdā saskaņā ar datu apstrādes noteikumiem un tikai iepriekš minētajiem nolūkiem:</p>
         <ul>
-          <li><b>Supabase</b> glabā pasūtījumus, kontus un atteikumus. Datubāzes reģions: ES (Īrija).</li>
+          <li><b>Supabase</b> glabā pasūtījumus, kontus, atteikumus, “Paziņot man” pieprasījumus, atsauksmes un to foto. Datubāzes reģions: ES (Īrija).</li>
           <li><b>Stripe</b> (Stripe Payments Europe, Īrija) apstrādā kartes maksājumus. Tas saņem tavu vārdu, e-pastu, pasūtījuma summu un maksājuma datus; tavas kartes numuru mēs neredzam. Daļu šo datu Stripe apstrādā arī kā patstāvīgs pārzinis — krāpšanas novēršanai un savu juridisko pienākumu izpildei: sk. <a href="https://stripe.com/privacy" rel="noopener">Stripe privātuma politiku</a>.</li>
           <li><b>Google</b> (Gmail) mitina mūsu e-pasta kastīti.</li>
-          <li><b>Vercel</b> mitina šo vietni.</li>
+          <li><b>Netlify</b> mitina šo vietni.</li>
           <li><b>Google vai Apple</b> — tikai tad, ja izvēlies pieslēgties ar tiem.</li>
-          <li><b>Brevo</b> (Sendinblue SAS, Francija) sūta pasūtījumu un atteikumu e-pastus (mums un tavu kopiju) un, ja pievienojies, glabā tavu pieteikumu un sūta mūsu jaunumus.</li>
+          <li><b>Brevo</b> (Sendinblue SAS, Francija) sūta pasūtījumu, atteikumu un “Paziņot man” e-pastus (mums un tavu kopiju) un, ja pievienojies, glabā tavu pieteikumu un sūta mūsu jaunumus.</li>
           <li>Tavs piegādes pārvadātājs saņem tavu vārdu, adresi un tālruni, lai piegādātu sūtījumu. DPD, Omniva, Latvijas Pasts, Venipak vai DHL (ar kuru sūtām tavu pasūtījumu)</li>
         </ul>
         <p>Daži no šiem uzņēmumiem atrodas Amerikas Savienotajās Valstīs vai izmanto tur esošus serverus. Datu nosūtīšana uz turieni balstās uz ES–ASV Datu privātuma regulējumu vai Eiropas Komisijas standarta līguma klauzulām.</p>
@@ -182,6 +188,8 @@
           <li>Pasūtījumi un atteikumi: tik ilgi, cik to prasa Latvijas grāmatvedības un nodokļu likumi, 5 gadus pēc pasūtījuma gada beigām, pēc tam tie tiek dzēsti.</li>
           <li>Konts: līdz tu to izdzēs (to vari izdarīt pats lapā <a href="/account">Konts</a>). Pēc tam tavi pasūtījumi saglabājas tikai kā pasūtījumu ieraksti, vairs nesaistīti ar kontu.</li>
           <li>Jaunumi: līdz tu atrakstījies. Mēs glabājam ierakstu par to, kad pieteicies un kad atrakstījies, lai pierādītu, ka mums bija tava piekrišana.</li>
+          <li>“Paziņot man” pieprasījumi: līdz e-pasta nosūtīšanai, pēc tam tie tiek dzēsti 30 dienu laikā. Raksti mums, ja vēlies tos dzēst ātrāk.</li>
+          <li>Atsauksmes un foto: līdz tu vai mēs tos izdzēšam. Dzēšot kontu, tie tiek izdzēsti, un tie ir iekļauti sadaļā “Lejupielādēt manus datus”.</li>
           <li>Aizsardzības nospiedumi: 24 stundas.</li>
         </ul>
 
@@ -345,6 +353,7 @@
         </div>
         <label>Country<input name="country" autocomplete="country-name" value="Latvia" required></label>
         <label>Note (optional)<textarea name="note" rows="2"></textarea></label>
+        <label>Gift message (optional)<textarea name="gift_note" rows="2" maxlength="300" placeholder="We print it and put it in the parcel"></textarea></label>
         <input type="text" name="_honey" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true">
         <p class="checkout__account" data-checkout-account hidden>Signed in — this order will be saved to your account.</p>
         <p class="checkout__legal" data-lang="en">Prices are in euro. Delivery cost is added in our confirmation email, before you pay. By sending this order you accept our <a href="/terms">Terms of sale</a>. How we use your details: <a href="/privacy">Privacy policy</a>.</p>

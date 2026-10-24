@@ -136,7 +136,7 @@ function renderShop() {
 }
 
 /* Product data for Google (price, stock, photos), from the same product the page shows */
-function productData(p) {
+function productData(p, reviews = []) {
   const site = 'https://moyenhillsofficial.com';
   const abs = (src) => new URL(src, `${site}/`).href;
   const url = `${site}/product?id=${encodeURIComponent(p.id)}`;
@@ -174,6 +174,20 @@ function productData(p) {
         returnFees: 'https://schema.org/ReturnFeesCustomerResponsibility',
       },
     },
+    ...(reviews.length ? {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: (reviews.reduce((n, r) => n + r.rating, 0) / reviews.length).toFixed(1),
+        reviewCount: reviews.length,
+      },
+      review: reviews.slice(0, 10).map((r) => ({
+        '@type': 'Review',
+        author: { '@type': 'Person', name: r.name },
+        datePublished: String(r.date).slice(0, 10),
+        reviewRating: { '@type': 'Rating', ratingValue: r.rating, bestRating: 5 },
+        ...(r.body ? { reviewBody: r.body } : {}),
+      })),
+    } : {}),
   };
   let el = $('script[data-product-ld]');
   if (!el) {
@@ -233,6 +247,67 @@ function renderProductPage(p) {
   const add = $('[data-add]', pdp);
   add.disabled = isSoldOut(p);
   add.textContent = t(isSoldOut(p) ? 'Sold out' : 'Add to cart');
+
+  // "Notify me when it's back" for sold-out sizes (supabase/features.sql)
+  const notify = $('[data-notify]', pdp);
+  const off = sizesOf(p).map((s) => s.size).filter((size) => sizeOff(p, size));
+  if (notify && window.mhData.supabase && off.length) {
+    const pick = $('[data-notify-size]', notify);
+    pick.innerHTML = off.map((size) => `<option value="${esc(size)}">${esc(size)}</option>`).join('');
+    notify.hidden = false;
+    // Tapping a crossed-out size picks it here
+    row.addEventListener('click', (e) => {
+      const label = e.target.closest('.size');
+      const size = label?.querySelector('input:disabled')?.value;
+      if (!size) return;
+      pick.value = size;
+      notify.elements.email.focus();
+    });
+  }
+}
+
+/* Approved reviews and buyers' photos under the product (supabase/features.sql) */
+async function loadReviews(p) {
+  const box = $('[data-reviews]');
+  const sb = window.mhData.supabase;
+  if (!box || !sb) return;
+  const { data, error } = await sb.rpc('product_reviews', { p_product: p.id });
+  // Shown only once there is at least one approved review
+  if (error || !Array.isArray(data) || !data.length) return;
+  const photo = (path) => sb.storage.from('reviews').getPublicUrl(path).data.publicUrl;
+  const stars = (n) => `<span class="stars" aria-label="${esc(t('{n} out of 5', { n }))}">${'★'.repeat(n)}<span class="stars__off">${'★'.repeat(5 - n)}</span></span>`;
+  const avg = data.reduce((n, r) => n + r.rating, 0) / data.length;
+  $('[data-reviews-avg]', box).innerHTML = `${stars(Math.round(avg))} <span>${esc(t(data.length === 1 ? '{avg} from 1 review' : '{avg} from {n} reviews', { avg: avg.toFixed(1).replace('.', LV ? ',' : '.'), n: data.length }))}</span>`;
+  $('[data-reviews-list]', box).innerHTML = data.map((r) => `<li class="review">
+    ${r.photo ? `<a class="review__photo" href="${esc(photo(r.photo))}" target="_blank" rel="noopener"><img src="${esc(photo(r.photo))}" alt="${esc(t('{name} wearing {product}', { name: r.name, product: p.name }))}" loading="lazy"></a>` : ''}
+    <div class="review__text">
+      ${stars(r.rating)}
+      ${r.body ? `<p>${esc(r.body)}</p>` : ''}
+      <span class="review__by">${esc(r.name)} · ${esc(new Date(r.date).toLocaleDateString(LV ? 'lv-LV' : 'en-GB', { month: 'short', year: 'numeric' }))}</span>
+    </div>
+  </li>`).join('');
+  box.hidden = false;
+  productData(p, data);
+}
+
+const notifyForm = $('[data-notify]');
+if (notifyForm) {
+  notifyForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = $('[data-notify-msg]', notifyForm);
+    const button = notifyForm.querySelector('button');
+    const size = notifyForm.elements.size.value;
+    button.disabled = true;
+    msg.classList.remove('is-error');
+    msg.textContent = t('Saving…');
+    const { error } = await window.mhData.supabase.rpc('request_stock_alert', {
+      p_product: current.id, p_size: size, p_email: notifyForm.elements.email.value, p_lang: LV ? 'lv' : 'en',
+    });
+    button.disabled = false;
+    if (error) { msg.classList.add('is-error'); msg.textContent = t(error.message); return; }
+    msg.textContent = t('Done. We’ll email you when {size} is back.', { size });
+    notifyForm.elements.email.value = '';
+  });
 }
 
 const buy = $('[data-buy]');
@@ -561,6 +636,7 @@ $('[data-checkout]')?.addEventListener('submit', async (e) => {
     lang: LV ? 'lv' : 'en', // the language of the order emails
     full_name: data.name, email: data.email, phone: data.phone || null,
     address: data.address, city: data.city, postcode: data.postcode, country: data.country, note: data.note || null,
+    ...(data.gift_note?.trim() ? { gift_note: data.gift_note.trim().slice(0, 300) } : {}),
   };
   if (cardPayments()) {
     msg.classList.remove('is-error');
@@ -586,7 +662,7 @@ $('[data-checkout]')?.addEventListener('submit', async (e) => {
   } catch {
     // Nothing reached the shop: let the buyer send the order themselves, already written out.
     const mail = `mailto:${SETTINGS.contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
-      `${text}\nSubtotal: ${money(subtotal())}\nPromo code: ${promoText}\nTotal: ${money(grandTotal())}\n\nName: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone || '—'}\nAddress: ${address}\nNote: ${data.note || '—'}`)}`;
+      `${text}\nSubtotal: ${money(subtotal())}\nPromo code: ${promoText}\nTotal: ${money(grandTotal())}\n\nName: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone || '—'}\nAddress: ${address}\nNote: ${data.note || '—'}\nGift message: ${data.gift_note || '—'}`)}`;
     msg.innerHTML = t('The order could not be sent. Please try again, or <a href="{mail}">email the order to {email}</a>.', { mail: esc(mail), email: esc(SETTINGS.contactEmail) });
   } finally {
     button.disabled = false;
@@ -755,6 +831,7 @@ window.mhData.catalog.then(({ products }) => {
   renderFeature(featured());
   renderShop();
   renderProductPage(current);
+  if (current && $('[data-pdp]')) loadReviews(current);
   renderCart();
   document.documentElement.classList.add('is-loaded');
 });

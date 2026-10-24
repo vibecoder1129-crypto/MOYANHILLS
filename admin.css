@@ -159,3 +159,25 @@
 @media (pointer: coarse) {
   input, select, textarea { font-size: max(16px, 1em); }
 }
+
+/* Gift message on an order, and the sheet "Print note" prints */
+.adm__gift { display: block; margin-top: 4px; padding: 8px 10px; border-radius: 8px; background: #fff6d6; color: var(--ink); font-size: var(--t-sm); }
+.adm__link { background: none; border: 0; padding: 0 0 0 6px; font: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; color: inherit; cursor: pointer; }
+.adm__notesheet { display: none; }
+@media print {
+  body.is-printing-note > * { display: none !important; }
+  body.is-printing-note > .adm__notesheet { display: grid !important; place-content: center; gap: 24px; min-height: 90vh; padding: 48px; text-align: center; }
+  .adm__notesheet p { font-size: 22pt; line-height: 1.4; white-space: pre-wrap; }
+  .adm__notesheet span { font-size: 10pt; letter-spacing: .3em; }
+}
+
+/* Reviews */
+.adm__review { display: grid; grid-template-columns: auto 1fr auto; gap: 16px; padding: 14px 16px; align-items: start; }
+.adm__review:not(:has(.adm__rvphoto)) { grid-template-columns: 1fr auto; }
+.adm__review .adm__rowmain { gap: 4px; }
+@media (max-width: 720px) { .adm__review, .adm__review:not(:has(.adm__rvphoto)) { grid-template-columns: auto 1fr; } .adm__review .adm__orderside { grid-column: 1 / -1; align-items: flex-start; flex-direction: row; flex-wrap: wrap; } }
+.adm__rvphoto img { width: 72px; height: 90px; object-fit: cover; border-radius: 6px; background: var(--tint); }
+.adm__rvbody { white-space: pre-line; }
+.adm__stars { letter-spacing: .06em; font-weight: 400; }
+.adm__waiting summary { cursor: pointer; font-weight: 700; }
+.adm__waiting a { font-size: var(--t-sm); }

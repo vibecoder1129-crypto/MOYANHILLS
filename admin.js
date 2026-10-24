@@ -132,7 +132,7 @@
       $('[data-preview]').hidden = false;
       $('[data-tab="log"]').hidden = true;
       $('[data-tab="admins"]').hidden = true;
-      loadStats(); loadProducts(); loadPromos(); loadOrders(); loadWithdrawals();
+      loadStats(); loadProducts(); loadPromos(); loadOrders(); loadWithdrawals(); loadReviews();
       return;
     }
     shownFor = '';
@@ -150,7 +150,7 @@
     $$('[data-editor-only]').forEach((el) => { el.hidden = role === 'owner'; });
     show('app');
     shownFor = myEmail;
-    loadStats(); loadProducts(); loadPromos(); loadOrders(); loadWithdrawals(); loadLog(); loadAdmins();
+    loadStats(); loadProducts(); loadPromos(); loadOrders(); loadWithdrawals(); loadReviews(); loadAlerts(); loadLog(); loadAdmins();
   }
 
   /* ---------- Two-step code (authenticator app) ---------- */
@@ -639,6 +639,7 @@
           <span class="adm__muted">${when} · <a href="mailto:${esc(o.email)}">${esc(o.email)}</a>${o.phone ? ` · ${esc(o.phone)}` : ''}</span>
           ${addr ? `<span class="adm__muted">${addr}</span>` : ''}
           ${o.note ? `<span class="adm__muted">Note: ${esc(o.note)}</span>` : ''}
+          ${o.gift_note ? `<span class="adm__gift"><b>Gift message:</b> “${esc(o.gift_note)}” <button type="button" class="adm__link" data-print-note="${o.id}">Print note</button></span>` : ''}
           ${o.status === 'cancelled' ? '' : `<form class="adm__track" data-track="${o.id}" data-was="${esc(o.status)}">
             <select name="carrier" aria-label="Carrier for order ${o.id}">${Object.entries(CARRIERS).map(([k, v]) => `<option value="${k}" ${k === (o.carrier || 'dpd') ? 'selected' : ''}>${v}</option>`).join('')}</select>
             <input name="number" value="${esc(o.tracking_number || '')}" placeholder="Tracking number" aria-label="Tracking number for order ${o.id}" autocomplete="off" spellcheck="false" maxlength="60">
@@ -687,6 +688,18 @@
     loadOrders();
   });
   $('[data-reload-orders]').addEventListener('click', loadOrders);
+  // Print just the gift message, to put in the parcel (admin.css hides everything else when printing)
+  orderList.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-print-note]');
+    if (!b) return;
+    const o = allOrders.find((x) => x.id === Number(b.dataset.printNote));
+    if (!o?.gift_note) return;
+    const sheet = $('[data-note-sheet]');
+    sheet.querySelector('p').textContent = o.gift_note;
+    document.body.classList.add('is-printing-note');
+    window.print();
+    document.body.classList.remove('is-printing-note');
+  });
   orderQ.addEventListener('input', renderOrders);
   orderFilter.addEventListener('change', renderOrders);
 
@@ -703,6 +716,7 @@
       ['Items', (o) => (o.items || []).map((i) => `${i.qty} x ${i.name} (${i.size})`).join('; ')], ['Pieces', pieces],
       ['Subtotal EUR', (o) => num(o.subtotal)], ['Promo code', (o) => o.promo_code], ['Discount EUR', (o) => num(o.discount)],
       ['Delivery EUR', (o) => num(o.shipping)], ['Total EUR', (o) => num(o.total ?? o.subtotal)],
+      ['Note', (o) => o.note], ['Gift message', (o) => o.gift_note],
       ['Carrier', (o) => CARRIERS[o.carrier] || ''], ['Tracking number', (o) => o.tracking_number],
       ['Shipped', (o) => day(o.shipped_at)], ['Delivered', (o) => day(o.delivered_at)],
     ];
@@ -779,7 +793,7 @@
     // Bar heights set from script: the page's CSP blocks inline style attributes
     $$('.bars__bar', statsEl).forEach((b) => b.style.setProperty('--h', `${b.dataset.h}%`));
   }
-  $('[data-reload-stats]').addEventListener('click', loadStats);
+  $('[data-reload-stats]').addEventListener('click', () => { loadStats(); if (sb) loadAlerts(); });
 
   /* ---------- Cancellations (sent on withdraw.html) ---------- */
   const wdList = $('[data-withdrawals]');
@@ -822,6 +836,85 @@
     loadWithdrawals();
   });
   $('[data-reload-wd]').addEventListener('click', loadWithdrawals);
+
+  /* ---------- Waiting for a size ("Notify me when it's back", supabase/features.sql) ---------- */
+  const alertsEl = $('[data-alerts]');
+  async function loadAlerts() {
+    const { data, error } = await sb.from('stock_alerts').select('product_id, size, email, created_at')
+      .is('notified_at', null).order('created_at').limit(1000);
+    // Table not there yet (features.sql not run): keep the card hidden
+    if (error || !data?.length) { alertsEl.hidden = true; return; }
+    const names = Object.fromEntries(products.map((p) => [p.id, p.name]));
+    const groups = {};
+    data.forEach((a) => { (groups[`${a.product_id}\u0000${a.size}`] ||= []).push(a); });
+    alertsEl.hidden = false;
+    alertsEl.innerHTML = `<h2 class="stats__h">Waiting for a size</h2>
+      <p class="adm__muted">People who asked to be emailed when a sold-out size is back. Add stock to that size on the Products tab and they each get one email automatically.</p>
+      <table class="stats__table">
+        <thead><tr><th>Product</th><th>Size</th><th>Waiting</th></tr></thead>
+        <tbody>${Object.values(groups).map((g) => `<tr>
+          <td>${esc(names[g[0].product_id] || g[0].product_id)}</td><td>${esc(g[0].size)}</td>
+          <td><details class="adm__waiting"><summary>${g.length}</summary>${g.map((a) => `<a href="mailto:${esc(a.email)}">${esc(a.email)}</a>`).join('<br>')}</details></td>
+        </tr>`).join('')}</tbody>
+      </table>`;
+  }
+
+  /* ---------- Reviews and customer photos (supabase/features.sql) ---------- */
+  const rvList = $('[data-reviews]');
+  const rvCount = $('[data-rv-count]');
+  const stars = (n) => '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n);
+  const rvPhoto = (path) => sb.storage.from('reviews').getPublicUrl(path).data.publicUrl;
+  const RV_ORDER = { pending: 0, approved: 1, hidden: 2 };
+
+  async function loadReviews() {
+    if (!sb) { rvList.innerHTML = '<li class="adm__empty">Reviews show here once the database is connected.</li>'; return; }
+    rvList.innerHTML = '<li class="adm__empty">Loading…</li>';
+    const { data, error } = await sb.from('reviews').select('*').order('created_at', { ascending: false }).limit(500);
+    if (error) {
+      rvList.innerHTML = /reviews/.test(error.message) && /exist|find/.test(error.message)
+        ? '<li class="adm__empty">Reviews need a database update first (supabase/features.sql).</li>'
+        : `<li class="adm__empty is-bad">${esc(error.message)}</li>`;
+      return;
+    }
+    const waiting = data.filter((r) => r.status === 'pending').length;
+    rvCount.hidden = !waiting;
+    rvCount.textContent = waiting;
+    if (!data.length) { rvList.innerHTML = '<li class="adm__empty">No reviews yet.</li>'; return; }
+    const names = Object.fromEntries(products.map((p) => [p.id, p.name]));
+    data.sort((a, b) => RV_ORDER[a.status] - RV_ORDER[b.status]);
+    rvList.innerHTML = data.map((r) => `<li class="adm__row adm__review">
+      ${r.photo ? `<a class="adm__rvphoto" href="${esc(rvPhoto(r.photo))}" target="_blank" rel="noopener"><img src="${esc(rvPhoto(r.photo))}" alt="Photo from ${esc(r.name)}" loading="lazy"></a>` : ''}
+      <div class="adm__rowmain">
+        <b>${esc(names[r.product_id] || r.product_id)} · <span class="adm__stars" aria-label="${r.rating} out of 5">${stars(r.rating)}</span></b>
+        ${r.body ? `<span class="adm__rvbody">${esc(r.body)}</span>` : ''}
+        <span class="adm__muted">${esc(r.name)} · ${day(r.created_at)}${r.order_id ? ` · order #${esc(r.order_id)}` : ''}</span>
+      </div>
+      <div class="adm__orderside">
+        <span class="adm__pill${{ pending: ' adm__pill--ink', approved: ' adm__pill--ok', hidden: '' }[r.status]}">${{ pending: 'Waiting', approved: 'On the site', hidden: 'Hidden' }[r.status]}</span>
+        ${r.status !== 'approved' ? `<button type="button" class="btn" data-rv="approved" data-rv-id="${r.id}">Approve</button>` : ''}
+        ${r.status === 'approved' ? `<button type="button" class="btn btn--line" data-rv="hidden" data-rv-id="${r.id}">Hide</button>` : ''}
+        <button type="button" class="adm__link is-bad" data-rv="delete" data-rv-id="${r.id}" data-rv-photo="${esc(r.photo || '')}">Delete</button>
+      </div>
+    </li>`).join('');
+  }
+  rvList.addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-rv]');
+    if (!b) return;
+    const id = Number(b.dataset.rvId);
+    if (b.dataset.rv === 'delete') {
+      if (!confirm('Delete this review and its photo for good?')) return;
+      b.disabled = true;
+      const { error } = await sb.from('reviews').delete().eq('id', id);
+      if (error) { alert(error.message); loadReviews(); return; }
+      if (b.dataset.rvPhoto) await sb.storage.from('reviews').remove([b.dataset.rvPhoto]);
+    } else {
+      b.disabled = true;
+      const { error } = await sb.from('reviews').update({ status: b.dataset.rv }).eq('id', id);
+      if (error) alert(error.message);
+    }
+    loadReviews();
+  });
+  $('[data-reload-rv]').addEventListener('click', loadReviews);
 
   /* ---------- Admins (owners manage; editors see the other editors) ---------- */
   const adminList = $('[data-admins]');

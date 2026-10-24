@@ -120,6 +120,9 @@ begin
     private.h(new.address), private.h(new.postcode), private.h(new.city), private.h(new.country));
   who_lv := who_en || case when coalesce(new.note, '') <> '' then '<p>Piezīme: ' || private.h(new.note) || '</p>' else '' end;
   who_en := who_en || case when coalesce(new.note, '') <> '' then '<p>Note: ' || private.h(new.note) || '</p>' else '' end;
+  -- Gift message for the parcel (supabase/features.sql); read through to_jsonb so this works before that file has run
+  who_lv := who_lv || case when coalesce(to_jsonb(new) ->> 'gift_note', '') <> '' then '<p><b>Dāvanas ziņa sūtījumam:</b> ' || private.h(to_jsonb(new) ->> 'gift_note') || '</p>' else '' end;
+  who_en := who_en || case when coalesce(to_jsonb(new) ->> 'gift_note', '') <> '' then '<p><b>Gift message for the parcel:</b> ' || private.h(to_jsonb(new) ->> 'gift_note') || '</p>' else '' end;
 
   perform private.send_mail(shop, 'MOYEN HILLS orders',
     format('New %sorder #%s: %s, %s', case when paid then 'paid ' else '' end, new.id, private.eur(coalesce(new.total, new.subtotal)), left(new.full_name, 60)),
