@@ -246,6 +246,22 @@
     $$('[data-panel]').forEach((p) => { p.hidden = p.dataset.panel !== tab.dataset.tab; });
   }));
 
+  // On narrow screens the tab bar scrolls sideways: arrows on whichever side has more tabs
+  const tabBar = $('.adm__tabs');
+  const tabPrev = $('[data-tabs-prev]');
+  const tabNext = $('[data-tabs-next]');
+  const tabArrows = () => {
+    const end = tabBar.scrollWidth - tabBar.clientWidth;
+    tabPrev.hidden = tabBar.scrollLeft <= 4;
+    tabNext.hidden = tabBar.scrollLeft >= end - 4;
+  };
+  tabPrev.addEventListener('click', () => tabBar.scrollBy({ left: -tabBar.clientWidth * 0.7 }));
+  tabNext.addEventListener('click', () => tabBar.scrollBy({ left: tabBar.clientWidth * 0.7 }));
+  tabBar.addEventListener('scroll', tabArrows, { passive: true });
+  addEventListener('resize', tabArrows);
+  new MutationObserver(tabArrows).observe($('[data-view="app"]'), { attributes: true, attributeFilter: ['hidden'] });
+  $$('[data-tab]').forEach((tab) => tab.addEventListener('click', () => tab.scrollIntoView({ block: 'nearest', inline: 'nearest' })));
+
   $$('[data-close]').forEach((b) => b.addEventListener('click', () => b.closest('dialog').close()));
 
   /* ---------- Products ---------- */

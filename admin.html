@@ -87,6 +87,8 @@
 
     <!-- The admin -->
     <section data-view="app" hidden>
+      <div class="adm__tabwrap">
+        <button type="button" class="adm__tabarrow adm__tabarrow--prev" data-tabs-prev aria-label="Scroll tabs left" hidden>&#8249;</button>
       <nav class="adm__tabs" role="tablist" aria-label="Admin sections">
         <button type="button" role="tab" class="adm__tab is-on" data-tab="overview" aria-selected="true">Overview</button>
         <button type="button" role="tab" class="adm__tab" data-tab="products" aria-selected="false">Products</button>
@@ -97,6 +99,8 @@
         <button type="button" role="tab" class="adm__tab" data-tab="admins" aria-selected="false">Team</button>
         <button type="button" role="tab" class="adm__tab" data-tab="log" aria-selected="false">Change log</button>
       </nav>
+        <button type="button" class="adm__tabarrow adm__tabarrow--next" data-tabs-next aria-label="Scroll tabs right" hidden>&#8250;</button>
+      </div>
 
       <!-- Overview: sales and stock at a glance -->
       <div class="adm__panel" data-panel="overview">
