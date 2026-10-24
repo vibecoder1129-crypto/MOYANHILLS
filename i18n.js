@@ -21,6 +21,14 @@
     'MOYEN HILLS. ART WILL TEE: boxy cut-off t-shirt, 100% cotton, screen printed front, back and neck label. Made in Latvia.':
       'MOYEN HILLS. ART WILL TEE: plats t-krekls ar nogrieztu apakšmalu, 100% kokvilna, sietspiede priekšpusē, aizmugurē un uz kakla etiķetes. Ražots Latvijā.',
     'Shop — MOYEN HILLS': 'Veikals — MOYEN HILLS',
+    'Shop MOYEN HILLS: streetwear t-shirts, screen printed and made in Latvia. Free delivery in Latvia, secure card payment, ships in 1–3 days.':
+      'MOYEN HILLS veikals: ielu stila t-krekli ar sietspiedi, ražoti Latvijā. Bezmaksas piegāde Latvijā, droša maksāšana ar karti, nosūtām 1–3 dienās.',
+    'ART WILL TEE by MOYEN HILLS: white boxy cut-off t-shirt, 100% cotton, screen printed front, back and neck label. Made in Latvia, free delivery in Latvia.':
+      'MOYEN HILLS ART WILL TEE: balts plats t-krekls ar nogrieztu apakšmalu, 100% kokvilna, sietspiede priekšpusē, aizmugurē un uz kakla etiķetes. Ražots Latvijā, bezmaksas piegāde Latvijā.',
+    'MOYEN HILLS lookbook: the ART WILL TEE from our first drop, worn. Streetwear made in Latvia.':
+      'MOYEN HILLS lookbook: ART WILL TEE no mūsu pirmās kolekcijas. Ielu stila apģērbs, ražots Latvijā.',
+    'Your MOYEN HILLS account: sign in to see your orders and follow your parcel.':
+      'Tavs MOYEN HILLS konts: pieslēdzies, lai redzētu savus pasūtījumus un sekotu sūtījumam.',
     'Account — MOYEN HILLS': 'Konts — MOYEN HILLS',
     'Terms of sale — MOYEN HILLS': 'Pārdošanas noteikumi — MOYEN HILLS',
     'Terms of sale for MOYEN HILLS.': 'MOYEN HILLS pārdošanas noteikumi.',
@@ -428,6 +436,8 @@
     document.title = t(document.title);
     const desc = document.querySelector('meta[name="description"]');
     if (desc) desc.content = t(desc.content);
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.content = t(ogDesc.content);
     translate(document.body);
   }
   document.querySelectorAll('[data-set-lang]').forEach((a) => {

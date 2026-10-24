@@ -135,6 +135,56 @@ function renderShop() {
   $$('[data-reveal]', grid).forEach(reveal);
 }
 
+/* Product data for Google (price, stock, photos), from the same product the page shows */
+function productData(p) {
+  const site = 'https://moyenhillsofficial.com';
+  const abs = (src) => new URL(src, `${site}/`).href;
+  const url = `${site}/product?id=${encodeURIComponent(p.id)}`;
+  const latvia = { '@type': 'DefinedRegion', addressCountry: 'LV' };
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    '@id': `${url}#product`,
+    name: p.name,
+    sku: p.id,
+    url,
+    image: p.images.map((im) => abs(im.src)),
+    description: [p.description, ...(p.details || [])].filter(Boolean).join(' '),
+    brand: { '@type': 'Brand', name: 'MOYEN HILLS' },
+    ...(p.colour ? { color: p.colour } : {}),
+    offers: {
+      '@type': 'Offer',
+      url,
+      price: Number(p.price).toFixed(2),
+      priceCurrency: 'EUR',
+      availability: isSoldOut(p) ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+      itemCondition: 'https://schema.org/NewCondition',
+      seller: { '@type': 'Organization', name: 'MOYEN HILLS' },
+      shippingDetails: {
+        '@type': 'OfferShippingDetails',
+        shippingRate: { '@type': 'MonetaryAmount', value: 0, currency: 'EUR' },
+        shippingDestination: latvia,
+      },
+      hasMerchantReturnPolicy: {
+        '@type': 'MerchantReturnPolicy',
+        applicableCountry: 'LV',
+        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+        merchantReturnDays: 14,
+        returnMethod: 'https://schema.org/ReturnByMail',
+        returnFees: 'https://schema.org/ReturnFeesCustomerResponsibility',
+      },
+    },
+  };
+  let el = $('script[data-product-ld]');
+  if (!el) {
+    el = document.createElement('script');
+    el.type = 'application/ld+json';
+    el.dataset.productLd = '';
+    document.head.append(el);
+  }
+  el.textContent = JSON.stringify(data);
+}
+
 /* Product page */
 function renderProductPage(p) {
   const pdp = $('[data-pdp]');
@@ -144,6 +194,7 @@ function renderProductPage(p) {
     return;
   }
   document.title = `${p.name} — MOYEN HILLS`;
+  productData(p);
 
   // Gallery
   const gal = $('[data-gallery]', pdp);
