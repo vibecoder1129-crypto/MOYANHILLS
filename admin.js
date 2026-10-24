@@ -49,7 +49,7 @@
       if (error) throw error;
       return { src: sb.storage.from('products').getPublicUrl(path).data.publicUrl };
     },
-    orders: () => sb.from('orders').select('*').order('created_at', { ascending: false }).limit(200),
+    orders: () => sb.from('orders').select('*').order('created_at', { ascending: false }).limit(1000),
     setStatus: (id, status) => sb.from('orders').update({ status }).eq('id', id),
     setTracking: (id, row) => sb.from('orders').update(row).eq('id', id),
   };
@@ -591,12 +591,44 @@
   // Card orders (Stripe). Only ship ones that say "Card: paid".
   const PAYMENT = { unpaid: 'Card: not paid yet', pending: 'Card: bank payment on its way', paid: 'Card: paid', failed: 'Card: payment failed', expired: 'Card: never paid' };
 
+  const orderQ = $('[data-order-q]');
+  const orderFilter = $('[data-order-filter]');
+  const orderCount = $('[data-order-count]');
+  let allOrders = [];
+  // Which orders each choice in the "Which orders" menu shows
+  const SHOW = {
+    all: () => true,
+    toship: (o) => isSale(o) && !['shipped', 'delivered'].includes(o.status),
+    shipped: (o) => o.status === 'shipped',
+    delivered: (o) => o.status === 'delivered',
+    unpaid: (o) => o.status !== 'cancelled' && !isSale(o),
+    cancelled: (o) => o.status === 'cancelled',
+  };
+  function shownOrders() {
+    const raw = orderQ.value.trim().toLowerCase();
+    const q = raw.replace(/\s/g, '');
+    const show = SHOW[orderFilter.value] || SHOW.all;
+    // "#12" finds order 12 only; anything else searches name, email, phone, tracking number, city and promo code
+    const hit = /^#\d+$/.test(q) ? (o) => String(o.id) === q.slice(1)
+      : (o) => [o.id, o.full_name, o.email, o.phone, o.tracking_number, o.city, o.promo_code]
+        .some((v) => v != null && String(v).toLowerCase().replace(/\s/g, '').includes(q));
+    return allOrders.filter((o) => show(o) && (!q || hit(o)));
+  }
+
   async function loadOrders() {
     orderList.innerHTML = '<li class="adm__empty">Loading…</li>';
+    orderCount.textContent = '';
     const { data, error } = await api.orders();
     if (error) { orderList.innerHTML = `<li class="adm__empty is-bad">${esc(error.message)}</li>`; return; }
-    if (!data.length) { orderList.innerHTML = `<li class="adm__empty">${sb ? 'No orders yet.' : 'Orders show here once the database is connected. Until then they arrive by email.'}</li>`; return; }
-    orderList.innerHTML = data.map((o) => {
+    allOrders = data || [];
+    renderOrders();
+  }
+  function renderOrders() {
+    if (!allOrders.length) { orderList.innerHTML = `<li class="adm__empty">${sb ? 'No orders yet.' : 'Orders show here once the database is connected. Until then they arrive by email.'}</li>`; return; }
+    const list = shownOrders();
+    orderCount.textContent = list.length === allOrders.length ? `${list.length} order${list.length === 1 ? '' : 's'}` : `${list.length} of ${allOrders.length} orders`;
+    if (!list.length) { orderList.innerHTML = '<li class="adm__empty">No orders match.</li>'; return; }
+    orderList.innerHTML = list.map((o) => {
       const items = (o.items || []).map((i) => `${esc(i.qty)} × ${esc(i.name)} (${esc(i.size)})`).join(', ');
       const when = new Date(o.created_at).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
       const addr = [o.address, o.postcode, o.city, o.country].filter(Boolean).map(esc).join(', ');
@@ -633,7 +665,9 @@
     const { error } = await api.setStatus(Number(sel.dataset.status), sel.value);
     sel.disabled = false;
     if (error) { alert(error.message); loadOrders(); return; }
-    if (sel.value === 'cancelled') loadProducts();
+    const o = allOrders.find((x) => x.id === Number(sel.dataset.status));
+    if (o) o.status = sel.value;
+    if (sel.value === 'cancelled') { loadProducts(); loadOrders(); }
   });
   // Tracking number: saving it marks the order shipped and emails the customer (supabase/tracking.sql)
   orderList.addEventListener('submit', async (e) => {
@@ -653,6 +687,34 @@
     loadOrders();
   });
   $('[data-reload-orders]').addEventListener('click', loadOrders);
+  orderQ.addEventListener('input', renderOrders);
+  orderFilter.addEventListener('change', renderOrders);
+
+  // Download the orders shown (search and filter applied) as a spreadsheet file, e.g. for the accountant
+  $('[data-export-orders]').addEventListener('click', () => {
+    const list = shownOrders();
+    if (!list.length) { alert('No orders to export.'); return; }
+    const day = (d) => (d ? new Date(d).toISOString().slice(0, 10) : '');
+    const num = (n) => (n == null || n === '' ? '' : Number(n).toFixed(2));
+    const cols = [
+      ['Order', (o) => o.id], ['Date', (o) => day(o.created_at)], ['Status', (o) => o.status], ['Payment', (o) => o.payment || ''],
+      ['Name', (o) => o.full_name], ['Email', (o) => o.email], ['Phone', (o) => o.phone],
+      ['Address', (o) => o.address], ['Postcode', (o) => o.postcode], ['City', (o) => o.city], ['Country', (o) => o.country],
+      ['Items', (o) => (o.items || []).map((i) => `${i.qty} x ${i.name} (${i.size})`).join('; ')], ['Pieces', pieces],
+      ['Subtotal EUR', (o) => num(o.subtotal)], ['Promo code', (o) => o.promo_code], ['Discount EUR', (o) => num(o.discount)],
+      ['Delivery EUR', (o) => num(o.shipping)], ['Total EUR', (o) => num(o.total ?? o.subtotal)],
+      ['Carrier', (o) => CARRIERS[o.carrier] || ''], ['Tracking number', (o) => o.tracking_number],
+      ['Shipped', (o) => day(o.shipped_at)], ['Delivered', (o) => day(o.delivered_at)],
+    ];
+    // Quote every cell; a leading = + - @ is neutralised so a spreadsheet never runs it as a formula
+    const cell = (v) => { let t = v == null ? '' : String(v); if (/^[=+\-@\t\r]/.test(t) && !/^-?\d+(\.\d+)?$/.test(t)) t = `'${t}`; return `"${t.replace(/"/g, '""')}"`; };
+    const csv = [cols.map(([h]) => cell(h)).join(','), ...list.map((o) => cols.map(([, f]) => cell(f(o))).join(','))].join('\r\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = `moyen-hills-orders-${day(new Date())}.csv`;
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  });
 
   /* ---------- Overview: sales and stock ---------- */
   const statsEl = $('[data-stats]');
