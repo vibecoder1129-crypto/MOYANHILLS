@@ -71,6 +71,11 @@
         const { lang, ...rest } = order;
         ({ error } = await sb.from('orders').insert({ user_id: state.user?.id ?? null, ...rest }));
       }
+      // Database not updated for gift notes yet (supabase/features.sql): save the order without it
+      if (error && /gift_note/.test(error.message)) {
+        const { gift_note: _, ...rest } = order;
+        ({ error } = await sb.from('orders').insert({ user_id: state.user?.id ?? null, ...rest }));
+      }
       if (error) console.warn('Order not saved:', error.message);
       if (state.user) {
         try {
@@ -126,6 +131,21 @@
     const { data, error } = await sb.from('orders').select('*').eq('user_id', state.user.id).order('created_at', { ascending: false });
     if (error) { list.innerHTML = `<li class="orders__empty">${esc(t('Could not load your orders.'))} ${esc(error.message)}</li>`; return; }
     if (!data.length) { list.innerHTML = `<li class="orders__empty">${esc(t('No orders yet.'))} <a href="/shop">${esc(t('Visit the shop'))}</a></li>`; return; }
+    // Reviews: once an order is sent, each piece in it can be reviewed (on its newest order only)
+    const { data: mine, error: rvError } = await sb.from('reviews').select('product_id, rating, name, body, photo, status');
+    myReviews = Object.fromEntries((rvError ? [] : mine).map((r) => [r.product_id, r]));
+    const offered = new Set();
+    const reviewLine = (o) => {
+      if (rvError || !['shipped', 'delivered'].includes(o.status)) return '';
+      const items = (o.items || []).filter((i) => i.id && !offered.has(i.id) && offered.add(i.id));
+      return items.map((i) => {
+        const r = myReviews[i.id];
+        const state = r && t({ pending: 'Waiting for approval', approved: 'On the site', hidden: 'Not shown' }[r.status]);
+        return `<p class="order__review">${r
+          ? `<span>${esc(t('Your review of {name}', { name: i.name }))}: ${'★'.repeat(r.rating)} · ${esc(state)}</span><button type="button" class="acct__link" data-write-review="${esc(i.id)}" data-review-name="${esc(i.name)}">${esc(t('Edit'))}</button>`
+          : `<span>${esc(t('How is your {name}?', { name: i.name }))}</span><button type="button" class="acct__link" data-write-review="${esc(i.id)}" data-review-name="${esc(i.name)}">${esc(t('Write a review'))}</button>`}</p>`;
+      }).join('');
+    };
     list.innerHTML = data.map((o) => {
       const items = (o.items || []).map((i) => `${esc(i.qty)} × ${esc(i.name)}, ${esc(t('size {size}', { size: i.size }))}`).join('<br>');
       const date = new Date(o.created_at).toLocaleDateString(LV ? 'lv-LV' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -134,8 +154,103 @@
         <p class="order__items">${items}</p>
         <div class="order__bottom"><span>${esc(date)}</span><b>${esc(money(Number(o.total ?? o.subtotal), o.currency))}</b></div>
         ${tracking(o)}
+        ${reviewLine(o)}
       </li>`;
     }).join('');
+  }
+
+  /* ---------------- Reviews with a photo (supabase/features.sql) ---------------- */
+  let myReviews = {};
+  const rvDialog = $('[data-review-dialog]');
+  const rvForm = $('[data-review-form]');
+  let rvProduct = null;
+  const rvSay = (text, bad) => { const el = $('[data-review-msg]', rvForm); el.textContent = text; el.classList.toggle('is-error', !!bad); };
+  const paintStars = () => {
+    const n = Number(rvForm.elements.rating.value) || 0;
+    rvForm.querySelectorAll('[data-review-stars] label').forEach((l, i) => l.classList.toggle('is-on', i < n));
+  };
+
+  // Photos are redrawn at up to 1600 px as JPEG: smaller uploads, and the redraw drops
+  // the photo's hidden details (such as where it was taken)
+  async function shrink(file) {
+    let img;
+    try { img = await createImageBitmap(file, { imageOrientation: 'from-image' }); } catch { img = null; }
+    if (!img) throw new Error(t('That photo could not be used. Try a JPG or PNG.'));
+    const k = Math.min(1, 1600 / Math.max(img.width, img.height));
+    const c = document.createElement('canvas');
+    c.width = Math.round(img.width * k);
+    c.height = Math.round(img.height * k);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    return new Promise((ok, bad) => c.toBlob((b) => (b ? ok(b) : bad(new Error(t('That photo could not be used. Try a JPG or PNG.')))), 'image/jpeg', 0.85));
+  }
+
+  if (page && enabled && rvDialog) {
+    page.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-write-review]');
+      if (!b) return;
+      rvProduct = b.dataset.writeReview;
+      const r = myReviews[rvProduct];
+      rvForm.reset();
+      rvSay('');
+      $('[data-review-title]', rvForm).textContent = t('Review: {name}', { name: b.dataset.reviewName });
+      if (r) {
+        rvForm.querySelector(`[name="rating"][value="${r.rating}"]`).checked = true;
+        rvForm.elements.body.value = r.body || '';
+      }
+      rvForm.elements.name.value = r?.name || (state.profile?.full_name || '').split(' ')[0];
+      const prev = $('[data-review-preview]', rvForm);
+      prev.hidden = !r?.photo;
+      if (r?.photo) prev.src = sb.storage.from('reviews').getPublicUrl(r.photo).data.publicUrl;
+      paintStars();
+      rvDialog.showModal();
+    });
+    $('[data-review-close]', rvForm).addEventListener('click', () => rvDialog.close());
+    rvForm.addEventListener('change', (e) => {
+      if (e.target.name === 'rating') paintStars();
+      if (e.target.name === 'photo') {
+        const f = e.target.files[0];
+        const prev = $('[data-review-preview]', rvForm);
+        prev.hidden = !f;
+        if (f) prev.src = URL.createObjectURL(f);
+      }
+    });
+    rvForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const rating = Number(rvForm.elements.rating.value);
+      const name = rvForm.elements.name.value.trim();
+      if (!rating) { rvSay(t('Please choose 1 to 5 stars.'), true); return; }
+      if (!name) { rvSay(t('Please enter your name.'), true); rvForm.elements.name.focus(); return; }
+      const button = rvForm.querySelector('[type="submit"]');
+      button.disabled = true;
+      const file = rvForm.elements.photo.files[0];
+      const old = myReviews[rvProduct]?.photo;
+      let path = null;
+      try {
+        if (file) {
+          rvSay(t('Uploading your photo…'));
+          const blob = await shrink(file);
+          path = `${state.user.id}/${crypto.randomUUID()}.jpg`;
+          const up = await sb.storage.from('reviews').upload(path, blob, { contentType: 'image/jpeg', upsert: false });
+          if (up.error) throw new Error(t('Could not upload the photo.'));
+        }
+        rvSay(t('Sending…'));
+        const { error } = await sb.rpc('submit_review', {
+          p_product: rvProduct, p_rating: rating, p_body: rvForm.elements.body.value, p_name: name, p_photo: path,
+        });
+        if (error) {
+          if (path) await sb.storage.from('reviews').remove([path]);
+          throw new Error(tMsg(error.message));
+        }
+        // A new photo replaces the old one
+        if (path && old) await sb.storage.from('reviews').remove([old]);
+        rvDialog.close();
+        renderAccount();
+      } catch (err) {
+        rvSay(err.message, true);
+      } finally {
+        button.disabled = false;
+      }
+    });
   }
 
   async function route() {
@@ -282,6 +397,9 @@
       e.preventDefault();
       if (delForm.elements.confirm.value.trim() !== 'DELETE') { say('[data-data-msg]', t('Type DELETE in capitals to confirm.'), true); return; }
       say('[data-data-msg]', t('Deleting your account…'));
+      // Review photos first (the reviews themselves go with the account)
+      const { data: files } = await sb.storage.from('reviews').list(state.user.id, { limit: 100 });
+      if (files?.length) await sb.storage.from('reviews').remove(files.map((f) => `${state.user.id}/${f.name}`));
       const { error } = await sb.rpc('delete_my_account');
       if (error) { say('[data-data-msg]', `${t('Could not delete your account.')} ${tMsg(error.message)} ${t('Email us and we will do it for you.')}`, true); return; }
       delForm.reset();

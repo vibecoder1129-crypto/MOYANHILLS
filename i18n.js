@@ -21,6 +21,14 @@
     'MOYEN HILLS. ART WILL TEE: boxy cut-off t-shirt, 100% cotton, screen printed front, back and neck label. Made in Latvia.':
       'MOYEN HILLS. ART WILL TEE: plats t-krekls ar nogrieztu apakšmalu, 100% kokvilna, sietspiede priekšpusē, aizmugurē un uz kakla etiķetes. Ražots Latvijā.',
     'Shop — MOYEN HILLS': 'Veikals — MOYEN HILLS',
+    'Shop MOYEN HILLS: streetwear t-shirts, screen printed and made in Latvia. Free delivery in Latvia, secure card payment, ships in 1–3 days.':
+      'MOYEN HILLS veikals: ielu stila t-krekli ar sietspiedi, ražoti Latvijā. Bezmaksas piegāde Latvijā, droša maksāšana ar karti, nosūtām 1–3 dienās.',
+    'ART WILL TEE by MOYEN HILLS: white boxy cut-off t-shirt, 100% cotton, screen printed front, back and neck label. Made in Latvia, free delivery in Latvia.':
+      'MOYEN HILLS ART WILL TEE: balts plats t-krekls ar nogrieztu apakšmalu, 100% kokvilna, sietspiede priekšpusē, aizmugurē un uz kakla etiķetes. Ražots Latvijā, bezmaksas piegāde Latvijā.',
+    'MOYEN HILLS lookbook: the ART WILL TEE from our first drop, worn. Streetwear made in Latvia.':
+      'MOYEN HILLS lookbook: ART WILL TEE no mūsu pirmās kolekcijas. Ielu stila apģērbs, ražots Latvijā.',
+    'Your MOYEN HILLS account: sign in to see your orders and follow your parcel.':
+      'Tavs MOYEN HILLS konts: pieslēdzies, lai redzētu savus pasūtījumus un sekotu sūtījumam.',
     'Account — MOYEN HILLS': 'Konts — MOYEN HILLS',
     'Terms of sale — MOYEN HILLS': 'Pārdošanas noteikumi — MOYEN HILLS',
     'Terms of sale for MOYEN HILLS.': 'MOYEN HILLS pārdošanas noteikumi.',
@@ -190,6 +198,8 @@
     'Postcode': 'Pasta indekss',
     'Country': 'Valsts',
     'Note (optional)': 'Piezīme (nav obligāti)',
+    'Gift message (optional)': 'Dāvanas ziņa (nav obligāti)',
+    'We print it and put it in the parcel': 'Mēs to izdrukāsim un ieliksim sūtījumā',
     'Signed in — this order will be saved to your account.': 'Tu esi pieslēdzies — pasūtījums tiks saglabāts tavā kontā.',
     'Send order request': 'Nosūtīt pasūtījumu',
     'Order received': 'Pasūtījums saņemts',
@@ -321,6 +331,52 @@
     'Email rate limit exceeded': 'Nosūtīts pārāk daudz e-pastu. Lūdzu, pamēģini vēlāk.',
     'New password should be different from the old password.': 'Jaunajai parolei jāatšķiras no vecās.',
 
+    // Notify me when a size is back (product page)
+    'Your size sold out? We’ll email you when it’s back.': 'Tavs izmērs izpārdots? Paziņosim e-pastā, kad tas atkal būs pieejams.',
+    'Your email': 'Tavs e-pasts',
+    'Notify me': 'Paziņot man',
+    'One email when it’s back, nothing else.': 'Viens e-pasts, kad tas atgriezīsies, nekas vairāk.',
+    'Done. We’ll email you when {size} is back.': 'Gatavs. Uzrakstīsim tev, kad {size} atkal būs pieejams.',
+    'That size is not available.': 'Šis izmērs nav pieejams.',
+    'Too many requests. Please wait a few minutes.': 'Pārāk daudz pieprasījumu. Lūdzu, pagaidi dažas minūtes.',
+
+    // Reviews and buyers' photos (product page and account)
+    'Worn by you': 'Valkā mūsu pircēji',
+    'Bought one?': 'Nopirki?',
+    'Review it from your account': 'Novērtē to savā kontā',
+    'and send us a photo of you in it.': 'un atsūti mums foto, kurā to valkā.',
+    '{n} out of 5': '{n} no 5',
+    '{avg} from {n} reviews': '{avg} no {n} atsauksmēm',
+    '{avg} from 1 review': '{avg} no 1 atsauksmes',
+    '{name} wearing {product}': '{name} valkā {product}',
+    'Waiting for approval': 'Gaida apstiprinājumu',
+    'On the site': 'Redzama vietnē',
+    'Not shown': 'Netiek rādīta',
+    'Your review of {name}': 'Tava atsauksme par {name}',
+    'Edit': 'Labot',
+    'How is your {name}?': 'Kā tev patīk {name}?',
+    'Write a review': 'Uzrakstīt atsauksmi',
+    'Review: {name}': 'Atsauksme: {name}',
+    'Your rating': 'Tavs vērtējums',
+    '1 star': '1 zvaigzne',
+    '2 stars': '2 zvaigznes',
+    '3 stars': '3 zvaigznes',
+    '4 stars': '4 zvaigznes',
+    '5 stars': '5 zvaigznes',
+    'Your name, shown with the review': 'Tavs vārds, ko rādīsim pie atsauksmes',
+    'Your review (optional)': 'Tava atsauksme (nav obligāti)',
+    'How does it fit and feel?': 'Kā tas sēž un kāds ir sajūtās?',
+    'A photo of you in it (optional)': 'Foto, kurā tu to valkā (nav obligāti)',
+    'Your photo': 'Tavs foto',
+    'We read every review before it goes on the site. Once approved, your name, review and photo are public on the product page.': 'Mēs izlasām katru atsauksmi, pirms tā parādās vietnē. Pēc apstiprināšanas tavs vārds, atsauksme un foto būs redzami produkta lapā.',
+    'Send review': 'Nosūtīt atsauksmi',
+    'Uploading your photo…': 'Augšupielādējam foto…',
+    'Could not upload the photo.': 'Neizdevās augšupielādēt foto.',
+    'That photo could not be used. Try a JPG or PNG.': 'Šo foto nevar izmantot. Pamēģini JPG vai PNG.',
+    'That photo could not be used.': 'Šo foto nevar izmantot.',
+    'Please choose 1 to 5 stars.': 'Lūdzu, izvēlies no 1 līdz 5 zvaigznēm.',
+    'You can review a piece once your order with it has been sent.': 'Atsauksmi var uzrakstīt, kad pasūtījums ar šo preci ir nosūtīts.',
+
     // Cancel an order (withdraw.html)
     'Withdraw from contract here': 'Atkāpties no līguma šeit',
     'Email used for the order': 'Pasūtījumā norādītais e-pasts',
@@ -381,7 +437,10 @@
 
   /* Translate everything under root: text, and the attributes people see or hear */
   const ATTRS = ['aria-label', 'placeholder', 'title', 'alt'];
-  const SKIP = 'script, style, textarea, [data-lang], [translate="no"]';
+  // <html translate="no"> only stops the browser's own translator: "body" keeps it from skipping
+  // the whole page here. Text boxes keep what is typed in them, but their placeholder is translated.
+  const SKIP_ATTRS = '[data-lang], body [translate="no"]';
+  const SKIP = `script, style, textarea, ${SKIP_ATTRS}`;
   function translate(root = document.body) {
     if (lang === 'en' || !root) return;
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
@@ -395,7 +454,7 @@
     }
     const els = root.querySelectorAll(ATTRS.map((a) => `[${a}]`).join(','));
     for (const el of [root, ...els]) {
-      if (!el.getAttribute || el.closest(SKIP)) continue;
+      if (!el.getAttribute || el.closest(SKIP_ATTRS)) continue;
       for (const a of ATTRS) {
         const v = el.getAttribute(a);
         if (v && lookup.has(norm(v))) el.setAttribute(a, lookup.get(norm(v)));
@@ -428,6 +487,8 @@
     document.title = t(document.title);
     const desc = document.querySelector('meta[name="description"]');
     if (desc) desc.content = t(desc.content);
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.content = t(ogDesc.content);
     translate(document.body);
   }
   document.querySelectorAll('[data-set-lang]').forEach((a) => {
