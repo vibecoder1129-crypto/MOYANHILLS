@@ -413,9 +413,28 @@ function renderPromo() {
     $('[data-discount]').textContent = `−${money(discount())}`;
     $('[data-grand-total]').textContent = money(grandTotal());
   }
+  autoPromo();
 }
 
-async function applyPromo() {
+/* A campaign code (campaign.js) or one from a link (?code=…) goes in by itself, once per visit,
+ * unless the visitor removed it. The database still checks it like a typed code. */
+let autoTried = false;
+function autoPromo() {
+  if (autoTried || promo || !cart.length) return;
+  let code = '';
+  try {
+    if (sessionStorage.getItem('mh-code-off')) return;
+    code = sessionStorage.getItem('mh-code') || '';
+  } catch { /* storage blocked */ }
+  if (!code && window.mhCampaign?.live()) code = window.mhCampaign.code;
+  const input = $('[data-promo-input]');
+  if (!code || !input) return;
+  autoTried = true;
+  input.value = code;
+  applyPromo(true);
+}
+
+async function applyPromo(quiet = false) {
   const input = $('[data-promo-input]');
   const msg = $('[data-promo-msg]');
   const btn = $('[data-promo-apply]');
@@ -424,12 +443,16 @@ async function applyPromo() {
   msg.classList.remove('is-error');
   try {
     const res = await window.mhData.checkPromo(input.value, subtotal());
-    if (!res?.ok) { msg.textContent = tMsg(res?.message || 'That code is not valid.'); msg.classList.add('is-error'); return; }
+    if (!res?.ok) {
+      if (quiet) { input.value = ''; msg.textContent = ''; return; } // a stale link or code: say nothing
+      msg.textContent = tMsg(res?.message || 'That code is not valid.'); msg.classList.add('is-error'); return;
+    }
     promo = { code: res.code, discount: Number(res.discount) || 0, label: res.label || '' };
     input.value = '';
     msg.textContent = t('Code applied: you save {amount}.', { amount: money(discount()) });
     renderPromo();
   } catch {
+    if (quiet) { msg.textContent = ''; return; }
     msg.textContent = t('Could not check the code. Please try again.');
     msg.classList.add('is-error');
   } finally {
@@ -453,9 +476,11 @@ function recheckPromo() {
   }, 250);
 }
 
-$('[data-promo-apply]')?.addEventListener('click', applyPromo);
+$('[data-promo-apply]')?.addEventListener('click', () => applyPromo());
 $('[data-promo-input]')?.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); applyPromo(); } });
-$('[data-promo-remove]')?.addEventListener('click', () => { promo = null; $('[data-promo-msg]').textContent = ''; renderPromo(); });
+$('[data-promo-remove]')?.addEventListener('click', () => {
+  try { sessionStorage.setItem('mh-code-off', '1'); } catch { /* fine */ }
+  promo = null; $('[data-promo-msg]').textContent = ''; renderPromo(); });
 
 /* ---------------- Card payments (Stripe), once config.js turns them on ----------------
  * The order is saved first, so the database checks prices, promo code and stock, holds the
