@@ -132,7 +132,7 @@
       $('[data-preview]').hidden = false;
       $('[data-tab="log"]').hidden = true;
       $('[data-tab="admins"]').hidden = true;
-      loadStats(); loadProducts(); loadPromos(); loadOrders(); loadWithdrawals(); loadReviews();
+      loadStats(); loadVisits(); loadProducts(); loadPromos(); loadOrders(); loadWithdrawals(); loadReviews();
       return;
     }
     shownFor = '';
@@ -150,7 +150,9 @@
     $$('[data-editor-only]').forEach((el) => { el.hidden = role === 'owner'; });
     show('app');
     shownFor = myEmail;
-    loadStats(); loadProducts(); loadPromos(); loadOrders(); loadWithdrawals(); loadReviews(); loadAlerts(); loadLog(); loadAdmins();
+    // This device belongs to the team: the shop's own visits are not counted (app.js)
+    try { localStorage.setItem('mh-team', '1'); } catch { /* fine */ }
+    loadStats(); loadVisits(); loadProducts(); loadPromos(); loadOrders(); loadWithdrawals(); loadReviews(); loadAlerts(); loadLog(); loadAdmins();
   }
 
   /* ---------- Two-step code (authenticator app) ---------- */
@@ -810,6 +812,61 @@
     $$('.bars__bar', statsEl).forEach((b) => b.style.setProperty('--h', `${b.dataset.h}%`));
   }
   $('[data-reload-stats]').addEventListener('click', () => { loadStats(); if (sb) loadAlerts(); });
+
+  /* ---------- Visitors (anonymous counts, supabase/visits.sql) ---------- */
+  const visitsEl = $('[data-visits]');
+  const visitDays = $('[data-visit-days]');
+  const SOURCE_NAMES = { direct: 'Direct / typed in', instagram: 'Instagram', tiktok: 'TikTok', facebook: 'Facebook', google: 'Google',
+    bing: 'Bing', youtube: 'YouTube', x: 'X (Twitter)', snapchat: 'Snapchat', pinterest: 'Pinterest', email: 'Email',
+    sendinblue: 'Email (Brevo)', brevo: 'Email (Brevo)' };
+  const DEVICE_NAMES = { phone: 'Phone', tablet: 'Tablet', computer: 'Computer' };
+  const pageName = (p) => ({ '/': 'Home', '/shop': 'Shop', '/lookbook': 'Lookbook', '/account': 'Account', '/privacy': 'Privacy',
+    '/terms': 'Terms', '/withdraw': 'Cancel an order' }[p] || (p.startsWith('/product') ? `Product${p.includes('id=') ? ` (${p.split('id=')[1]})` : ''}` : p));
+  async function loadVisits() {
+    if (!sb) { visitsEl.innerHTML = '<p class="adm__empty">Visitor numbers show here once the database is connected.</p>'; return; }
+    visitsEl.innerHTML = '<p class="adm__empty">Loading…</p>';
+    const days = Number(visitDays.value) || 30;
+    const [{ data: v, error }, { data: orders }] = await Promise.all([sb.rpc('visit_stats', { p_days: days }), api.orders()]);
+    if (error) {
+      const missing = /visit_stats|function/i.test(error.message);
+      visitsEl.innerHTML = `<p class="adm__empty${missing ? '' : ' is-bad'}">${missing ? 'Visitor counting is not switched on yet: run supabase/visits.sql in the Supabase SQL Editor.' : esc(error.message)}</p>`;
+      return;
+    }
+    const from = new Date(); from.setHours(0, 0, 0, 0); from.setDate(from.getDate() - (days - 1));
+    const sales = (orders || []).filter((o) => isSale(o) && new Date(o.paid_at || o.created_at) >= from).length;
+    const people = Number(v.total?.visitors) || 0;
+    const rate = people ? `${((sales / people) * 100).toFixed(1).replace(/\.0$/, '')}%` : '—';
+    const per = v.per_day || [];
+    const top = Math.max(...per.map((d) => d.visitors), 1);
+    const every = per.length > 31 ? 7 : per.length > 14 ? 3 : 1;
+    const tile = (label, value, sub = '') => `<div class="stat"><span class="stat__label">${label}</span><b class="stat__value">${value}</b>${sub ? `<span class="adm__muted">${sub}</span>` : ''}</div>`;
+    const table = (title, head, rows) => `<section class="adm__card stats__box"><h2 class="stats__h">${title}</h2>${rows.length
+      ? `<table class="stats__table"><thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table>`
+      : '<p class="adm__muted">Nothing yet.</p>'}</section>`;
+    const devTotal = (v.devices || []).reduce((n, d) => n + d.visitors, 0) || 1;
+    visitsEl.innerHTML = `
+      <div class="stats">
+        ${tile('Visitors today', v.today?.visitors ?? 0, `${v.today?.views ?? 0} page view${v.today?.views === 1 ? '' : 's'}`)}
+        ${tile(`Visitors, ${days} days`, people, 'people per day, added up')}
+        ${tile(`Page views, ${days} days`, v.total?.views ?? 0, people ? `${(v.total.views / people).toFixed(1)} per visitor` : '')}
+        ${tile('Orders per visitor', rate, `${sales} paid order${sales === 1 ? '' : 's'} in ${days} days`)}
+      </div>
+      <section class="adm__card stats__box">
+        <h2 class="stats__h">Visitors per day</h2>
+        <div class="bars bars--auto" data-n="${per.length}" role="img" aria-label="Visitors per day">
+          ${per.map((d, i) => `<div class="bars__col" title="${shortDay(d.day)}: ${d.visitors} visitor${d.visitors === 1 ? '' : 's'}, ${d.views} page view${d.views === 1 ? '' : 's'}"><span class="bars__bar" data-h="${Math.round((d.visitors / top) * 100)}"></span><span class="bars__day">${(per.length - 1 - i) % every === 0 ? new Date(d.day).getDate() : '&nbsp;'}</span></div>`).join('')}
+        </div>
+      </section>
+      ${table('Where they come from', ['Source', 'Visitors'], (v.sources || []).map((r) => `<tr><td>${esc(SOURCE_NAMES[r.source] || r.source)}</td><td>${r.visitors}</td></tr>`))}
+      ${table('Most viewed pages', ['Page', 'Views', 'Visitors'], (v.pages || []).map((r) => `<tr><td>${esc(pageName(r.path))}</td><td>${r.views}</td><td>${r.visitors}</td></tr>`))}
+      ${table('Devices', ['Device', 'Visitors', 'Share'], (v.devices || []).map((r) => `<tr><td>${esc(DEVICE_NAMES[r.device] || r.device)}</td><td>${r.visitors}</td><td>${Math.round((r.visitors / devTotal) * 100)}%</td></tr>`))}
+      <p class="adm__muted">Anonymous and cookie-free: a visitor is counted once per day, so the same person on two days counts twice. Robots, browsers that ask not to be tracked and devices that opened this admin page are not counted. Kept for 13 months.</p>`;
+    const bars = $('.bars--auto', visitsEl);
+    bars?.style.setProperty('--n', bars.dataset.n);
+    $$('.bars__bar', visitsEl).forEach((b) => b.style.setProperty('--h', `${b.dataset.h}%`));
+  }
+  $('[data-reload-visits]').addEventListener('click', loadVisits);
+  visitDays.addEventListener('change', loadVisits);
 
   /* ---------- Cancellations (sent on withdraw.html) ---------- */
   const wdList = $('[data-withdrawals]');

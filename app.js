@@ -860,3 +860,36 @@ window.mhData.catalog.then(({ products }) => {
   renderCart();
   document.documentElement.classList.add('is-loaded');
 });
+
+/* ---------------- Visitor count (supabase/visits.sql) ----------------
+ * One anonymous count per page view, for the admin's Visitors tab. No cookies and nothing
+ * stored in the browser; the database keeps only the page, where the visit came from
+ * (e.g. "instagram"), the device type and a one-day hash, never the IP address.
+ * Browsers that ask not to be tracked, robots, previews and the shop's own team
+ * (anyone who opened the admin on this device) are not counted. */
+(() => {
+  const sb = window.mhData.supabase;
+  if (!sb || navigator.webdriver || navigator.doNotTrack === '1' || window.doNotTrack === '1' || navigator.globalPrivacyControl) return;
+  if (location.hostname === 'localhost' || location.hostname.endsWith('.netlify.app')) return;
+  try { if (localStorage.getItem('mh-team')) return; } catch { /* storage blocked: count it */ }
+  const qs = new URLSearchParams(location.search);
+  let source = qs.get('utm_source') || qs.get('ref') || '';
+  if (!source && document.referrer) {
+    try {
+      const host = new URL(document.referrer).hostname.replace(/^www\.|^m\.|^l\.|^lm\./, '');
+      if (host && host !== location.hostname.replace(/^www\./, '')) {
+        const known = [['instagram', 'instagram'], ['tiktok', 'tiktok'], ['facebook', 'facebook'], ['google', 'google'],
+          ['bing', 'bing'], ['youtube', 'youtube'], ['t.co', 'x'], ['twitter', 'x'], ['snapchat', 'snapchat'], ['pinterest', 'pinterest'],
+          ['sendibt', 'email'], ['brevo', 'email'], ['mail', 'email']];
+        source = (known.find(([k]) => host.includes(k)) || [null, host])[1];
+      }
+    } catch { /* odd referrer: count as direct */ }
+  }
+  const w = Math.min(screen.width || innerWidth, innerWidth || screen.width);
+  const device = w < 768 ? 'phone' : w < 1100 && matchMedia('(pointer: coarse)').matches ? 'tablet' : 'computer';
+  const path = location.pathname === '/product' || location.pathname === '/product.html'
+    ? `/product${qs.get('id') ? `?id=${qs.get('id')}` : ''}` : location.pathname;
+  const send = () => sb.rpc('track_visit', { p_path: path, p_source: source, p_device: device }).then(() => {}, () => {});
+  if (document.visibilityState === 'prerender') document.addEventListener('visibilitychange', send, { once: true });
+  else setTimeout(send, 800);
+})();
