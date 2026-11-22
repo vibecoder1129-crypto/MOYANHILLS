@@ -91,6 +91,7 @@
         <button type="button" class="adm__tabarrow adm__tabarrow--prev" data-tabs-prev aria-label="Scroll tabs left" hidden>&#8249;</button>
       <nav class="adm__tabs" role="tablist" aria-label="Admin sections">
         <button type="button" role="tab" class="adm__tab is-on" data-tab="overview" aria-selected="true">Overview</button>
+        <button type="button" role="tab" class="adm__tab" data-tab="visitors" aria-selected="false">Visitors</button>
         <button type="button" role="tab" class="adm__tab" data-tab="products" aria-selected="false">Products</button>
         <button type="button" role="tab" class="adm__tab" data-tab="promos" aria-selected="false">Promo codes</button>
         <button type="button" role="tab" class="adm__tab" data-tab="orders" aria-selected="false">Orders</button>
@@ -110,6 +111,22 @@
         </div>
         <div data-stats><p class="adm__empty">Loading…</p></div>
         <section class="adm__card stats__box" data-alerts hidden></section>
+      </div>
+
+      <!-- Visitors: anonymous counts from supabase/visits.sql -->
+      <div class="adm__panel" data-panel="visitors" hidden>
+        <div class="adm__head">
+          <h1 class="adm__title">Visitors</h1>
+          <div class="adm__headtools">
+            <select class="adm__select" data-visit-days aria-label="Period">
+              <option value="7">Last 7 days</option>
+              <option value="30" selected>Last 30 days</option>
+              <option value="90">Last 90 days</option>
+            </select>
+            <button type="button" class="btn btn--line" data-reload-visits>Refresh</button>
+          </div>
+        </div>
+        <div data-visits><p class="adm__empty">Loading…</p></div>
       </div>
 
       <!-- Products -->

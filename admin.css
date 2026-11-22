@@ -154,6 +154,8 @@
 .stats__box { margin-bottom: 16px; }
 .stats__h { margin: 0 0 16px; font-size: var(--t-sm); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .bars { display: grid; grid-template-columns: repeat(14, 1fr); gap: 6px; align-items: end; height: 140px; }
+.bars--auto { grid-template-columns: repeat(var(--n, 30), minmax(0, 1fr)); gap: 2px; }
+.bars--auto .bars__day { font-size: 10px; overflow: visible; white-space: nowrap; }
 .bars__col { display: grid; grid-template-rows: 1fr auto; gap: 6px; height: 100%; }
 .bars__bar { align-self: end; height: max(var(--h), 2px); background: var(--ink); border-radius: 3px 3px 0 0; }
 .bars__day { font-size: 11px; color: var(--muted); text-align: center; font-variant-numeric: tabular-nums; }
@@ -187,3 +189,5 @@
 .adm__stars { letter-spacing: .06em; font-weight: 400; }
 .adm__waiting summary { cursor: pointer; font-weight: 700; }
 .adm__waiting a { font-size: var(--t-sm); }
+
+.adm__headtools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
