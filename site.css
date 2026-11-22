@@ -706,3 +706,25 @@ html[lang="lv"] [data-lang="en"], html:not([lang="lv"]) [data-lang="lv"] { displ
   .cookie { left: 8px; right: 8px; bottom: 8px; width: auto; gap: 12px; padding: 10px 10px 10px 14px; }
   .cookie__more { display: none; }
 }
+
+/* Black Friday section on the home page (campaign.js shows it during the sale only) */
+.bf { margin-top: clamp(72px, 9vw, 140px); background: var(--ink); color: var(--bg); overflow: hidden; }
+.bf[hidden] { display: none; }
+.bf__ticker { overflow: hidden; border-bottom: 1px solid rgba(255, 255, 255, .22); padding: 12px 0; user-select: none; }
+.bf__track { display: flex; width: max-content; animation: ticker 24s linear infinite; }
+.bf__track span { flex: none; padding-right: .7em; font-size: clamp(1.25rem, .8rem + 2vw, 2.25rem); font-weight: 800; letter-spacing: -0.03em; text-transform: uppercase; white-space: nowrap; line-height: 1; }
+.bf__track span:nth-child(even) { color: transparent; -webkit-text-stroke: 1.2px var(--bg); }
+.bf__body { display: grid; justify-items: center; text-align: center; gap: clamp(14px, 2vw, 22px); padding: clamp(48px, 7vw, 104px) var(--m) clamp(56px, 8vw, 112px); }
+.bf__kicker { opacity: .7; }
+.bf__title { margin: 0; font-size: clamp(5.5rem, 2rem + 17vw, 15rem); font-weight: 800; line-height: .82; letter-spacing: -0.06em; }
+.bf__price { margin: 0; font-size: clamp(1.5rem, 1rem + 2vw, 2.5rem); font-weight: 700; letter-spacing: -0.02em; }
+.bf__price s { opacity: .5; font-weight: 500; margin-right: .3em; }
+.bf__clock { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(8px, 1.4vw, 16px); width: min(100%, 520px); margin-top: 6px; }
+.bf__clock div { display: grid; gap: 6px; padding: clamp(12px, 2vw, 20px) 4px; border: 1px solid rgba(255, 255, 255, .25); border-radius: var(--radius); }
+.bf__clock b { font-size: clamp(1.75rem, 1rem + 3vw, 3.25rem); font-weight: 800; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.bf__clock span { font-size: var(--t-xs); font-weight: 600; letter-spacing: .1em; text-transform: uppercase; opacity: .65; }
+.bf__note { margin: 0; max-width: 34ch; font-size: .95rem; opacity: .75; }
+.bf__cta { margin-top: 6px; background: var(--bg); color: var(--ink); border-color: var(--bg); min-width: 220px; }
+.bf__cta:hover { background: #ddd; border-color: #ddd; }
+.bf + .feature { padding-top: clamp(56px, 7vw, 112px); }
+@media (prefers-reduced-motion: reduce) { .bf__track { animation: none; } }
