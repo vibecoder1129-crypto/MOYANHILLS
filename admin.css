@@ -213,3 +213,15 @@
   .chart__plot { height: 230px; }
   .chart--wide .chart__plot { height: 240px; }
 }
+
+/* Plain-number pieces next to the charts */
+.stats--compact { margin-bottom: 0; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+.stats--compact .stat { padding: 12px 14px; }
+.stat--hot { border-color: var(--ink); }
+.mlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.mlist__row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: baseline; }
+.mlist__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mlist__val { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mlist__bar { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: var(--tint); overflow: hidden; }
+.mlist__bar i { display: block; height: 100%; width: var(--w, 0%); background: var(--ink); border-radius: 3px; transition: width .5s ease; }
+.mlist__row:hover .mlist__bar i { background: #257de0; }

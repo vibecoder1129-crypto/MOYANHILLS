@@ -88,6 +88,24 @@
     ? `<table class="stats__table"><thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`
     : '');
 
+  // Ranked list of plain numbers with a thin bar behind each, for "top X" data.
+  // Bar widths are set from script afterwards (the CSP blocks inline style attributes).
+  function numList(id, title, sub, rows, { unit = '', extra } = {}, cls = '') {
+    if (!rows.length) return empty(title, 'Nothing yet.', cls);
+    const top = Math.max(...rows.map((r) => r.value), 1);
+    const total = rows.reduce((n, r) => n + r.value, 0) || 1;
+    return `<section class="adm__card stats__box chart ${cls}">
+      <div class="chart__head"><h2 class="stats__h">${title}</h2>${sub ? `<span class="adm__muted chart__sub">${sub}</span>` : ''}</div>
+      <ol class="mlist" data-list="${id}">${rows.map((r) => `<li class="mlist__row" title="${esc(r.name)}: ${num(r.value)}${unit ? ` ${unit}` : ''}">
+        <span class="mlist__name">${esc(r.name)}</span>
+        <span class="mlist__val"><b>${num(r.value)}</b>${extra ? ` <span class="adm__muted">${extra(r)}</span>` : ` <span class="adm__muted">${Math.round((r.value / total) * 100)}%</span>`}</span>
+        <span class="mlist__bar"><i data-w="${Math.max(2, Math.round((r.value / top) * 100))}"></i></span>
+      </li>`).join('')}</ol>
+    </section>`;
+  }
+  function sizeBars(el) { el.querySelectorAll('.mlist__bar i').forEach((i) => i.style.setProperty('--w', `${i.dataset.w}%`)); }
+  const tiles = (list) => `<div class="stats stats--compact">${list.map(([label, value, sub, cls]) => `<div class="stat ${cls || ''}"><span class="stat__label">${label}</span><b class="stat__value">${value}</b>${sub ? `<span class="adm__muted">${sub}</span>` : ''}</div>`).join('')}</div>`;
+
   function draw(el, id, config) {
     const canvas = el.querySelector(`[data-chart="${id}"]`);
     if (!canvas) return;
@@ -175,7 +193,6 @@
     };
     const statusCount = Object.fromEntries(STATUS.map(([k]) => [k, 0]));
     ordersIn.forEach((o) => { statusCount[statusOf(o)] += 1; });
-    const statusRows = STATUS.filter(([k]) => statusCount[k]);
 
     // 3. Sizes: sold in the period and left in stock now
     const soldBy = {}; const prodBy = {}; const promoBy = {};
@@ -199,24 +216,25 @@
 
     const prodRows = Object.entries(prodBy).sort((a, b) => b[1] - a[1]).map(([name, value]) => ({ name, value }));
     const promoRows = Object.entries(promoBy).sort((a, b) => (a[0] === 'No code') - (b[0] === 'No code') || b[1] - a[1]).map(([name, value]) => ({ name, value }));
-    const usedPromo = promoRows.some((r) => r.name !== 'No code');
 
+    const totalPieces = Object.values(soldBy).reduce((x, y) => x + y, 0);
     el.innerHTML = `
+      <section class="adm__card stats__box chart chart--wide">
+        <div class="chart__head"><h2 class="stats__h">Orders placed</h2><span class="adm__muted chart__sub">${plural(ordersIn.length, 'order')}, ${periodName}</span></div>
+        ${tiles(STATUS.map(([k, n]) => [n, num(statusCount[k]), ordersIn.length ? `${Math.round((statusCount[k] / ordersIn.length) * 100)}%` : '', statusCount[k] && k === 'toship' ? 'stat--hot' : '']))}
+      </section>
       ${card('trend', weekly ? 'Sales per week' : 'Sales per day', `${eur(money(salesIn))} from ${plural(salesIn.length, 'paid order')}, ${periodName}`,
         table([weekly ? 'Week' : 'Day', 'Sales', 'Orders', 'Pieces'], trendRows), 'chart--wide')}
       <div class="chart__grid">
-        ${ordersIn.length ? card('status', 'Order status', `${plural(ordersIn.length, 'order')} placed, ${periodName}`,
-          table(['Status', 'Orders'], statusRows.map(([k, n]) => [n, statusCount[k]]))) : empty('Order status', `No orders ${periodName}.`)}
+        ${salesIn.length ? card('running', 'Sales adding up', `Running total, ${periodName}`, '') : empty('Sales adding up', `Nothing sold ${periodName}.`)}
         ${sizes.length ? card('sizes', 'Sizes: sold and left', `Sold ${periodName}; left = in stock now`,
-          table(['Size', 'Sold', 'Left'], sizes.map((s) => [esc(s), soldBy[s] || 0, leftBy[s] || 0]))) : empty('Sizes: sold and left', 'No sizes yet.')}
-        ${salesIn.length ? card('sizeshare', 'Share of pieces by size', `${plural(Object.values(soldBy).reduce((a, b) => a + b, 0), 'piece')} sold, ${periodName}`,
-          table(['Size', 'Pieces'], sizes.filter((s) => soldBy[s]).map((s) => [esc(s), soldBy[s]]))) : empty('Share of pieces by size', `Nothing sold ${periodName}.`)}
+          table(['Size', 'Sold', 'Left'], sizes.map((x) => [esc(x), soldBy[x] || 0, leftBy[x] || 0]))) : empty('Sizes: sold and left', 'No sizes yet.')}
+        ${salesIn.length ? card('sizeshare', 'Share of pieces by size', `${plural(totalPieces, 'piece')} sold, ${periodName}`,
+          table(['Size', 'Pieces'], sizes.filter((x) => soldBy[x]).map((x) => [esc(x), soldBy[x]]))) : empty('Share of pieces by size', `Nothing sold ${periodName}.`)}
         ${salesIn.length ? card('weekday', 'Best days of the week', `Paid orders by weekday, ${periodName}`,
           table(['Day', 'Orders', 'Sales'], WEEKDAYS.map((w, i) => [w, byWeekday[i].orders, eur(byWeekday[i].money)]))) : empty('Best days of the week', `Nothing sold ${periodName}.`)}
-        ${prodRows.length > 1 ? card('products', 'Pieces sold by product', periodName[0].toUpperCase() + periodName.slice(1),
-          table(['Product', 'Pieces'], prodRows.map((r) => [esc(r.name), r.value]))) : ''}
-        ${usedPromo ? card('promos', 'Promo codes used', `Paid orders with and without a code, ${periodName}`,
-          table(['Code', 'Orders'], promoRows.map((r) => [esc(r.name), r.value]))) : (salesIn.length ? empty('Promo codes used', `No promo codes used ${periodName}.`) : '')}
+        ${salesIn.length ? numList('promos', 'Promo codes', `Paid orders, ${periodName}`, promoRows, { unit: 'orders' }) : ''}
+        ${prodRows.length > 1 ? numList('products', 'Pieces sold by product', periodName[0].toUpperCase() + periodName.slice(1), prodRows, { unit: 'pieces' }) : ''}
       </div>`;
 
     // Draw
@@ -246,9 +264,18 @@
       },
     });
 
-    if (ordersIn.length) {
-      const colours = { toship: PAL[0], shipped: PAL[1], delivered: PAL[2], unpaid: PAL[3], cancelled: PAL[4] };
-      doughnut(el, 'status', statusRows.map(([, n]) => n), statusRows.map(([k]) => statusCount[k]), statusRows.map(([k]) => colours[k]), { centre: 'orders' });
+    if (salesIn.length) {
+      let run = 0;
+      const running = perBucket.map((b) => (run += b.money));
+      draw(el, 'running', {
+        type: 'line',
+        data: { labels: buckets.map((b) => dayLabel(b)), datasets: [{ label: 'Running total', data: running, borderColor: PAL[2], backgroundColor: 'rgba(0,184,148,.14)', fill: true, borderWidth: 2, stepped: false, tension: 0.2, pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: PAL[2], pointHoverBorderColor: SURFACE, pointHoverBorderWidth: 2 }] },
+        options: {
+          interaction: hoverIndex,
+          plugins: { legend: { display: false }, tooltip: { callbacks: { title: (c) => (weekly ? `Up to the week of ${longDay(buckets[c[0].dataIndex])}` : `Up to ${longDay(buckets[c[0].dataIndex])}`), label: (c) => ` Total so far: ${eur(c.parsed.y)}` } } },
+          scales: { x: axisX, y: axisY(eur) },
+        },
+      });
     }
 
     if (sizes.length) {
@@ -286,15 +313,7 @@
       });
     }
 
-    if (prodRows.length > 1) {
-      const f = fold(prodRows);
-      doughnut(el, 'products', f.map((r) => r.name), f.map((r) => r.value), f.map((r, i) => (r.other ? '#b5b5b0' : PAL[i % PAL.length])), { centre: 'pieces' });
-    }
-    if (usedPromo) {
-      const f = fold(promoRows);
-      let n = 0;
-      doughnut(el, 'promos', f.map((r) => r.name), f.map((r) => r.value), f.map((r) => (r.name === 'No code' ? '#c9c9c5' : r.other ? '#b5b5b0' : PAL[n++ % PAL.length])), { centre: 'orders' });
-    }
+    sizeBars(el);
   }
 
   /* ---------- Visitors ---------- */
@@ -318,8 +337,7 @@
           table(['Source', 'Visitors'], sources.map((r) => [esc(sourceName(r.name)), r.value]))) : empty('Where they come from', 'Nothing yet.')}
         ${devices.length ? card('devices', 'Devices', `Visitors by device, ${period}`,
           table(['Device', 'Visitors'], devices.map((r) => [esc(deviceName(r.name)), r.value]))) : empty('Devices', 'Nothing yet.')}
-        ${pages.length ? card('pages', 'Most viewed pages', `Page views, ${period}`,
-          table(['Page', 'Views', 'Visitors'], (v.pages || []).map((r) => [esc(pageName(r.path)), r.views, r.visitors])), 'chart--wide chart--tall') : empty('Most viewed pages', 'Nothing yet.', 'chart--wide')}
+        ${numList('pages', 'Most viewed pages', `Page views, ${period}`, pages.map((r) => ({ name: pageName(r.path), value: Number(r.views) || 0, visitors: Number(r.visitors) || 0 })), { unit: 'views', extra: (r) => plural(r.visitors, 'visitor') }, 'chart--wide')}
       </div>`;
 
     const many = per.length > 31;
@@ -340,25 +358,23 @@
     });
 
     if (sources.length) {
-      const f = fold(sources);
-      const sc = colourMap(SOURCE_ORDER, f.filter((r) => !r.other).map((r) => r.name));
-      doughnut(el, 'sources', f.map((r) => (r.other ? 'Other' : sourceName(r.name))), f.map((r) => r.value), f.map((r) => (r.other ? '#b5b5b0' : sc[r.name])), { centre: 'visitors' });
+      const f = fold(sources, 8);
+      const all = f.reduce((n, r) => n + r.value, 0) || 1;
+      draw(el, 'sources', {
+        type: 'bar',
+        data: { labels: f.map((r) => (r.other ? 'Other' : sourceName(r.name))), datasets: [{ label: 'Visitors', data: f.map((r) => r.value), backgroundColor: INK, hoverBackgroundColor: PAL[0], borderRadius: 4, borderSkipped: 'start', maxBarThickness: 20 }] },
+        options: {
+          indexAxis: 'y',
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => ` ${plural(c.parsed.x, 'visitor')} (${Math.round((c.parsed.x / all) * 100)}%)` } } },
+          scales: { x: { ...axisY(), grid: { color: GRID } }, y: { grid: { display: false }, border: { display: false }, ticks: { color: INK } } },
+        },
+      });
     }
     if (devices.length) {
       const dc = colourMap(DEVICE_ORDER, devices.map((r) => r.name));
       doughnut(el, 'devices', devices.map((r) => deviceName(r.name)), devices.map((r) => r.value), devices.map((r) => dc[r.name]), { centre: 'visitors' });
     }
-    if (pages.length) {
-      draw(el, 'pages', {
-        type: 'bar',
-        data: { labels: pages.map((r) => pageName(r.path)), datasets: [{ label: 'Page views', data: pages.map((r) => r.views), backgroundColor: INK, hoverBackgroundColor: PAL[0], borderRadius: 4, borderSkipped: 'start', maxBarThickness: 22 }] },
-        options: {
-          indexAxis: 'y',
-          plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => ` ${plural(c.parsed.x, 'view')}`, afterLabel: (c) => plural(Number(pages[c.dataIndex].visitors) || 0, 'visitor') } } },
-          scales: { x: { ...axisY(), grid: { color: GRID } }, y: { grid: { display: false }, border: { display: false }, ticks: { color: INK } } },
-        },
-      });
-    }
+    sizeBars(el);
   }
 
   window.MHCharts = { sales, visits };
