@@ -191,3 +191,25 @@
 .adm__waiting a { font-size: var(--t-sm); }
 
 .adm__headtools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* Interactive charts (admin-charts.js, Chart.js). Canvas size comes from .chart__plot. */
+.chart__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; margin-bottom: 16px; }
+.chart__grid .stats__box { margin-bottom: 0; }
+.chart--wide { grid-column: 1 / -1; }
+.chart { display: flex; flex-direction: column; min-width: 0; }
+.chart__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; margin-bottom: 12px; }
+.chart__head .stats__h { margin: 0; }
+.chart__sub { font-size: var(--t-xs); }
+.chart__plot { position: relative; height: 260px; }
+.chart--wide .chart__plot { height: 300px; }
+.chart--tall .chart__plot { height: 320px; }
+.chart__none { margin: 24px 0; }
+.chart__table { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 8px; }
+.chart__table summary { cursor: pointer; font-size: var(--t-xs); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 6px 0; }
+.chart__table summary:hover { color: var(--ink); }
+.chart__table .stats__table { margin-top: 8px; }
+.chart__table[open] { max-height: 360px; overflow: auto; }
+@media (max-width: 600px) {
+  .chart__plot { height: 230px; }
+  .chart--wide .chart__plot { height: 240px; }
+}
