@@ -107,7 +107,16 @@
       <div class="adm__panel" data-panel="overview">
         <div class="adm__head">
           <h1 class="adm__title">Overview</h1>
-          <button type="button" class="btn btn--line" data-reload-stats>Refresh</button>
+          <div class="adm__headtools">
+            <select class="adm__select" data-stat-days aria-label="Period for the charts">
+              <option value="7">Last 7 days</option>
+              <option value="30" selected>Last 30 days</option>
+              <option value="90">Last 90 days</option>
+              <option value="365">Last 12 months</option>
+              <option value="all">All time</option>
+            </select>
+            <button type="button" class="btn btn--line" data-reload-stats>Refresh</button>
+          </div>
         </div>
         <div data-stats><p class="adm__empty">Loading…</p></div>
         <section class="adm__card stats__box" data-alerts hidden></section>
@@ -325,6 +334,8 @@
   <script src="vendor/supabase.js" defer></script>
   <script src="catalog.js" defer></script>
   <script src="data.js" defer></script>
+  <script src="vendor/chart.js" defer></script>
+  <script src="admin-charts.js" defer></script>
   <script src="admin.js" defer></script>
 </body>
 </html>

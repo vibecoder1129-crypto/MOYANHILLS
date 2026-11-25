@@ -755,7 +755,6 @@
   const isSale = (o) => o.status !== 'cancelled'
     && (o.payment ? o.payment === 'paid' : ['paid', 'shipped', 'delivered'].includes(o.status));
   const pieces = (o) => (o.items || []).reduce((n, i) => n + (Number(i.qty) || 0), 0);
-  const dayKey = (d) => { const x = new Date(d); return `${x.getFullYear()}-${x.getMonth()}-${x.getDate()}`; };
 
   async function loadStats() {
     statsEl.innerHTML = '<p class="adm__empty">Loading…</p>';
@@ -771,18 +770,9 @@
     const sold = sales.reduce((n, o) => n + pieces(o), 0);
     const toShip = sales.filter((o) => !['shipped', 'delivered'].includes(o.status)).length;
 
-    // Pieces sold per size, and what is left per size (all products together)
-    const soldBy = {};
-    sales.forEach((o) => (o.items || []).forEach((i) => { soldBy[i.size] = (soldBy[i.size] || 0) + (Number(i.qty) || 0); }));
-    const leftBy = {};
-    (prods || []).filter((p) => p.active !== false).forEach((p) => (p.sizes || []).forEach((s) => { leftBy[s.size] = (leftBy[s.size] || 0) + Math.max(0, Number(s.stock) || 0); }));
-    const sizes = [...new Set([...Object.keys(leftBy), ...Object.keys(soldBy)])];
-    const left = Object.values(leftBy).reduce((a, b) => a + b, 0);
-
-    // Sales per day, last 14 days
-    const days = [...Array(14)].map((_, i) => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - 13 + i); return d; });
-    const perDay = days.map((d) => sum(sales.filter((o) => dayKey(o.paid_at || o.created_at) === dayKey(d))));
-    const top = Math.max(...perDay, 1);
+    // Pieces left in stock, all active products and sizes together
+    const left = (prods || []).filter((p) => p.active !== false)
+      .reduce((n, p) => n + (p.sizes || []).reduce((m, x) => m + Math.max(0, Number(x.stock) || 0), 0), 0);
 
     const tile = (label, value, sub = '') => `<div class="stat"><span class="stat__label">${label}</span><b class="stat__value">${value}</b>${sub ? `<span class="adm__muted">${sub}</span>` : ''}</div>`;
     statsEl.innerHTML = `
@@ -794,23 +784,21 @@
         ${tile('To ship', toShip, toShip ? 'paid, not shipped yet' : 'all sent')}
         ${tile('Pieces left', left, 'in stock, all sizes')}
       </div>
-      <section class="adm__card stats__box">
-        <h2 class="stats__h">Sales, last 14 days</h2>
-        <div class="bars" role="img" aria-label="Sales per day for the last 14 days">
-          ${days.map((d, i) => `<div class="bars__col" title="${shortDay(d)}: ${eur(perDay[i])}"><span class="bars__bar" data-h="${Math.round((perDay[i] / top) * 100)}"></span><span class="bars__day">${d.getDate()}</span></div>`).join('')}
-        </div>
-      </section>
-      <section class="adm__card stats__box">
-        <h2 class="stats__h">By size</h2>
-        <table class="stats__table">
-          <thead><tr><th>Size</th><th>Sold</th><th>Left</th></tr></thead>
-          <tbody>${sizes.map((s) => `<tr><td>${esc(s)}</td><td>${soldBy[s] || 0}</td><td class="${(leftBy[s] || 0) === 0 ? 'is-bad' : ''}">${leftBy[s] || 0}</td></tr>`).join('')}</tbody>
-        </table>
-      </section>
+      <div data-sales-charts></div>
       <p class="adm__muted">Counts paid orders only; cancelled and unpaid ones are left out. Refunds made in Stripe are not subtracted.</p>`;
-    // Bar heights set from script: the page's CSP blocks inline style attributes
-    $$('.bars__bar', statsEl).forEach((b) => b.style.setProperty('--h', `${b.dataset.h}%`));
+    lastStats = { orders: orders || [], prods: prods || [] };
+    drawSalesCharts();
   }
+  // Charts follow the period picker; changing it redraws without asking the database again
+  let lastStats = null;
+  const statDays = $('[data-stat-days]');
+  function drawSalesCharts() {
+    const box = $('[data-sales-charts]', statsEl);
+    if (!box || !lastStats || !window.MHCharts) return;
+    const days = statDays.value === 'all' ? 'all' : Number(statDays.value) || 30;
+    window.MHCharts.sales(box, { ...lastStats, days, isSale, pieces });
+  }
+  statDays.addEventListener('change', drawSalesCharts);
   $('[data-reload-stats]').addEventListener('click', () => { loadStats(); if (sb) loadAlerts(); });
 
   /* ---------- Visitors (anonymous counts, supabase/visits.sql) ---------- */
@@ -836,14 +824,7 @@
     const sales = (orders || []).filter((o) => isSale(o) && new Date(o.paid_at || o.created_at) >= from).length;
     const people = Number(v.total?.visitors) || 0;
     const rate = people ? `${((sales / people) * 100).toFixed(1).replace(/\.0$/, '')}%` : '—';
-    const per = v.per_day || [];
-    const top = Math.max(...per.map((d) => d.visitors), 1);
-    const every = per.length > 31 ? 7 : per.length > 14 ? 3 : 1;
     const tile = (label, value, sub = '') => `<div class="stat"><span class="stat__label">${label}</span><b class="stat__value">${value}</b>${sub ? `<span class="adm__muted">${sub}</span>` : ''}</div>`;
-    const table = (title, head, rows) => `<section class="adm__card stats__box"><h2 class="stats__h">${title}</h2>${rows.length
-      ? `<table class="stats__table"><thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table>`
-      : '<p class="adm__muted">Nothing yet.</p>'}</section>`;
-    const devTotal = (v.devices || []).reduce((n, d) => n + d.visitors, 0) || 1;
     visitsEl.innerHTML = `
       <div class="stats">
         ${tile('Visitors today', v.today?.visitors ?? 0, `${v.today?.views ?? 0} page view${v.today?.views === 1 ? '' : 's'}`)}
@@ -851,19 +832,9 @@
         ${tile(`Page views, ${days} days`, v.total?.views ?? 0, people ? `${(v.total.views / people).toFixed(1)} per visitor` : '')}
         ${tile('Orders per visitor', rate, `${sales} paid order${sales === 1 ? '' : 's'} in ${days} days`)}
       </div>
-      <section class="adm__card stats__box">
-        <h2 class="stats__h">Visitors per day</h2>
-        <div class="bars bars--auto" data-n="${per.length}" role="img" aria-label="Visitors per day">
-          ${per.map((d, i) => `<div class="bars__col" title="${shortDay(d.day)}: ${d.visitors} visitor${d.visitors === 1 ? '' : 's'}, ${d.views} page view${d.views === 1 ? '' : 's'}"><span class="bars__bar" data-h="${Math.round((d.visitors / top) * 100)}"></span><span class="bars__day">${(per.length - 1 - i) % every === 0 ? new Date(d.day).getDate() : '&nbsp;'}</span></div>`).join('')}
-        </div>
-      </section>
-      ${table('Where they come from', ['Source', 'Visitors'], (v.sources || []).map((r) => `<tr><td>${esc(SOURCE_NAMES[r.source] || r.source)}</td><td>${r.visitors}</td></tr>`))}
-      ${table('Most viewed pages', ['Page', 'Views', 'Visitors'], (v.pages || []).map((r) => `<tr><td>${esc(pageName(r.path))}</td><td>${r.views}</td><td>${r.visitors}</td></tr>`))}
-      ${table('Devices', ['Device', 'Visitors', 'Share'], (v.devices || []).map((r) => `<tr><td>${esc(DEVICE_NAMES[r.device] || r.device)}</td><td>${r.visitors}</td><td>${Math.round((r.visitors / devTotal) * 100)}%</td></tr>`))}
+      <div data-visit-charts></div>
       <p class="adm__muted">Anonymous and cookie-free: a visitor is counted once per day, so the same person on two days counts twice. Robots, browsers that ask not to be tracked and devices that opened this admin page are not counted. Kept for 13 months.</p>`;
-    const bars = $('.bars--auto', visitsEl);
-    bars?.style.setProperty('--n', bars.dataset.n);
-    $$('.bars__bar', visitsEl).forEach((b) => b.style.setProperty('--h', `${b.dataset.h}%`));
+    window.MHCharts?.visits($('[data-visit-charts]', visitsEl), { v, days, sourceName: (x) => SOURCE_NAMES[x] || x, deviceName: (x) => DEVICE_NAMES[x] || x, pageName });
   }
   $('[data-reload-visits]').addEventListener('click', loadVisits);
   visitDays.addEventListener('change', loadVisits);
